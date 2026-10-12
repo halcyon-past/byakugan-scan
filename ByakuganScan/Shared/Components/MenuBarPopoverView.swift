@@ -76,6 +76,7 @@ struct MenuBarPopoverView: View {
                 icon: "text.viewfinder",
                 color: .indigo
             ) {
+                AppDelegate.shared?.closePopover()
                 ScanCoordinator.shared.startTextScan()
             }
             
@@ -85,6 +86,7 @@ struct MenuBarPopoverView: View {
                 icon: "qrcode.viewfinder",
                 color: .teal
             ) {
+                AppDelegate.shared?.closePopover()
                 ScanCoordinator.shared.startQRScan()
             }
             
@@ -94,6 +96,7 @@ struct MenuBarPopoverView: View {
                 icon: "barcode.viewfinder",
                 color: .orange
             ) {
+                AppDelegate.shared?.closePopover()
                 ScanCoordinator.shared.startBarcodeScan()
             }
             

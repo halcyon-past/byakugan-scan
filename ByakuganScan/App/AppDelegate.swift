@@ -114,19 +114,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     
     // MARK: - Actions
     
+    func closePopover() {
+        popover?.performClose(nil)
+    }
+    
     @objc func triggerTextScan() {
+        closePopover()
         ScanCoordinator.shared.startTextScan()
     }
     
     @objc func triggerLastSelectionScan() {
+        closePopover()
         ScanCoordinator.shared.startLastSelectionScan()
     }
     
     @objc func triggerQRScan() {
+        closePopover()
         ScanCoordinator.shared.startQRScan()
     }
     
     @objc func triggerBarcodeScan() {
+        closePopover()
         ScanCoordinator.shared.startBarcodeScan()
     }
     
