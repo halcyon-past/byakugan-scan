@@ -5,8 +5,8 @@ enum AppConstants {
     enum App {
         static let name = "Byakugan Scan"
         static let bundleID = "cloud.aritro.byakugan-scan"
-        static let version = "1.0.3"
-        static let build = "4"
+        static let version = "1.0.4"
+        static let build = "5"
         static let websiteURL = URL(string: "https://byakugan-scan.aritro.cloud")!
         static let supportURL = URL(string: "https://byakugan-scan.aritro.cloud/support")!
         static let privacyURL = URL(string: "https://byakugan-scan.aritro.cloud/privacy")!
@@ -24,9 +24,9 @@ enum AppConstants {
     enum UI {
         static let defaultWindowWidth: CGFloat = 900
         static let defaultWindowHeight: CGFloat = 600
-        static let settingsWindowWidth: CGFloat = 560
-        static let settingsWindowHeight: CGFloat = 480
-        static let sidebarWidth: CGFloat = 220
+        static let settingsWindowWidth: CGFloat = 680
+        static let settingsWindowHeight: CGFloat = 540
+        static let sidebarWidth: CGFloat = 200
     }
     
     enum Accessibility {

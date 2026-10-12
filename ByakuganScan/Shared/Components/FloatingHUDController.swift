@@ -42,6 +42,7 @@ struct FloatingHUDView: View {
     let item: FloatingHUDItem
     let onDismiss: () -> Void
     
+    @ObservedObject private var settings = AppSettings.shared
     @State private var isHovered = false
     
     var body: some View {
@@ -49,7 +50,7 @@ struct FloatingHUDView: View {
             // Type reticle icon
             ZStack {
                 Circle()
-                    .fill(typeColor.opacity(0.18))
+                    .fill(typeColor.opacity(0.20))
                     .frame(width: 34, height: 34)
                 
                 Image(systemName: item.result.type.systemImage)
@@ -86,7 +87,7 @@ struct FloatingHUDView: View {
                     }
                     .padding(.horizontal, 9)
                     .padding(.vertical, 5)
-                    .background(Color.accentColor.opacity(0.85), in: Capsule())
+                    .background(typeColor.opacity(0.88), in: Capsule())
                     .foregroundStyle(.white)
                 }
                 .buttonStyle(.plain)
@@ -105,7 +106,7 @@ struct FloatingHUDView: View {
                     }
                     .padding(.horizontal, 9)
                     .padding(.vertical, 5)
-                    .background(Color.blue.opacity(0.85), in: Capsule())
+                    .background(typeColor.opacity(0.88), in: Capsule())
                     .foregroundStyle(.white)
                 }
                 .buttonStyle(.plain)
@@ -116,10 +117,10 @@ struct FloatingHUDView: View {
                     Text("Copied")
                         .font(.system(size: 11, weight: .medium))
                 }
-                .foregroundStyle(Color.green.opacity(0.9))
+                .foregroundStyle(typeColor)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(Color.green.opacity(0.12), in: Capsule())
+                .background(typeColor.opacity(0.16), in: Capsule())
             }
             
             // Close / Dismiss button
@@ -143,7 +144,7 @@ struct FloatingHUDView: View {
                     .fill(Color(red: 0.08, green: 0.09, blue: 0.14).opacity(0.88))
                 
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .strokeBorder(Color.white.opacity(0.16), lineWidth: 1.0)
+                    .strokeBorder(typeColor.opacity(0.45), lineWidth: 1.2)
             }
         )
         .shadow(color: .black.opacity(0.45), radius: 16, x: 0, y: 8)
@@ -152,11 +153,7 @@ struct FloatingHUDView: View {
     }
     
     private var typeColor: Color {
-        switch item.result.type {
-        case .text: return .indigo
-        case .qrCode: return .teal
-        case .barcode: return .orange
-        }
+        settings.themeAccent.color
     }
 }
 
