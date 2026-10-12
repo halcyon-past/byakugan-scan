@@ -1,88 +1,106 @@
-@import url('https://fonts.googleapis.com/css2?family=Alumni+Sans:ital,wght@0,100..900;1,100..900&family=Cinzel:wght@400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alumni+Sans:ital,wght@0,100..900;1,100..900&family=Cinzel:wght@600;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Yuji+Syuku&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Editorial Palette Inspired by Halcyon + Neo-Anime */
-  --bg-lacquer: #07080d;
-  --bg-deep: #030408;
-  --bg-surface: #0e1019;
-  --bg-raised: #141724;
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-hairline: rgba(255, 255, 255, 0.14);
-  --border-active: rgba(147, 197, 253, 0.5);
-  
-  --text-primary: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-faint: #64748b;
-  
-  --accent-chakra: #818cf8;
-  --accent-verdigris: #38bdf8;
-  --accent-gold: #e2e8f0;
+  --bg-deep: #020307;
+  --chakra-glow: rgba(129, 140, 248, 0.45);
+  --chakra-cyan: #38bdf8;
+  --gold-accent: #f59e0b;
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 html {
-  scroll-behavior: smooth;
-  text-rendering: optimizeLegibility;
+  background-color: var(--bg-deep);
+  color: #f8fafc;
   -webkit-font-smoothing: antialiased;
-  background-color: var(--bg-lacquer);
-  color: var(--text-primary);
+  text-rendering: optimizeLegibility;
 }
 
 body {
   overflow-x: hidden;
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  selection-background-color: #4f46e5;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg-deep);
+  selection-background-color: #6366f1;
   selection-color: #ffffff;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 5px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-lacquer);
-}
-::-webkit-scrollbar-thumb {
-  background: #1e2235;
-  border-radius: 2px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #333a56;
-}
-
-/* Typography Classes */
-.font-editorial-display {
-  font-family: 'Alumni Sans', sans-serif;
-  letter-spacing: -0.02em;
+/* Anime Japanese Manga Display Font */
+.font-manga {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.14em;
 }
 
 .font-kanji {
-  font-family: 'Cinzel', serif;
-  letter-spacing: 0.12em;
+  font-family: 'Yuji Syuku', serif;
 }
 
-.font-mono-tech {
+.font-display {
+  font-family: 'Alumni Sans', sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Editorial Rules & Hairlines */
-.hairline-b {
-  border-bottom: 1px solid var(--border-subtle);
-}
-.hairline-t {
-  border-top: 1px solid var(--border-subtle);
-}
-.hairline-r {
-  border-right: 1px solid var(--border-subtle);
-}
-.hairline-l {
-  border-left: 1px solid var(--border-subtle);
+/* Glassmorphism with Cyberpunk / Anime Edge */
+.anime-glass {
+  background: rgba(8, 10, 20, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(129, 140, 248, 0.16);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
 }
 
-/* Halcyon Ticker Marquee */
+.anime-card-hover {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.anime-card-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgba(147, 197, 253, 0.45);
+  box-shadow: 0 16px 40px -10px rgba(99, 102, 241, 0.25);
+}
+
+/* Manga Speed Lines / Halftone Overlay */
+.manga-grid {
+  background-image: radial-gradient(rgba(129, 140, 248, 0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Scanline Overlay */
+.anime-scanline {
+  background: linear-gradient(
+    rgba(18, 16, 38, 0) 50%,
+    rgba(0, 0, 0, 0.3) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+/* Ticker Animations */
 @keyframes ticker {
   0% { transform: translate3d(0, 0, 0); }
   100% { transform: translate3d(-50%, 0, 0); }
@@ -91,19 +109,36 @@ body {
 .animate-ticker {
   display: flex;
   width: 200%;
-  animation: ticker 32s linear infinite;
+  animation: ticker 28s linear infinite;
 }
+
 .animate-ticker:hover {
   animation-play-state: paused;
 }
 
-/* Smooth Image Shimmer */
-.shimmer-card {
-  background: linear-gradient(135deg, rgba(14, 16, 25, 0.9) 0%, rgba(10, 11, 18, 0.95) 100%);
-  border: 1px solid var(--border-subtle);
-  transition: border-color 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+/* Laser Scan Sweep */
+@keyframes laserSweep {
+  0% { top: 0%; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
 }
-.shimmer-card:hover {
-  border-color: rgba(129, 140, 248, 0.35);
-  transform: translateY(-2px);
+
+.laser-beam {
+  animation: laserSweep 2.2s ease-in-out infinite;
+}
+
+/* Custom Thin Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #020307;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e1b4b;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3730a3;
 }
