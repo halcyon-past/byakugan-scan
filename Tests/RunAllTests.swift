@@ -360,15 +360,25 @@ struct TestRunner {
             }
         }
 
-        // Suite 11: ThemeAccent Color Presets (Issue #6)
-        print("\n▶️ [Suite 11/12] ThemeAccent Presets & Hex Lookups")
-        test("ThemeAccent: Curated cases and hex mapping") {
+        // Suite 11: ThemeAccent Color Presets & Selection Overlay (Issue #6)
+        print("\n▶️ [Suite 11/12] ThemeAccent Presets, NSColor & Selection Overlay")
+        test("ThemeAccent: Curated cases, shortDisplayName, and hex mapping") {
             try assertEqual(ThemeAccent.allCases.count, 5)
             try assertEqual(ThemeAccent.byakuganChakra.hexString, "#D946EF")
+            try assertEqual(ThemeAccent.byakuganChakra.shortDisplayName, "Chakra Pink")
             try assertEqual(ThemeAccent.neonCyan.hexString, "#06B6D4")
+            try assertEqual(ThemeAccent.neonCyan.shortDisplayName, "Neon Cyan")
             try assertEqual(ThemeAccent.electricPurple.hexString, "#8B5CF6")
+            try assertEqual(ThemeAccent.electricPurple.shortDisplayName, "Electric Purple")
             try assertEqual(ThemeAccent.emerald.hexString, "#10B981")
+            try assertEqual(ThemeAccent.emerald.shortDisplayName, "Emerald")
             try assertEqual(ThemeAccent.systemAccent.hexString, "system")
+            try assertEqual(ThemeAccent.systemAccent.shortDisplayName, "System")
+            
+            for accent in ThemeAccent.allCases {
+                let nsCol = accent.nsColor
+                try assertTrue(nsCol.alphaComponent > 0.9, "NSColor alpha must be opaque for \(accent.rawValue)")
+            }
         }
 
         test("ThemeAccent: from(hexOrId:) lookup parser") {
@@ -377,6 +387,24 @@ struct TestRunner {
             try assertEqual(ThemeAccent.from(hexOrId: "#10b981"), .emerald)
             try assertEqual(ThemeAccent.from(hexOrId: "system"), .systemAccent)
             try assertEqual(ThemeAccent.from(hexOrId: "non_existent"), .byakuganChakra)
+        }
+
+        test("SelectionOverlayController: AppKit to Quartz screen rect conversion") {
+            // Top-left 200x100 region on a 1440x900 display: AppKit y is 800 (maxY = 900) -> Quartz y = 0
+            let appKitTopLeft = NSRect(x: 50, y: 800, width: 200, height: 100)
+            let quartzTopLeft = SelectionOverlayController.quartzRect(fromAppKitScreenRect: appKitTopLeft, primaryScreenHeight: 900)
+            try assertEqual(Int(quartzTopLeft.origin.x), 50)
+            try assertEqual(Int(quartzTopLeft.origin.y), 0)
+            try assertEqual(Int(quartzTopLeft.width), 200)
+            try assertEqual(Int(quartzTopLeft.height), 100)
+            
+            // Bottom-left 300x150 region on a 1440x900 display: AppKit y is 0 (maxY = 150) -> Quartz y = 750
+            let appKitBottomLeft = NSRect(x: 100, y: 0, width: 300, height: 150)
+            let quartzBottomLeft = SelectionOverlayController.quartzRect(fromAppKitScreenRect: appKitBottomLeft, primaryScreenHeight: 900)
+            try assertEqual(Int(quartzBottomLeft.origin.x), 100)
+            try assertEqual(Int(quartzBottomLeft.origin.y), 750)
+            try assertEqual(Int(quartzBottomLeft.width), 300)
+            try assertEqual(Int(quartzBottomLeft.height), 150)
         }
 
         // Suite 12: FloatingHUDItem Analytics & Titles (Issue #3)
@@ -400,9 +428,11 @@ struct TestRunner {
             try assertEqual(barcodeItem.title, "Barcode Scanned")
         }
 
-        test("AppConstants: Version 1.0.3 verification") {
-            try assertEqual(AppConstants.App.version, "1.0.3")
-            try assertEqual(AppConstants.App.build, "4")
+        test("AppConstants: Version 1.0.4 & Settings window sizing verification") {
+            try assertEqual(AppConstants.App.version, "1.0.4")
+            try assertEqual(AppConstants.App.build, "5")
+            try assertEqual(Int(AppConstants.UI.settingsWindowWidth), 680)
+            try assertEqual(Int(AppConstants.UI.settingsWindowHeight), 540)
         }
 
         // Summary Report

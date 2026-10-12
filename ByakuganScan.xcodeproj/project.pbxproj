@@ -7,23 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00528CA2A026AFE798498980 /* ThemeAccent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20BE01199D2A39B46620505 /* ThemeAccent.swift */; };
 		087113017C6A6CFDAB48F38E /* ScanCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7569952164D6C21980027F50 /* ScanCoordinator.swift */; };
 		1877D1B5525770AC4172115F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA98AC75D6BBF93DFFB0153F /* AppDelegate.swift */; };
 		1C37704298CF8FA3F66316E6 /* ScreenCaptureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71752EDA4704D428F939D279 /* ScreenCaptureService.swift */; };
 		275E17E3A761BEDE99917762 /* ScanResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCEBDEA2C38290A4D83385BE /* ScanResult.swift */; };
 		34F85CCFB01027ABAB891644 /* NSImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4EFB873A11D7CDB8B34270A /* NSImage+Extensions.swift */; };
+		3A69294A422AD87B160256DC /* FloatingHUDController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053BEDA92D5F748B94075590 /* FloatingHUDController.swift */; };
 		3DF543117D891E8C0C02E4B8 /* ByakuganScanApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B698FC443560C38874A36C1 /* ByakuganScanApp.swift */; };
 		4921188AFF0609C11D993EC3 /* SpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30AF252BA1980EFF65F61B3D /* SpeechService.swift */; };
 		55D67C9E9D90C4A36E31DC1E /* HistoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC89CBB1932833A583B03494 /* HistoryService.swift */; };
+		6FE631D7AD17A6BFB07AA781 /* SoundEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F760A5698F60BBAD756CDAD /* SoundEffect.swift */; };
 		706C614E2F422E585C63D6E5 /* BarcodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4095E04052EE68CA6798727F /* BarcodeService.swift */; };
 		7B2CB57241F75B2B7943079C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C51CC7E7F690FA265B1A68BF /* HomeView.swift */; };
 		818AD544D7E66E048BF4258A /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE31EC1AF63B3EFC35E0DFB3 /* PrivacyPolicyView.swift */; };
+		824FE910AA5576453B0DBE95 /* SelectionOverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E532B4FF487AD2FDB8D1D7 /* SelectionOverlayController.swift */; };
 		89133898343EBAB54B3F4E73 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD419CB91D0B1F3EFB42E2E /* String+Extensions.swift */; };
 		9AC11985574377A5180C2EC2 /* URLRouteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC06D4A247DEE3B59A0EEB9 /* URLRouteService.swift */; };
 		A77BE2E9670521BF30230E78 /* UpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615022B2E1E222BCA2DDFB8C /* UpdateService.swift */; };
 		AD42233FDCC9F74357DF70DE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6B03DDFFC0A9DD6FCFDF6E /* SettingsView.swift */; };
 		C9EC1FF5937DDB75CA3C79CF /* AppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5294704DB8890C7F45DA08B3 /* AppIntents.swift */; };
 		D8BC803D340FA3115DE883A1 /* MenuBarPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4771ABCF001B07D1651911BB /* MenuBarPopoverView.swift */; };
+		E04282B708F071AB9B8A71EC /* FeedbackStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473B08261C1DE82CB22EEACC /* FeedbackStyle.swift */; };
 		E0BCADE7600F3135BA32CB63 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB9E8299C744402B574CEEFC /* AppConstants.swift */; };
 		E3196639EB2848B277B3A53C /* TermsOfServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0EBD25F1444919258A72D9 /* TermsOfServiceView.swift */; };
 		E7497397C6F8D2B443D339B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9B59DAEAE00AA5B76426C40 /* Assets.xcassets */; };
@@ -35,11 +40,15 @@
 
 /* Begin PBXFileReference section */
 		051FB20863B62DED869DDABD /* HotkeyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyService.swift; sourceTree = "<group>"; };
+		053BEDA92D5F748B94075590 /* FloatingHUDController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingHUDController.swift; sourceTree = "<group>"; };
 		0EC06D4A247DEE3B59A0EEB9 /* URLRouteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRouteService.swift; sourceTree = "<group>"; };
+		0F760A5698F60BBAD756CDAD /* SoundEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffect.swift; sourceTree = "<group>"; };
 		2044B547D07259E923B32BBC /* ByakuganScan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ByakuganScan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30AF252BA1980EFF65F61B3D /* SpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechService.swift; sourceTree = "<group>"; };
 		3B698FC443560C38874A36C1 /* ByakuganScanApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByakuganScanApp.swift; sourceTree = "<group>"; };
 		4095E04052EE68CA6798727F /* BarcodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeService.swift; sourceTree = "<group>"; };
+		44E532B4FF487AD2FDB8D1D7 /* SelectionOverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionOverlayController.swift; sourceTree = "<group>"; };
+		473B08261C1DE82CB22EEACC /* FeedbackStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackStyle.swift; sourceTree = "<group>"; };
 		4771ABCF001B07D1651911BB /* MenuBarPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPopoverView.swift; sourceTree = "<group>"; };
 		5294704DB8890C7F45DA08B3 /* AppIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntents.swift; sourceTree = "<group>"; };
 		5A6B03DDFFC0A9DD6FCFDF6E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -58,6 +67,7 @@
 		DA98AC75D6BBF93DFFB0153F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DD0EBD25F1444919258A72D9 /* TermsOfServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsOfServiceView.swift; sourceTree = "<group>"; };
 		EB9E8299C744402B574CEEFC /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+		F20BE01199D2A39B46620505 /* ThemeAccent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeAccent.swift; sourceTree = "<group>"; };
 		FE31EC1AF63B3EFC35E0DFB3 /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -118,7 +128,10 @@
 			isa = PBXGroup;
 			children = (
 				611C89CFFF3F8859AC9AC3B0 /* AppSettings.swift */,
+				473B08261C1DE82CB22EEACC /* FeedbackStyle.swift */,
 				CCEBDEA2C38290A4D83385BE /* ScanResult.swift */,
+				0F760A5698F60BBAD756CDAD /* SoundEffect.swift */,
+				F20BE01199D2A39B46620505 /* ThemeAccent.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -219,7 +232,9 @@
 		EC1F2C1136E77591401112F2 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				053BEDA92D5F748B94075590 /* FloatingHUDController.swift */,
 				4771ABCF001B07D1651911BB /* MenuBarPopoverView.swift */,
+				44E532B4FF487AD2FDB8D1D7 /* SelectionOverlayController.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -302,6 +317,8 @@
 				706C614E2F422E585C63D6E5 /* BarcodeService.swift in Sources */,
 				3DF543117D891E8C0C02E4B8 /* ByakuganScanApp.swift in Sources */,
 				E7A270065590F21768DED142 /* ClipboardService.swift in Sources */,
+				E04282B708F071AB9B8A71EC /* FeedbackStyle.swift in Sources */,
+				3A69294A422AD87B160256DC /* FloatingHUDController.swift in Sources */,
 				55D67C9E9D90C4A36E31DC1E /* HistoryService.swift in Sources */,
 				7B2CB57241F75B2B7943079C /* HomeView.swift in Sources */,
 				EE6F025421CBF067269222EF /* HotkeyService.swift in Sources */,
@@ -312,10 +329,13 @@
 				087113017C6A6CFDAB48F38E /* ScanCoordinator.swift in Sources */,
 				275E17E3A761BEDE99917762 /* ScanResult.swift in Sources */,
 				1C37704298CF8FA3F66316E6 /* ScreenCaptureService.swift in Sources */,
+				824FE910AA5576453B0DBE95 /* SelectionOverlayController.swift in Sources */,
 				AD42233FDCC9F74357DF70DE /* SettingsView.swift in Sources */,
+				6FE631D7AD17A6BFB07AA781 /* SoundEffect.swift in Sources */,
 				4921188AFF0609C11D993EC3 /* SpeechService.swift in Sources */,
 				89133898343EBAB54B3F4E73 /* String+Extensions.swift in Sources */,
 				E3196639EB2848B277B3A53C /* TermsOfServiceView.swift in Sources */,
+				00528CA2A026AFE798498980 /* ThemeAccent.swift in Sources */,
 				9AC11985574377A5180C2EC2 /* URLRouteService.swift in Sources */,
 				A77BE2E9670521BF30230E78 /* UpdateService.swift in Sources */,
 			);
@@ -359,7 +379,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -374,7 +394,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.0.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "cloud.aritro.byakugan-scan";
@@ -422,7 +442,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -443,7 +463,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.0.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
