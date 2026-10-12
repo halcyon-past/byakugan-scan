@@ -2,22 +2,25 @@ import AppKit
 import SwiftUI
 import UserNotifications
 
-/// Application delegate: sets up the menu bar item, hotkeys, and notification permissions.
+/// Application delegate: sets up the menu bar item, hotkeys, settings window, and notification permissions.
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    // MARK: - Singleton reference for easy access
+    static weak var shared: AppDelegate?
+    
     // MARK: - Properties
     private var statusItem: NSStatusItem?
     private var popover: NSPopover?
-    private var mainWindow: NSWindow?
+    private var settingsWindow: NSWindow?
     
     // Hotkey IDs for cleanup
-    private var textScanHotkeyID: UInt32?
-    private var qrScanHotkeyID: UInt32?
-    private var barcodeScanHotkeyID: UInt32?
+    private var activeHotkeyIDs: [UInt32] = []
     
     // MARK: - Lifecycle
     
     func applicationDidFinishLaunching(_ notification: Notification) {
+        Self.shared = self
+        
         // Hide dock icon – we live in the menu bar
         NSApp.setActivationPolicy(.accessory)
         
@@ -25,7 +28,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         setupHotkeys()
         requestNotificationPermissions()
         
-        // Listen for settings changes to re-register hotkeys
+        // Listen for settings window triggers & setting changes
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(openSettings),
+            name: NSNotification.Name("OpenSettingsWindow"),
+            object: nil
+        )
+        
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(settingsDidChange),
@@ -66,7 +76,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func togglePopover(_ sender: NSStatusBarButton) {
         if popover == nil {
             let pop = NSPopover()
-            pop.contentSize = NSSize(width: 340, height: 460)
+            pop.contentSize = NSSize(width: 340, height: 480)
             pop.behavior = .transient
             pop.contentViewController = NSHostingController(
                 rootView: MenuBarPopoverView()
@@ -86,6 +96,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func showContextMenu() {
         let menu = NSMenu()
         menu.addItem(NSMenuItem(title: "Capture Text", action: #selector(triggerTextScan), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Capture Last Selection", action: #selector(triggerLastSelectionScan), keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: "Scan QR Code", action: #selector(triggerQRScan), keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: "Scan Barcode", action: #selector(triggerBarcodeScan), keyEquivalent: ""))
         menu.addItem(.separator())
@@ -104,6 +115,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         ScanCoordinator.shared.startTextScan()
     }
     
+    @objc func triggerLastSelectionScan() {
+        ScanCoordinator.shared.startLastSelectionScan()
+    }
+    
     @objc func triggerQRScan() {
         ScanCoordinator.shared.startQRScan()
     }
@@ -112,9 +127,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         ScanCoordinator.shared.startBarcodeScan()
     }
     
-    @objc private func openSettings() {
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+    @objc func openSettings() {
+        if settingsWindow == nil {
+            let window = NSWindow(
+                contentRect: NSRect(x: 0, y: 0, width: 620, height: 520),
+                styleMask: [.titled, .closable, .miniaturizable, .resizable],
+                backing: .buffered,
+                defer: false
+            )
+            window.center()
+            window.title = "Byakugan Scan Settings"
+            window.isReleasedWhenClosed = false
+            window.contentView = NSHostingView(
+                rootView: SettingsView()
+                    .environmentObject(AppSettings.shared)
+                    .environmentObject(HistoryService.shared)
+            )
+            self.settingsWindow = window
+        }
+        
         NSApp.activate(ignoringOtherApps: true)
+        settingsWindow?.makeKeyAndOrderFront(nil)
+        settingsWindow?.orderFrontRegardless()
     }
     
     @objc private func openAbout() {
@@ -127,45 +161,57 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupHotkeys() {
         let settings = AppSettings.shared
         
-        if let parsed = HotkeyService.parseShortcut(settings.textScanShortcut) {
-            textScanHotkeyID = HotkeyService.shared.register(
-                keyCode: parsed.keyCode,
-                modifiers: parsed.modifiers
-            ) {
-                Task { @MainActor in
-                    ScanCoordinator.shared.startTextScan()
-                }
-            }
+        registerShortcut(settings.textScanShortcut) {
+            ScanCoordinator.shared.startTextScan()
         }
         
-        if let parsed = HotkeyService.parseShortcut(settings.qrScanShortcut) {
-            qrScanHotkeyID = HotkeyService.shared.register(
-                keyCode: parsed.keyCode,
-                modifiers: parsed.modifiers
-            ) {
-                Task { @MainActor in
-                    ScanCoordinator.shared.startQRScan()
-                }
-            }
+        registerShortcut(settings.qrScanShortcut) {
+            ScanCoordinator.shared.startQRScan()
         }
         
-        if let parsed = HotkeyService.parseShortcut(settings.barcodeScanShortcut) {
-            barcodeScanHotkeyID = HotkeyService.shared.register(
-                keyCode: parsed.keyCode,
-                modifiers: parsed.modifiers
-            ) {
-                Task { @MainActor in
-                    ScanCoordinator.shared.startBarcodeScan()
-                }
-            }
+        registerShortcut(settings.barcodeScanShortcut) {
+            ScanCoordinator.shared.startBarcodeScan()
+        }
+        
+        registerShortcut(settings.captureLastSelectionShortcut) {
+            ScanCoordinator.shared.startLastSelectionScan()
+        }
+        
+        registerShortcut(settings.captureWithoutLineBreaksShortcut) {
+            ScanCoordinator.shared.startTextScan(overridePreserveLineBreaks: false)
+        }
+        
+        registerShortcut(settings.captureWithLineBreaksShortcut) {
+            ScanCoordinator.shared.startTextScan(overridePreserveLineBreaks: true)
+        }
+        
+        registerShortcut(settings.captureWithTTSShortcut) {
+            ScanCoordinator.shared.startTextScan(overrideTTS: true)
+        }
+        
+        registerShortcut(settings.stopSpeakingShortcut) {
+            ScanCoordinator.shared.stopSpeaking()
         }
     }
     
+    private func registerShortcut(_ shortcutString: String, action: @escaping () -> Void) {
+        guard !shortcutString.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        guard let parsed = HotkeyService.parseShortcut(shortcutString) else { return }
+        
+        let id = HotkeyService.shared.register(keyCode: parsed.keyCode, modifiers: parsed.modifiers) {
+            Task { @MainActor in
+                action()
+            }
+        }
+        activeHotkeyIDs.append(id)
+    }
+    
     @objc private func settingsDidChange() {
-        // Re-register hotkeys when settings change
-        if let id = textScanHotkeyID { HotkeyService.shared.unregister(id: id) }
-        if let id = qrScanHotkeyID { HotkeyService.shared.unregister(id: id) }
-        if let id = barcodeScanHotkeyID { HotkeyService.shared.unregister(id: id) }
+        // Unregister existing hotkeys and re-register newly saved ones
+        for id in activeHotkeyIDs {
+            HotkeyService.shared.unregister(id: id)
+        }
+        activeHotkeyIDs.removeAll()
         setupHotkeys()
     }
     

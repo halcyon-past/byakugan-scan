@@ -17,33 +17,57 @@ final class ScanCoordinator: ObservableObject {
     // MARK: - Scan Pipelines
     
     /// Captures a screen region and extracts text via OCR.
-    func startTextScan() {
+    func startTextScan(overridePreserveLineBreaks: Bool? = nil, overrideTTS: Bool? = nil) {
         guard !isScanning else { return }
-        Task { await performScan(type: .text) }
+        Task { await performScan(type: .text, useLastSelection: false, overridePreserveLineBreaks: overridePreserveLineBreaks, overrideTTS: overrideTTS) }
+    }
+    
+    /// Re-scans the previous selection area without dragging a new rectangle.
+    func startLastSelectionScan() {
+        guard !isScanning else { return }
+        Task { await performScan(type: .text, useLastSelection: true) }
     }
     
     /// Captures a screen region and scans for QR codes.
     func startQRScan() {
         guard !isScanning else { return }
-        Task { await performScan(type: .qrCode) }
+        Task { await performScan(type: .qrCode, useLastSelection: false) }
     }
     
     /// Captures a screen region and scans for barcodes.
     func startBarcodeScan() {
         guard !isScanning else { return }
-        Task { await performScan(type: .barcode) }
+        Task { await performScan(type: .barcode, useLastSelection: false) }
+    }
+    
+    /// Stops any ongoing text-to-speech output.
+    func stopSpeaking() {
+        SpeechService.shared.stopSpeaking()
     }
     
     // MARK: - Core Pipeline
     
-    private func performScan(type: ScanType) async {
+    private func performScan(
+        type: ScanType,
+        useLastSelection: Bool = false,
+        overridePreserveLineBreaks: Bool? = nil,
+        overrideTTS: Bool? = nil
+    ) async {
         isScanning = true
         lastError = nil
         defer { isScanning = false }
         
         do {
-            let image = try await ScreenCaptureService.shared.captureInteractiveRegion()
+            let image: NSImage
+            if useLastSelection {
+                image = try await ScreenCaptureService.shared.captureLastSelection()
+            } else {
+                image = try await ScreenCaptureService.shared.captureInteractiveRegion()
+            }
+            
             let settings = AppSettings.shared
+            let preserveLineBreaks = overridePreserveLineBreaks ?? settings.preserveLineBreaks
+            let shouldSpeak = overrideTTS ?? settings.textToSpeechEnabled
             
             let content: String
             switch type {
@@ -51,8 +75,9 @@ final class ScanCoordinator: ObservableObject {
                 content = try await OCRService.shared.extractText(
                     from: image,
                     language: settings.ocrLanguage,
+                    autoDetectLanguage: settings.automaticallyDetectLanguage,
                     accuracyLevel: settings.ocrAccuracyLevel,
-                    preserveLineBreaks: settings.preserveLineBreaks,
+                    preserveLineBreaks: preserveLineBreaks,
                     trimWhitespace: settings.trimWhitespace
                 )
             case .qrCode:
@@ -67,20 +92,33 @@ final class ScanCoordinator: ObservableObject {
             lastResult = result
             HistoryService.shared.add(result)
             
+            // Clipboard Handling (Standard or Additive)
             if settings.autoCopyToClipboard {
-                ClipboardService.shared.copy(content)
+                ClipboardService.shared.copy(content, additive: settings.additiveClipboard)
             }
             
+            // Audio Feedback
             if settings.playSoundOnCapture {
                 NSSound(named: "Glass")?.play()
             }
             
+            // Notification Feedback
             if settings.showNotificationOnCapture {
                 sendNotification(for: result)
             }
             
+            // Text to Speech
+            if shouldSpeak {
+                SpeechService.shared.speak(content, rate: settings.speechRate)
+            }
+            
+            // Automatically Open Links (if detected and enabled)
+            if settings.automaticallyOpenLinks && content.isURL, let url = URL(string: content.trimmingCharacters(in: .whitespacesAndNewlines)) {
+                NSWorkspace.shared.open(url)
+            }
+            
         } catch ScreenCaptureError.selectionCancelled {
-            // User cancelled – silently ignore
+            // User cancelled interactive drag – gracefully ignore
         } catch {
             lastError = error.localizedDescription
             sendErrorNotification(error.localizedDescription)

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Main settings window with tabbed sections.
+/// Main settings window with comprehensive preferences matching gold-standard macOS utilities.
 struct SettingsView: View {
     @EnvironmentObject private var settings: AppSettings
     @State private var selectedSection: SettingsSection = .general
@@ -11,7 +11,7 @@ struct SettingsView: View {
                 Label(section.title, systemImage: section.systemImage)
                     .tag(section)
             }
-            .navigationSplitViewColumnWidth(180)
+            .navigationSplitViewColumnWidth(min: 160, ideal: 180, max: 200)
         } detail: {
             Group {
                 switch selectedSection {
@@ -19,30 +19,31 @@ struct SettingsView: View {
                 case .shortcuts: ShortcutsSettingsView()
                 case .ocr: OCRSettingsView()
                 case .clipboard: ClipboardSettingsView()
-                case .appearance: AppearanceSettingsView()
+                case .speech: SpeechSettingsView()
                 case .about: AboutSettingsView()
                 }
             }
             .environmentObject(settings)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .navigationTitle("Settings")
+        .frame(minWidth: 620, minHeight: 520)
+        .navigationTitle("Byakugan Scan Settings")
     }
 }
 
 // MARK: - Settings Sections
 
 enum SettingsSection: String, CaseIterable, Identifiable, Hashable {
-    case general, shortcuts, ocr, clipboard, appearance, about
+    case general, shortcuts, ocr, clipboard, speech, about
     var id: String { rawValue }
     
     var title: String {
         switch self {
         case .general: return "General"
         case .shortcuts: return "Shortcuts"
-        case .ocr: return "OCR"
+        case .ocr: return "Recognition"
         case .clipboard: return "Clipboard"
-        case .appearance: return "Appearance"
+        case .speech: return "Text to Speech"
         case .about: return "About"
         }
     }
@@ -53,30 +54,51 @@ enum SettingsSection: String, CaseIterable, Identifiable, Hashable {
         case .shortcuts: return "keyboard"
         case .ocr: return "text.viewfinder"
         case .clipboard: return "doc.on.clipboard"
-        case .appearance: return "paintpalette"
+        case .speech: return "speaker.wave.2"
         case .about: return "info.circle"
         }
     }
 }
 
-// MARK: - General Settings
+// MARK: - 1. General Settings (Matches System in Screenshot 2)
 
 struct GeneralSettingsView: View {
     @EnvironmentObject private var settings: AppSettings
     
     var body: some View {
         Form {
-            Section("App Behaviour") {
+            Section("System") {
                 Toggle("Launch at Login", isOn: $settings.launchAtLogin)
                 Toggle("Show in Menu Bar", isOn: $settings.showInMenuBar)
-                Toggle("Play Sound on Capture", isOn: $settings.playSoundOnCapture)
-                Toggle("Show Notification on Capture", isOn: $settings.showNotificationOnCapture)
+                Text("To restore menu bar icon, relaunch Byakugan Scan from Applications or Finder.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                
+                Toggle("Play Sound Effects on Capture", isOn: $settings.playSoundOnCapture)
+                Toggle("Show Success Notifications", isOn: $settings.showNotificationOnCapture)
+                Toggle("Automatically Open Links", isOn: $settings.automaticallyOpenLinks)
+            }
+            
+            Section("Screen Recording Permission") {
+                HStack {
+                    if ScreenCaptureService.shared.hasScreenRecordingPermission {
+                        Label("Screen Recording: Granted", systemImage: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                    } else {
+                        Label("Screen Recording: Not Granted", systemImage: "xmark.circle.fill")
+                            .foregroundStyle(.red)
+                        Spacer()
+                        Button("Open Privacy Settings") {
+                            ScreenCaptureService.shared.requestScreenRecordingPermission()
+                        }
+                    }
+                }
             }
             
             Section("History") {
                 Toggle("Enable Scan History", isOn: $settings.historyEnabled)
                 if settings.historyEnabled {
-                    Stepper("Max Items: \(settings.maxHistoryItems)", value: $settings.maxHistoryItems, in: 10...500, step: 10)
+                    Stepper("Max Stored Items: \(settings.maxHistoryItems)", value: $settings.maxHistoryItems, in: 10...500, step: 10)
                 }
                 Button("Clear All History", role: .destructive) {
                     HistoryService.shared.clearAll()
@@ -84,7 +106,7 @@ struct GeneralSettingsView: View {
             }
             
             Section {
-                Button("Reset All Settings to Defaults", role: .destructive) {
+                Button("Reset All Settings to Factory Defaults", role: .destructive) {
                     settings.resetToDefaults()
                 }
             }
@@ -95,29 +117,57 @@ struct GeneralSettingsView: View {
     }
 }
 
-// MARK: - Shortcuts Settings
+// MARK: - 2. Shortcuts Settings (Matches Screenshot 1)
 
 struct ShortcutsSettingsView: View {
     @EnvironmentObject private var settings: AppSettings
     
     var body: some View {
         Form {
-            Section("Keyboard Shortcuts") {
+            Section("Global Shortcuts") {
                 LabeledContent("Capture Text") {
-                    ShortcutField(shortcut: $settings.textScanShortcut)
+                    ShortcutField(shortcut: $settings.textScanShortcut, placeholder: "⌘⇧2")
                 }
-                LabeledContent("Scan QR Code") {
-                    ShortcutField(shortcut: $settings.qrScanShortcut)
+                LabeledContent("Capture Last Selection") {
+                    ShortcutField(shortcut: $settings.captureLastSelectionShortcut, placeholder: "Record Shortcut")
                 }
-                LabeledContent("Scan Barcode") {
-                    ShortcutField(shortcut: $settings.barcodeScanShortcut)
+                LabeledContent("Capture Without Line Breaks") {
+                    ShortcutField(shortcut: $settings.captureWithoutLineBreaksShortcut, placeholder: "Record Shortcut")
+                }
+                LabeledContent("Capture With Line Breaks") {
+                    ShortcutField(shortcut: $settings.captureWithLineBreaksShortcut, placeholder: "Record Shortcut")
+                }
+                LabeledContent("Capture With Text to Speech") {
+                    ShortcutField(shortcut: $settings.captureWithTTSShortcut, placeholder: "Record Shortcut")
+                }
+                LabeledContent("Read QR / Bar Code") {
+                    ShortcutField(shortcut: $settings.qrScanShortcut, placeholder: "⌘⇧3")
+                }
+                LabeledContent("Stop Speaking") {
+                    ShortcutField(shortcut: $settings.stopSpeakingShortcut, placeholder: "Record Shortcut")
+                }
+                LabeledContent("Toggle Additive Clipboard") {
+                    ShortcutField(shortcut: $settings.toggleAdditiveClipboardShortcut, placeholder: "Record Shortcut")
+                }
+                LabeledContent("Clear Additive History") {
+                    ShortcutField(shortcut: $settings.clearAdditiveClipboardShortcut, placeholder: "Record Shortcut")
                 }
             }
             
-            Section {
-                Text("Note: After changing shortcuts, they will apply immediately. Conflicting shortcuts with other apps may not work.")
+            Section("Capture Text Mode") {
+                Text("Toggles preferences when Capture Text operation is active:")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                
+                LabeledContent("Keep Line Breaks") {
+                    Text("⌘L").font(.system(.body, design: .monospaced))
+                }
+                LabeledContent("Additive Clipboard") {
+                    Text("⌘H").font(.system(.body, design: .monospaced))
+                }
+                LabeledContent("Text to Speech") {
+                    Text("⌘S").font(.system(.body, design: .monospaced))
+                }
             }
         }
         .formStyle(.grouped)
@@ -126,19 +176,43 @@ struct ShortcutsSettingsView: View {
     }
 }
 
-/// Simple shortcut display field (editable text for shortcut string).
+/// Shortcut input and display field.
 struct ShortcutField: View {
     @Binding var shortcut: String
+    var placeholder: String = "Record Shortcut"
     @State private var isEditing = false
     
     var body: some View {
-        HStack {
-            Text(shortcut)
-                .font(.system(.body, design: .monospaced))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
-            Button(isEditing ? "Done" : "Edit") {
+        HStack(spacing: 6) {
+            if shortcut.isEmpty {
+                Text(placeholder)
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(.tertiary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 6))
+            } else {
+                Text(shortcut)
+                    .font(.system(.body, design: .monospaced))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
+                
+                Button {
+                    shortcut = ""
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name(AppConstants.Notifications.settingsChanged),
+                        object: nil
+                    )
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+            
+            Button(isEditing ? "Save" : "Edit") {
                 isEditing.toggle()
                 if !isEditing {
                     NotificationCenter.default.post(
@@ -148,27 +222,21 @@ struct ShortcutField: View {
                 }
             }
             .buttonStyle(.borderless)
+            .font(.caption)
         }
     }
 }
 
-// MARK: - OCR Settings
+// MARK: - 3. OCR Settings (Matches Recognition Language in Screenshot 2)
 
 struct OCRSettingsView: View {
     @EnvironmentObject private var settings: AppSettings
     
     var body: some View {
         Form {
-            Section("Recognition") {
-                Picker("Accuracy", selection: $settings.ocrAccuracyLevel) {
-                    ForEach(OCRAccuracyLevel.allCases, id: \.self) { level in
-                        Text(level.displayName).tag(level)
-                    }
-                }
-                .pickerStyle(.segmented)
-                
+            Section("Recognition Language") {
                 Picker("Primary Language", selection: $settings.ocrLanguage) {
-                    Text("English (US)").tag("en-US")
+                    Text("English").tag("en-US")
                     Text("English (UK)").tag("en-GB")
                     Text("French").tag("fr-FR")
                     Text("German").tag("de-DE")
@@ -182,6 +250,20 @@ struct OCRSettingsView: View {
                     Text("Arabic").tag("ar-SA")
                     Text("Hindi").tag("hi-IN")
                 }
+                
+                Toggle("Automatically Detect Language", isOn: $settings.automaticallyDetectLanguage)
+                Text("Note: Leaving this unchecked provides sub-15ms instant OCR on Apple Silicon.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Section("Performance & Accuracy") {
+                Picker("Recognition Engine", selection: $settings.ocrAccuracyLevel) {
+                    ForEach(OCRAccuracyLevel.allCases, id: \.self) { level in
+                        Text(level.displayName).tag(level)
+                    }
+                }
+                .pickerStyle(.segmented)
             }
             
             Section("Text Formatting") {
@@ -193,33 +275,43 @@ struct OCRSettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .navigationTitle("OCR")
+        .navigationTitle("Recognition")
         .padding()
     }
 }
 
-// MARK: - Clipboard Settings
+// MARK: - 4. Additive Clipboard Settings (Matches Screenshot 2)
 
 struct ClipboardSettingsView: View {
     @EnvironmentObject private var settings: AppSettings
     
     var body: some View {
         Form {
-            Section("Clipboard Behaviour") {
-                Toggle("Auto Copy to Clipboard", isOn: $settings.autoCopyToClipboard)
+            Section("Additive Clipboard") {
+                Toggle("Enable Additive Clipboard", isOn: $settings.additiveClipboard)
+                Text("When enabled, consecutive captures are appended together rather than overwriting.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                
+                Toggle("Clear Automatically", isOn: $settings.clearAdditiveClipboardAutomatically)
+                Text("Additive Clipboard gets cleared automatically upon paste.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                
+                Button("Clear Additive Clipboard Now") {
+                    ClipboardService.shared.clear()
+                }
             }
             
-            Section("Current Clipboard") {
-                if let content = ClipboardService.shared.currentContent {
+            Section("Current Clipboard Content") {
+                if let content = ClipboardService.shared.currentContent, !content.isEmpty {
                     Text(content)
                         .font(.caption)
-                        .lineLimit(5)
+                        .lineLimit(6)
                         .foregroundStyle(.secondary)
-                    Button("Clear Clipboard") {
+                    Button("Clear Clipboard", role: .destructive) {
                         ClipboardService.shared.clear()
                     }
-                    .buttonStyle(.borderless)
-                    .foregroundStyle(.red)
                 } else {
                     Text("Clipboard is empty")
                         .foregroundStyle(.secondary)
@@ -232,60 +324,64 @@ struct ClipboardSettingsView: View {
     }
 }
 
-// MARK: - Appearance Settings
+// MARK: - 5. Text to Speech Settings (Matches Screenshot 2)
 
-struct AppearanceSettingsView: View {
+struct SpeechSettingsView: View {
     @EnvironmentObject private var settings: AppSettings
     
     var body: some View {
         Form {
-            Section("Overlay") {
-                HStack {
-                    Text("Overlay Opacity")
-                    Slider(value: $settings.overlayOpacity, in: 0.1...0.8, step: 0.05)
-                    Text(String(format: "%.0f%%", settings.overlayOpacity * 100))
-                        .monospacedDigit()
-                        .frame(width: 40)
+            Section("Text to Speech") {
+                Toggle("Enable Speech on Capture", isOn: $settings.textToSpeechEnabled)
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Speech Rate:")
+                        Spacer()
+                        Text("\(Int(settings.speechRate)) WPM")
+                            .font(.system(.body, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                    }
+                    Slider(value: $settings.speechRate, in: 90...300, step: 10)
                 }
-            }
-            
-            Section("Screen Capture Permission") {
-                if ScreenCaptureService.shared.hasScreenRecordingPermission {
-                    Label("Screen Recording: Granted", systemImage: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
-                } else {
-                    Label("Screen Recording: Not Granted", systemImage: "xmark.circle.fill")
-                        .foregroundStyle(.red)
-                    Button("Open Privacy Settings") {
-                        ScreenCaptureService.shared.requestScreenRecordingPermission()
+                .padding(.vertical, 4)
+                
+                HStack {
+                    Button("Test Speech") {
+                        SpeechService.shared.speak("Byakugan Scan is ready to capture text.", rate: settings.speechRate)
+                    }
+                    if SpeechService.shared.isSpeaking {
+                        Button("Stop", role: .destructive) {
+                            SpeechService.shared.stopSpeaking()
+                        }
                     }
                 }
             }
         }
         .formStyle(.grouped)
-        .navigationTitle("Appearance")
+        .navigationTitle("Text to Speech")
         .padding()
     }
 }
 
-// MARK: - About Settings
+// MARK: - 6. About Settings (Matches Screenshot 2)
 
 struct AboutSettingsView: View {
     var body: some View {
-        VStack(spacing: 24) {
-            Image("AppIcon")
+        VStack(spacing: 20) {
+            Image(nsImage: NSImage(named: "MenuBarIcon") ?? NSImage())
                 .resizable()
-                .frame(width: 100, height: 100)
-                .clipShape(RoundedRectangle(cornerRadius: 22))
+                .frame(width: 80, height: 80)
+                .background(.quaternary, in: RoundedRectangle(cornerRadius: 18))
             
             VStack(spacing: 4) {
                 Text(AppConstants.App.name)
-                    .font(.largeTitle.weight(.bold))
+                    .font(.title2.weight(.bold))
                 Text("Version \(AppConstants.App.version) (\(AppConstants.App.build))")
                     .foregroundStyle(.secondary)
             }
             
-            Text("A powerful screen text capture, QR code, and barcode scanner for macOS. Built with love using Apple's Vision framework.")
+            Text("High-performance on-device screen text capture, QR code, and barcode scanner for macOS.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: 360)
@@ -300,11 +396,19 @@ struct AboutSettingsView: View {
             
             Divider()
             
+            HStack {
+                Text("Send Feedback:")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Link("aritrosaha2025@gmail.com", destination: URL(string: "mailto:aritrosaha2025@gmail.com")!)
+                    .font(.caption)
+            }
+            
             Text("© 2026 Aritro Saha. All rights reserved.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
         }
-        .padding(40)
+        .padding(32)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

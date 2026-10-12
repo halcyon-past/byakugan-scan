@@ -142,9 +142,8 @@ struct MenuBarPopoverView: View {
     
     private var footerSection: some View {
         HStack {
-            Button("Settings") {
-                NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-                NSApp.activate(ignoringOtherApps: true)
+            Button("Settings...") {
+                AppDelegate.shared?.openSettings()
             }
             .buttonStyle(.plain)
             .font(.caption)

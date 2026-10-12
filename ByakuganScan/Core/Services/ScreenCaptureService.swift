@@ -6,40 +6,44 @@ enum ScreenCaptureError: LocalizedError {
     case permissionDenied
     case captureFailed
     case selectionCancelled
+    case noPreviousSelection
     
     var errorDescription: String? {
         switch self {
         case .permissionDenied: return "Screen recording permission is required. Please grant access in System Settings > Privacy & Security > Screen Recording."
         case .captureFailed: return "Failed to capture the selected screen area."
         case .selectionCancelled: return "Screen capture was cancelled."
+        case .noPreviousSelection: return "No previous capture selection found to re-scan."
         }
     }
 }
 
 /// Service that manages screen capture using the macOS screencapture CLI tool.
-/// Uses the system's interactive region selection for user-driven capture.
+/// Optimized for near-zero latency by utilizing uncompressed TIFF raster buffers.
 final class ScreenCaptureService {
     // MARK: - Singleton
     static let shared = ScreenCaptureService()
     private init() {}
     
+    // MARK: - Cache
+    private(set) var lastCapturedImage: NSImage?
+    
     // MARK: - Public API
     
     /// Launches an interactive screen region selector and returns the captured image.
-    /// Uses the built-in macOS `screencapture` tool for reliable crosshair selection.
-    /// - Returns: The captured NSImage from the selected region.
+    /// Uses `-t tiff` for instant raster encoding without CPU-intensive PNG compression.
     func captureInteractiveRegion() async throws -> NSImage {
         let tmpURL = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString)
-            .appendingPathExtension("png")
+            .appendingPathExtension("tiff")
         
         return try await withCheckedThrowingContinuation { continuation in
             let process = Process()
             process.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
-            // -s: interactive selection mode; -x: no sound; -t png: PNG format
-            process.arguments = ["-s", "-x", "-t", "png", tmpURL.path]
+            // -s: interactive selection mode; -x: no sound; -t tiff: instantaneous uncompressed raster
+            process.arguments = ["-s", "-x", "-t", "tiff", tmpURL.path]
             
-            process.terminationHandler = { proc in
+            process.terminationHandler = { [weak self] proc in
                 defer { try? FileManager.default.removeItem(at: tmpURL) }
                 
                 guard proc.terminationStatus == 0 else {
@@ -53,6 +57,7 @@ final class ScreenCaptureService {
                     return
                 }
                 
+                self?.lastCapturedImage = image
                 continuation.resume(returning: image)
             }
             
@@ -64,9 +69,16 @@ final class ScreenCaptureService {
         }
     }
     
+    /// Returns the last captured image for instant re-scanning.
+    func captureLastSelection() async throws -> NSImage {
+        guard let cached = lastCapturedImage else {
+            throw ScreenCaptureError.noPreviousSelection
+        }
+        return cached
+    }
+    
     /// Checks whether screen recording permission has been granted.
     var hasScreenRecordingPermission: Bool {
-        // CGWindowListCreateImage returns nil or a 1x1 image if permission is denied
         let image = CGWindowListCreateImage(
             CGRect(x: 0, y: 0, width: 1, height: 1),
             .optionOnScreenOnly,

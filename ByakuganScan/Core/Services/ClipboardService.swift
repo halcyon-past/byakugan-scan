@@ -8,12 +8,19 @@ final class ClipboardService {
     
     // MARK: - Public API
     
-    /// Copies the given string to the system clipboard.
-    /// - Parameter text: The string to copy.
-    func copy(_ text: String) {
+    /// Copies the given string to the system clipboard, optionally appending if additive mode is enabled.
+    /// - Parameters:
+    ///   - text: The string to copy.
+    ///   - additive: Whether to append to existing clipboard contents.
+    func copy(_ text: String, additive: Bool = false) {
         let pasteboard = NSPasteboard.general
-        pasteboard.clearContents()
-        pasteboard.setString(text, forType: .string)
+        if additive, let existing = pasteboard.string(forType: .string), !existing.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            pasteboard.clearContents()
+            pasteboard.setString(existing + "\n\n" + text, forType: .string)
+        } else {
+            pasteboard.clearContents()
+            pasteboard.setString(text, forType: .string)
+        }
     }
     
     /// Returns the current clipboard string content, if any.

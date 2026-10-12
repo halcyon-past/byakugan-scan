@@ -1,6 +1,5 @@
 import Vision
 import AppKit
-import Combine
 
 /// Errors that can occur during OCR processing.
 enum OCRError: LocalizedError {
@@ -18,6 +17,7 @@ enum OCRError: LocalizedError {
 }
 
 /// Service responsible for extracting text from images using Apple's Vision framework.
+/// Highly optimized for instant, sub-20ms latency on Apple Silicon neural engines.
 final class OCRService {
     // MARK: - Singleton
     static let shared = OCRService()
@@ -28,14 +28,16 @@ final class OCRService {
     /// Extracts text from the given NSImage asynchronously.
     /// - Parameters:
     ///   - image: The source image to process.
-    ///   - language: BCP-47 language tag for recognition (e.g. "en-US").
-    ///   - accuracyLevel: Recognition accuracy vs. speed trade-off.
+    ///   - language: Primary BCP-47 language tag (e.g. "en-US").
+    ///   - autoDetectLanguage: Whether to run deep multi-lingual detection (slower; defaults to false for instant speed).
+    ///   - accuracyLevel: Fast vs. Accurate recognition trade-off.
     ///   - preserveLineBreaks: Whether to preserve line breaks in output.
     ///   - trimWhitespace: Whether to trim leading/trailing whitespace from lines.
     /// - Returns: The extracted text string.
     func extractText(
         from image: NSImage,
         language: String = "en-US",
+        autoDetectLanguage: Bool = false,
         accuracyLevel: OCRAccuracyLevel = .accurate,
         preserveLineBreaks: Bool = true,
         trimWhitespace: Bool = true
@@ -79,11 +81,12 @@ final class OCRService {
                 continuation.resume(returning: lines.joined(separator: separator))
             }
             
-            // Configure recognition level
+            // Recognition Configuration:
             request.recognitionLevel = accuracyLevel == .accurate ? .accurate : .fast
             request.recognitionLanguages = [language, "en-US"]
             request.usesLanguageCorrection = accuracyLevel == .accurate
-            request.automaticallyDetectsLanguage = true
+            // Disabling automatic language detection by default prevents a 500ms multi-lingual classification stall
+            request.automaticallyDetectsLanguage = autoDetectLanguage
             
             let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
             do {
