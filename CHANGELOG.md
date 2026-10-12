@@ -6,9 +6,17 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-## [Unreleased]
+## [1.0.2] — 2026-10-12
 
 ### Added
+- **Deep Links & macOS Shortcuts Integration (`byakugan://`):** Registered custom URL scheme and route handler (`URLRouteService`) enabling programmatic triggers from Raycast, Alfred, Stream Deck, BetterTouchTool, terminal scripts, and macOS Shortcuts:
+  - `byakugan://scan?mode=text` — Starts instant interactive text OCR capture.
+  - `byakugan://scan?mode=qr` — Starts instant QR code capture.
+  - `byakugan://scan?mode=barcode` — Starts commercial barcode recognition.
+  - `byakugan://scan?mode=last` — Re-scans the most recent rectangular region.
+  - `byakugan://settings` — Opens the Settings preferences window.
+  - `byakugan://history` — Opens recent scan history popover.
+- **Native macOS App Intents:** Provided Swift `AppIntent` definitions (`CaptureTextIntent`, `ScanQRCodeIntent`, `ScanBarcodeIntent`, `CaptureLastSelectionIntent`, `OpenSettingsIntent`) and `AppShortcutsProvider` for native integration with macOS Shortcuts.app and Spotlight search.
 - **Official Homebrew Cask Distribution:** Added official Homebrew Cask formula (`Casks/byakugan-scan.rb`) and official tap support (`halcyon-past/tap/byakugan-scan`), enabling seamless installation and upgrades via `brew install --cask halcyon-past/tap/byakugan-scan`.
 - **Interactive Web Installer Tabs:** Added a dual-tab installation card to the marketing website hero section featuring one-click copyable Homebrew commands, direct DMG downloads, SHA-256 checksum copying, and file size badges.
 
@@ -17,7 +25,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **3D Follower Eyeball Trajectory:** Recalibrated 3D Three.js Byakugan eyeball follower coordinates and ambient lighting stages for improved visual hierarchy across desktop and mobile devices.
 
 ### Fixed
-- **Xcode Target Compilation:** Regenerated `ByakuganScan.xcodeproj` via `xcodegen` to ensure `UpdateService.swift` and related components are properly included in the build target.
+- **Xcode Target Compilation:** Regenerated `ByakuganScan.xcodeproj` via `xcodegen` to ensure `UpdateService.swift`, `URLRouteService.swift`, and related components are properly included in the build target.
 
 ### Security
 - **Hardened GitHub Actions Token Permissions:** Added explicit least-privilege `permissions` blocks (`contents: read` / `contents: write`) across all CI/CD workflow manifests.

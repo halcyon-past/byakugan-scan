@@ -40,6 +40,9 @@ struct MenuBarPopoverView: View {
             footerSection
         }
         .frame(width: 340)
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("SwitchToHistoryTab"))) { _ in
+            selectedTab = .history
+        }
     }
     
     // MARK: - Header
