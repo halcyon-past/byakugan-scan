@@ -63,9 +63,9 @@ cp "$PROJECT_DIR/Assets/Icons/AS_icon_lightmode_64x64.png" "$RESOURCES_DIR/MenuB
 cp "$PROJECT_DIR/Assets/Icons/AS_icon_darkmode_32x32.png"  "$RESOURCES_DIR/MenuBarIcon_Dark.png"
 cp "$PROJECT_DIR/Assets/Icons/AS_icon_darkmode_64x64.png"  "$RESOURCES_DIR/MenuBarIcon_Dark@2x.png"
 
-# 5. Ad-hoc codesign the bundle
+# 5. Ad-hoc codesign the bundle with permanent designated requirement
 echo "🔐 Signing app bundle..."
-codesign --force --deep --sign - "$APP_BUNDLE"
+codesign --force --deep --sign - -r='designated => identifier "cloud.aritro.byakugan-scan"' "$APP_BUNDLE"
 
 echo "✅ Successfully built: $APP_BUNDLE"
 echo "👉 Run with: open \"$APP_BUNDLE\""

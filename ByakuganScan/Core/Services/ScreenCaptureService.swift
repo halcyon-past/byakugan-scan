@@ -28,31 +28,38 @@ final class ScreenCaptureService {
     // MARK: - Cache
     private(set) var lastCapturedImage: NSImage?
     
+    private var captureDirectory: URL {
+        let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let dir = caches.appendingPathComponent("cloud.aritro.byakugan-scan", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }
+    
+    private var latestCaptureURL: URL {
+        captureDirectory.appendingPathComponent("screen_latest.png")
+    }
+    
     // MARK: - Public API
     
     /// Launches an interactive screen region selector and returns the captured image.
-    /// Uses `-t tiff` for instant raster encoding without CPU-intensive PNG compression.
+    /// Uses `-i -x` for instant crosshairs interaction and silent capture.
     func captureInteractiveRegion() async throws -> NSImage {
-        let tmpURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString)
-            .appendingPathExtension("tiff")
+        let fileURL = latestCaptureURL
         
         return try await withCheckedThrowingContinuation { continuation in
             let process = Process()
             process.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
-            // -s: interactive selection mode; -x: no sound; -t tiff: instantaneous uncompressed raster
-            process.arguments = ["-s", "-x", "-t", "tiff", tmpURL.path]
+            // -i: interactive selection mode; -x: no sound
+            process.arguments = ["-i", "-x", fileURL.path]
             
             process.terminationHandler = { [weak self] proc in
-                defer { try? FileManager.default.removeItem(at: tmpURL) }
-                
                 guard proc.terminationStatus == 0 else {
                     continuation.resume(throwing: ScreenCaptureError.selectionCancelled)
                     return
                 }
                 
-                guard FileManager.default.fileExists(atPath: tmpURL.path),
-                      let image = NSImage(contentsOf: tmpURL) else {
+                guard FileManager.default.fileExists(atPath: fileURL.path),
+                      let image = NSImage(contentsOf: fileURL) else {
                     continuation.resume(throwing: ScreenCaptureError.captureFailed)
                     return
                 }
@@ -71,26 +78,40 @@ final class ScreenCaptureService {
     
     /// Returns the last captured image for instant re-scanning.
     func captureLastSelection() async throws -> NSImage {
-        guard let cached = lastCapturedImage else {
-            throw ScreenCaptureError.noPreviousSelection
+        if let cached = lastCapturedImage {
+            return cached
         }
-        return cached
+        let fileURL = latestCaptureURL
+        if FileManager.default.fileExists(atPath: fileURL.path),
+           let img = NSImage(contentsOf: fileURL) {
+            self.lastCapturedImage = img
+            return img
+        }
+        throw ScreenCaptureError.noPreviousSelection
     }
     
-    /// Checks whether screen recording permission has been granted.
+    /// Checks whether screen recording permission has been granted without showing any system dialog.
     var hasScreenRecordingPermission: Bool {
-        let image = CGWindowListCreateImage(
-            CGRect(x: 0, y: 0, width: 1, height: 1),
-            .optionOnScreenOnly,
-            kCGNullWindowID,
-            .bestResolution
-        )
-        return image != nil
+        if #available(macOS 10.15, *) {
+            return CGPreflightScreenCaptureAccess()
+        }
+        return true
     }
     
     /// Prompts the user to grant screen recording permission.
-    func requestScreenRecordingPermission() {
-        let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture")!
-        NSWorkspace.shared.open(url)
+    @discardableResult
+    func requestScreenRecordingPermission() -> Bool {
+        if #available(macOS 10.15, *) {
+            if !CGPreflightScreenCaptureAccess() {
+                let granted = CGRequestScreenCaptureAccess()
+                if !granted {
+                    let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture")!
+                    NSWorkspace.shared.open(url)
+                }
+                return granted
+            }
+            return true
+        }
+        return true
     }
 }

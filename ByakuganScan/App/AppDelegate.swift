@@ -28,6 +28,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         setupHotkeys()
         requestNotificationPermissions()
         
+        // Pre-warm the Vision & Neural Engine models in background
+        OCRService.shared.warmUp()
+        
         // Listen for settings window triggers & setting changes
         NotificationCenter.default.addObserver(
             self,
@@ -128,6 +131,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc func openSettings() {
+        popover?.performClose(nil)
+        
         if settingsWindow == nil {
             let window = NSWindow(
                 contentRect: NSRect(x: 0, y: 0, width: 620, height: 520),
@@ -138,6 +143,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             window.center()
             window.title = "Byakugan Scan Settings"
             window.isReleasedWhenClosed = false
+            window.level = .floating
+            window.collectionBehavior = [.moveToActiveSpace, .participatesInCycle]
             window.contentView = NSHostingView(
                 rootView: SettingsView()
                     .environmentObject(AppSettings.shared)
@@ -146,9 +153,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.settingsWindow = window
         }
         
-        NSApp.activate(ignoringOtherApps: true)
+        settingsWindow?.center()
         settingsWindow?.makeKeyAndOrderFront(nil)
         settingsWindow?.orderFrontRegardless()
+        NSApp.activate(ignoringOtherApps: true)
     }
     
     @objc private func openAbout() {
