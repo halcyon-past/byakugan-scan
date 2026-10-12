@@ -31,6 +31,8 @@ swiftc -target arm64-apple-macos14.0 \
 # 2. Copy Info.plist
 echo "📄 Copying Info.plist..."
 cp "$PROJECT_DIR/ByakuganScan/Resources/Info.plist" "$CONTENTS/Info.plist"
+plutil -replace CFBundleExecutable -string "ByakuganScan" "$CONTENTS/Info.plist"
+plutil -replace CFBundleIdentifier -string "cloud.aritro.byakugan-scan" "$CONTENTS/Info.plist"
 
 # 3. Create .icns file for macOS
 echo "🎨 Generating AppIcon.icns..."
