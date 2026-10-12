@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Byakugan Scan — Blazing Fast Text OCR, QR & Barcode Scanner for macOS</title>
+  <meta name="description" content="Instantly extract text, decode QR codes, and read barcodes anywhere on your Mac screen. Powered by Apple Vision, 100% private, on-device processing.">
+  <link rel="canonical" href="https://byakugan-scan.aritro.cloud">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/as-icon-dark.png">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand">
+        <img src="assets/as-icon-dark.png" alt="Byakugan Scan Logo" class="brand-icon">
+        <span>Byakugan Scan</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#shortcuts">Shortcuts</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="terms.html">Terms</a></li>
+      </ul>
+      <div>
+        <a href="https://github.com/aritrosaha/byakugan-scan" class="btn btn-primary" target="_blank" rel="noopener">Download Free</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">⚡️ Designed for macOS 14+ Sonoma & Sequoia</div>
+      <h1 class="hero-title">The All-Seeing Eye for<br>Text & Codes on Your Mac</h1>
+      <p class="hero-subtitle">
+        Snatch uncopyable text from images, videos, slides, and protected documents in milliseconds. Decode QR codes and read barcodes straight from your monitor with a single keystroke.
+      </p>
+      <div class="hero-actions">
+        <a href="https://github.com/aritrosaha/byakugan-scan" class="btn btn-primary" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 1.01-2.87-.96.04-2.12.64-2.79 1.43-.59.68-1.1 1.77-1.04 2.81 1.07.08 2.18-.56 2.82-1.37z"/></svg>
+          Download for Mac
+        </a>
+        <a href="https://github.com/aritrosaha/byakugan-scan" class="btn btn-secondary" target="_blank" rel="noopener">View GitHub Source</a>
+      </div>
+
+      <!-- App Preview Card -->
+      <div class="app-preview-card">
+        <div class="preview-grid">
+          <div class="preview-icon-wrapper">
+            <img src="assets/app-icon.jpg" alt="Byakugan Scan App Icon" class="preview-app-icon">
+            <div class="preview-menubar-tag">
+              <img src="assets/as-icon-dark.png" alt="AS Icon">
+              <span>Menu Bar Ready</span>
+            </div>
+          </div>
+          <div style="text-align: left;">
+            <h3 style="font-size: 1.4rem; margin-bottom: 8px;">Lightweight. Instant. 100% On-Device.</h3>
+            <p style="color: var(--text-muted); margin-bottom: 16px;">
+              Byakugan Scan sits discretely in your menu bar. No bloated dock icon, no complex windows. Whenever you see text you can't select or a code you need to scan, fire your shortcut, drag your crosshair, and paste anywhere.
+            </p>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <span class="kbd">⌘⇧2 Text OCR</span>
+              <span class="kbd">⌘⇧3 QR Code</span>
+              <span class="kbd">⌘⇧4 Barcode</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Capabilities</div>
+        <h2 class="section-title">Everything you need to capture your screen</h2>
+      </div>
+
+      <div class="grid-3">
+        <div class="feature-card">
+          <div class="feature-icon-box">👁️</div>
+          <h3>High-Precision Text OCR</h3>
+          <p>Extract text from videos, images, scanned invoices, diagrams, and remote desktops using Apple's neural Vision framework with multi-language support.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">📱</div>
+          <h3>Instant QR Code Decoding</h3>
+          <p>Scan any QR code on your display directly into URLs, contact cards, 2FA setup keys, or WiFi credentials without pulling out your smartphone.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">🏷️</div>
+          <h3>13+ Barcode Formats</h3>
+          <p>Read 1D and 2D industrial symbologies including EAN-13, UPC-E, Code 128, Code 39, Data Matrix, Aztec, and PDF417 for retail and inventory tasks.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">📋</div>
+          <h3>Clipboard Automation</h3>
+          <p>Extracted content is instantly formatted and copied to your clipboard. Customize line break behavior, spacing, and automatic whitespace trimming.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">📜</div>
+          <h3>Local Scan History</h3>
+          <p>Review past captures, mark favorites, and copy previous scan results at any time directly from the menu bar popover.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">🔒</div>
+          <h3>Zero Telemetry Guarantee</h3>
+          <p>Your screen pixels never leave your device. All processing occurs in local memory with zero network access and complete privacy.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shortcuts Section -->
+  <section class="shortcuts-section" id="shortcuts">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Global Hotkeys</div>
+        <h2 class="section-title">Work at the speed of thought</h2>
+      </div>
+
+      <div style="max-width: 680px; margin: 0 auto;">
+        <div class="shortcut-row">
+          <div>
+            <strong>Capture Text (OCR)</strong>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Extract selectable text from selected region</div>
+          </div>
+          <span class="kbd">⌘ + Shift + 2</span>
+        </div>
+
+        <div class="shortcut-row">
+          <div>
+            <strong>Scan QR Code</strong>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Decode QR code payloads instantly</div>
+          </div>
+          <span class="kbd">⌘ + Shift + 3</span>
+        </div>
+
+        <div class="shortcut-row">
+          <div>
+            <strong>Scan Barcode</strong>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Read 1D/2D industrial barcode types</div>
+          </div>
+          <span class="kbd">⌘ + Shift + 4</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="features-section" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Workflow</div>
+        <h2 class="section-title">3 Steps to Instant Capture</h2>
+      </div>
+
+      <div class="grid-3" style="text-align: center;">
+        <div class="feature-card">
+          <div class="feature-icon-box" style="margin: 0 auto 16px;">1</div>
+          <h3>Press Shortcut</h3>
+          <p>Hit your hotkey or click the Byakugan eye icon in the menu bar to activate interactive crosshair selection.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box" style="margin: 0 auto 16px;">2</div>
+          <h3>Select Region</h3>
+          <p>Drag the crosshairs over any text, QR code, or barcode on your screen.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box" style="margin: 0 auto 16px;">3</div>
+          <h3>Paste Anywhere</h3>
+          <p>Extracted data is automatically in your clipboard. Press ⌘V to paste into Slack, Notion, Xcode, or Notes!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section" id="faq">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Common Questions</div>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <h4>Why does Byakugan Scan require Screen Recording permission?</h4>
+          <p>macOS requires this permission for any utility that reads pixels on screen. Byakugan Scan only captures the exact rectangular frame you select, processes it in RAM with Apple Vision, and discards it immediately.</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>Does the app work without an internet connection?</h4>
+          <p>Yes! It is 100% offline. Byakugan Scan does not include any networking permissions or remote dependencies.</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>Can I change the keyboard shortcuts?</h4>
+          <p>Yes. Open Settings from the menu bar popover and configure custom shortcut combinations for each scan type.</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>What languages are supported for OCR?</h4>
+          <p>English, Spanish, French, German, Italian, Portuguese, Japanese, Chinese (Simplified & Traditional), Korean, and more.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-inner">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <img src="assets/as-icon-dark.png" alt="AS Icon" style="width: 20px; height: 20px;">
+        <span>Byakugan Scan © 2026 Aritro Saha. All rights reserved.</span>
+      </div>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="mailto:aritrosaha2025@gmail.com">Contact Support</a>
+        <a href="https://github.com/aritrosaha/byakugan-scan" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
