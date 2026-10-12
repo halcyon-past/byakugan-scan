@@ -48,8 +48,14 @@ final class AppSettings: ObservableObject {
     @Published var playSoundOnCapture: Bool {
         didSet { UserDefaults.standard.set(playSoundOnCapture, forKey: Keys.playSoundOnCapture) }
     }
+    @Published var captureSoundEffect: SoundEffect {
+        didSet { UserDefaults.standard.set(captureSoundEffect.rawValue, forKey: Keys.captureSoundEffect) }
+    }
     @Published var showNotificationOnCapture: Bool {
         didSet { UserDefaults.standard.set(showNotificationOnCapture, forKey: Keys.showNotificationOnCapture) }
+    }
+    @Published var feedbackStyle: FeedbackStyle {
+        didSet { UserDefaults.standard.set(feedbackStyle.rawValue, forKey: Keys.feedbackStyle) }
     }
     @Published var automaticallyOpenLinks: Bool {
         didSet { UserDefaults.standard.set(automaticallyOpenLinks, forKey: Keys.automaticallyOpenLinks) }
@@ -114,6 +120,12 @@ final class AppSettings: ObservableObject {
     @Published var overlayTintColor: String {
         didSet { UserDefaults.standard.set(overlayTintColor, forKey: Keys.overlayTintColor) }
     }
+    @Published var themeAccent: ThemeAccent {
+        didSet {
+            UserDefaults.standard.set(themeAccent.rawValue, forKey: Keys.themeAccent)
+            overlayTintColor = themeAccent.hexString
+        }
+    }
     
     // MARK: - Init
     private init() {
@@ -133,7 +145,11 @@ final class AppSettings: ObservableObject {
         self.launchAtLogin = ud.object(forKey: Keys.launchAtLogin) as? Bool ?? false
         self.showInMenuBar = ud.object(forKey: Keys.showInMenuBar) as? Bool ?? true
         self.playSoundOnCapture = ud.object(forKey: Keys.playSoundOnCapture) as? Bool ?? true
+        let soundRaw = ud.string(forKey: Keys.captureSoundEffect) ?? SoundEffect.classicGlass.rawValue
+        self.captureSoundEffect = SoundEffect(rawValue: soundRaw) ?? .classicGlass
         self.showNotificationOnCapture = ud.object(forKey: Keys.showNotificationOnCapture) as? Bool ?? true
+        let feedbackRaw = ud.string(forKey: Keys.feedbackStyle) ?? FeedbackStyle.floatingHUD.rawValue
+        self.feedbackStyle = FeedbackStyle(rawValue: feedbackRaw) ?? .floatingHUD
         self.automaticallyOpenLinks = ud.object(forKey: Keys.automaticallyOpenLinks) as? Bool ?? false
         self.autoCheckForUpdates = ud.object(forKey: Keys.autoCheckForUpdates) as? Bool ?? true
         
@@ -158,7 +174,10 @@ final class AppSettings: ObservableObject {
         self.maxHistoryItems = ud.object(forKey: Keys.maxHistoryItems) as? Int ?? 50
         
         self.overlayOpacity = ud.object(forKey: Keys.overlayOpacity) as? Double ?? 0.3
-        self.overlayTintColor = ud.string(forKey: Keys.overlayTintColor) ?? "#5B4EFF"
+        let savedTintColor = ud.string(forKey: Keys.overlayTintColor) ?? ThemeAccent.byakuganChakra.hexString
+        self.overlayTintColor = savedTintColor
+        let accentRaw = ud.string(forKey: Keys.themeAccent) ?? ThemeAccent.from(hexOrId: savedTintColor).rawValue
+        self.themeAccent = ThemeAccent(rawValue: accentRaw) ?? .byakuganChakra
     }
     
     // MARK: - UserDefaults Keys
@@ -177,7 +196,9 @@ final class AppSettings: ObservableObject {
         static let launchAtLogin = "launchAtLogin"
         static let showInMenuBar = "showInMenuBar"
         static let playSoundOnCapture = "playSoundOnCapture"
+        static let captureSoundEffect = "captureSoundEffect"
         static let showNotificationOnCapture = "showNotificationOnCapture"
+        static let feedbackStyle = "feedbackStyle"
         static let automaticallyOpenLinks = "automaticallyOpenLinks"
         static let autoCheckForUpdates = "autoCheckForUpdates"
         
@@ -200,6 +221,7 @@ final class AppSettings: ObservableObject {
         static let maxHistoryItems = "maxHistoryItems"
         static let overlayOpacity = "overlayOpacity"
         static let overlayTintColor = "overlayTintColor"
+        static let themeAccent = "themeAccent"
     }
     
     /// Resets all settings to factory defaults.
@@ -218,7 +240,9 @@ final class AppSettings: ObservableObject {
         launchAtLogin = false
         showInMenuBar = true
         playSoundOnCapture = true
+        captureSoundEffect = .classicGlass
         showNotificationOnCapture = true
+        feedbackStyle = .floatingHUD
         automaticallyOpenLinks = false
         autoCheckForUpdates = true
         
@@ -240,7 +264,8 @@ final class AppSettings: ObservableObject {
         historyEnabled = true
         maxHistoryItems = 50
         overlayOpacity = 0.3
-        overlayTintColor = "#5B4EFF"
+        themeAccent = .byakuganChakra
+        overlayTintColor = ThemeAccent.byakuganChakra.hexString
     }
 }
 

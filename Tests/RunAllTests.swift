@@ -320,9 +320,89 @@ struct TestRunner {
             }
         }
 
-        test("AppConstants: Version 1.0.2 verification") {
-            try assertEqual(AppConstants.App.version, "1.0.2")
-            try assertEqual(AppConstants.App.build, "3")
+        // Suite 9: SoundEffect Model & Profiles (Issue #4)
+        print("\n▶️ [Suite 9/12] Selection Sound Variations & Audio Feedback")
+        test("SoundEffect: All cases enumeration and display names") {
+            try assertEqual(SoundEffect.allCases.count, 5)
+            try assertEqual(SoundEffect.classicGlass.displayName, "Classic Glass")
+            try assertEqual(SoundEffect.subtleClick.displayName, "Subtle Click")
+            try assertEqual(SoundEffect.cameraShutter.displayName, "Camera Shutter")
+            try assertEqual(SoundEffect.hapticPop.displayName, "Haptic Pop")
+            try assertEqual(SoundEffect.none.displayName, "Mute / Silent")
+        }
+
+        test("SoundEffect: Codable serialization and deserialization") {
+            for effect in SoundEffect.allCases {
+                let data = try JSONEncoder().encode(effect)
+                let decoded = try JSONDecoder().decode(SoundEffect.self, from: data)
+                try assertEqual(decoded, effect)
+                try assertTrue(!effect.systemImage.isEmpty, "Icon must not be empty")
+            }
+        }
+
+        // Suite 10: FeedbackStyle Model & Options (Issue #3)
+        print("\n▶️ [Suite 10/12] FeedbackStyle Model & Properties")
+        test("FeedbackStyle: All cases and property checks") {
+            try assertEqual(FeedbackStyle.allCases.count, 4)
+            try assertTrue(FeedbackStyle.floatingHUD.showsHUD, "floatingHUD must show HUD")
+            try assertTrue(!FeedbackStyle.floatingHUD.showsSystemNotification, "floatingHUD must not show system notif")
+            try assertTrue(!FeedbackStyle.systemNotification.showsHUD, "systemNotification must not show HUD")
+            try assertTrue(FeedbackStyle.systemNotification.showsSystemNotification, "systemNotification must show system notif")
+            try assertTrue(FeedbackStyle.both.showsHUD && FeedbackStyle.both.showsSystemNotification, "both must show both")
+            try assertTrue(!FeedbackStyle.none.showsHUD && !FeedbackStyle.none.showsSystemNotification, "none must show neither")
+        }
+
+        test("FeedbackStyle: Codable roundtrip") {
+            for style in FeedbackStyle.allCases {
+                let data = try JSONEncoder().encode(style)
+                let decoded = try JSONDecoder().decode(FeedbackStyle.self, from: data)
+                try assertEqual(decoded, style)
+            }
+        }
+
+        // Suite 11: ThemeAccent Color Presets (Issue #6)
+        print("\n▶️ [Suite 11/12] ThemeAccent Presets & Hex Lookups")
+        test("ThemeAccent: Curated cases and hex mapping") {
+            try assertEqual(ThemeAccent.allCases.count, 5)
+            try assertEqual(ThemeAccent.byakuganChakra.hexString, "#D946EF")
+            try assertEqual(ThemeAccent.neonCyan.hexString, "#06B6D4")
+            try assertEqual(ThemeAccent.electricPurple.hexString, "#8B5CF6")
+            try assertEqual(ThemeAccent.emerald.hexString, "#10B981")
+            try assertEqual(ThemeAccent.systemAccent.hexString, "system")
+        }
+
+        test("ThemeAccent: from(hexOrId:) lookup parser") {
+            try assertEqual(ThemeAccent.from(hexOrId: "byakuganChakra"), .byakuganChakra)
+            try assertEqual(ThemeAccent.from(hexOrId: "#06B6D4"), .neonCyan)
+            try assertEqual(ThemeAccent.from(hexOrId: "#10b981"), .emerald)
+            try assertEqual(ThemeAccent.from(hexOrId: "system"), .systemAccent)
+            try assertEqual(ThemeAccent.from(hexOrId: "non_existent"), .byakuganChakra)
+        }
+
+        // Suite 12: FloatingHUDItem Analytics & Titles (Issue #3)
+        print("\n▶️ [Suite 12/12] FloatingHUDItem Word Count & Analytics")
+        test("FloatingHUDItem: Text scan word and character count") {
+            let sampleResult = ScanResult(type: .text, content: "Instant on-device OCR for Apple Silicon")
+            let item = FloatingHUDItem(result: sampleResult)
+            try assertEqual(item.wordCount, 6)
+            try assertEqual(item.characterCount, 39)
+            try assertTrue(item.title.contains("Copied 6 words"), "Title must state copied word count")
+            try assertEqual(item.previewText, "Instant on-device OCR for Apple Silicon")
+        }
+
+        test("FloatingHUDItem: QR code detection title") {
+            let qrResult = ScanResult(type: .qrCode, content: "https://byakugan-scan.aritro.cloud")
+            let qrItem = FloatingHUDItem(result: qrResult)
+            try assertEqual(qrItem.title, "QR Code URL Detected")
+
+            let barcodeResult = ScanResult(type: .barcode, content: "[EAN-13] 8901030829145")
+            let barcodeItem = FloatingHUDItem(result: barcodeResult)
+            try assertEqual(barcodeItem.title, "Barcode Scanned")
+        }
+
+        test("AppConstants: Version 1.0.3 verification") {
+            try assertEqual(AppConstants.App.version, "1.0.3")
+            try assertEqual(AppConstants.App.build, "4")
         }
 
         // Summary Report
