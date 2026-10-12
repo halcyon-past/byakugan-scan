@@ -146,6 +146,12 @@ export default function EditorialHeader() {
               Specs
             </Link>
             <Link
+              href="/support"
+              className="hover:text-white transition-colors py-1"
+            >
+              Support & FAQ
+            </Link>
+            <Link
               href="/privacy"
               className="hover:text-white transition-colors py-1"
             >
@@ -226,6 +232,13 @@ export default function EditorialHeader() {
                 className="hover:text-pink-300 transition-colors"
               >
                 Specs
+              </Link>
+              <Link
+                href="/support"
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-slate-300 hover:text-pink-300 transition-colors"
+              >
+                Support & FAQ
               </Link>
               <Link
                 href="/privacy"

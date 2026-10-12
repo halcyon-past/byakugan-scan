@@ -50,6 +50,11 @@ export default function Footer() {
                   Specs & Permissions
                 </Link>
               </li>
+              <li>
+                <Link href="/support" className="text-slate-300 hover:text-white transition-colors">
+                  Support & FAQ
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -59,6 +64,11 @@ export default function Footer() {
               Legal & Creator
             </div>
             <ul className="space-y-2.5 text-sm">
+              <li>
+                <Link href="/support" className="text-slate-300 hover:text-white transition-colors">
+                  Help Center & FAQ
+                </Link>
+              </li>
               <li>
                 <Link href="/privacy" className="text-slate-300 hover:text-white transition-colors">
                   Privacy Policy

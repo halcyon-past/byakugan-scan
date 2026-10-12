@@ -21,7 +21,7 @@ export default function Navbar() {
           <Link href="/#features" className="hover:text-white transition-colors">Features</Link>
           <Link href="/#shortcuts" className="hover:text-white transition-colors">Shortcuts</Link>
           <Link href="/#how-it-works" className="hover:text-white transition-colors">How It Works</Link>
-          <Link href="/#faq" className="hover:text-white transition-colors">FAQ</Link>
+          <Link href="/support" className="hover:text-white transition-colors">Support & FAQ</Link>
           <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
           <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
         </nav>
