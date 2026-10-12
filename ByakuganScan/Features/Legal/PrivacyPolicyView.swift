@@ -60,7 +60,7 @@ struct PolicySection<Content: StringProtocol>: View {
     let title: String
     let content: () -> Content
     
-    init(title: String, @ViewBuilder content: @escaping () -> Content) {
+    init(title: String, content: @escaping () -> Content) {
         self.title = title
         self.content = content
     }

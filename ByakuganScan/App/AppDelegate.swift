@@ -3,6 +3,7 @@ import SwiftUI
 import UserNotifications
 
 /// Application delegate: sets up the menu bar item, hotkeys, and notification permissions.
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Properties
     private var statusItem: NSStatusItem?
@@ -130,21 +131,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             textScanHotkeyID = HotkeyService.shared.register(
                 keyCode: parsed.keyCode,
                 modifiers: parsed.modifiers
-            ) { ScanCoordinator.shared.startTextScan() }
+            ) {
+                Task { @MainActor in
+                    ScanCoordinator.shared.startTextScan()
+                }
+            }
         }
         
         if let parsed = HotkeyService.parseShortcut(settings.qrScanShortcut) {
             qrScanHotkeyID = HotkeyService.shared.register(
                 keyCode: parsed.keyCode,
                 modifiers: parsed.modifiers
-            ) { ScanCoordinator.shared.startQRScan() }
+            ) {
+                Task { @MainActor in
+                    ScanCoordinator.shared.startQRScan()
+                }
+            }
         }
         
         if let parsed = HotkeyService.parseShortcut(settings.barcodeScanShortcut) {
             barcodeScanHotkeyID = HotkeyService.shared.register(
                 keyCode: parsed.keyCode,
                 modifiers: parsed.modifiers
-            ) { ScanCoordinator.shared.startBarcodeScan() }
+            ) {
+                Task { @MainActor in
+                    ScanCoordinator.shared.startBarcodeScan()
+                }
+            }
         }
     }
     
