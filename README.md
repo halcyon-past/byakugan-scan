@@ -158,7 +158,7 @@ We maintain three primary protected branches:
 - **Hotfix branches:** `hotfix/<feature-name>` (e.g., `hotfix/permissions-patch`)
 - **Fork contributions:** Pull requests from forks are automatically recognized by CI and permitted.
 
-All pull requests require code owner review and passing automated tests before merge. See our complete [Contributing Guide](CONTRIBUTING.md) for details.
+All pull requests require code owner review and passing automated tests before merge. See our complete [Contributing Guide](CONTRIBUTING.md) and [AI Agent Instructions](AGENTS.md) for details.
 
 ---
 

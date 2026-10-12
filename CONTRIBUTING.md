@@ -123,6 +123,19 @@ git push origin feature/dev/your-feature-name
 
 ---
 
+## 🤖 AI Coding Harnesses & Assistant Instructions
+
+If you use AI coding assistants or harnesses (such as **Claude Code**, **Google Antigravity**, **OpenAI Codex**, **GitHub Copilot**, or **Cursor**), our repository includes preconfigured instruction files:
+
+- **[AGENTS.md](AGENTS.md)**: Universal instructions for AI agents, Codex, Antigravity, and Cursor.
+- **[CLAUDE.md](CLAUDE.md)**: Optimized CLI guidance for Claude Code.
+- **[.github/copilot-instructions.md](.github/copilot-instructions.md)**: Repository guidelines for GitHub Copilot Workspace.
+
+### ⚠️ Mandatory Rule for AI-Assisted PRs:
+Every feature or service modification implemented via AI coding assistants **MUST include corresponding unit tests** in `Tests/RunAllTests.swift`. The assistant must run `./scripts/run_tests.sh` to ensure all tests pass (0 failures) prior to submitting a pull request.
+
+---
+
 ## Architectural Guidelines
 
 - **Architecture:** Lightweight MVVM with dedicated Service Singletons (`OCRService`, `ScreenCaptureService`, `HotkeyService`, `HistoryService`).
@@ -135,3 +148,4 @@ git push origin feature/dev/your-feature-name
 ## Need Help?
 
 If you have questions about architecture or testing, open an issue or discussion on GitHub or contact **[aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)**.
+
