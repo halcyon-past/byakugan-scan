@@ -52,8 +52,8 @@ export default function TermsPage() {
           <p>
             For questions regarding these Terms, contact:<br />
             <strong className="text-white">Aritro Saha</strong><br />
-            Email: <a href="mailto:aritrosaha2025@gmail.com" className="text-indigo-300 underline font-semibold">aritrosaha2025@gmail.com</a><br />
-            Website: <a href="https://byakugan-scan.aritro.cloud" className="text-indigo-300 underline font-semibold">https://byakugan-scan.aritro.cloud</a>
+            Email: <a href="mailto:aritrosaha2025@gmail.com" className="text-pink-300 hover:text-white underline font-semibold transition-colors">aritrosaha2025@gmail.com</a><br />
+            Website: <a href="https://byakugan-scan.aritro.cloud" className="text-pink-300 hover:text-white underline font-semibold transition-colors">https://byakugan-scan.aritro.cloud</a>
           </p>
         </section>
       </div>

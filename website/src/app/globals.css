@@ -5,12 +5,15 @@
 @tailwind utilities;
 
 :root {
-  --bg-deep: #08030b;
-  --magenta-glow: rgba(236, 72, 153, 0.45);
+  --bg-deep: #0a0b12;
+  --bg-surface: #121420;
+  --bg-card: rgba(18, 20, 32, 0.72);
+  --magenta-glow: rgba(244, 114, 182, 0.2);
   --magenta-neon: #f43f5e;
   --fuchsia-bright: #d946ef;
+  --lotus-pink: #f472b6;
   --gold-accent: #f59e0b;
-  --cyan-accent: #06b6d4;
+  --cyan-accent: #38bdf8;
 }
 
 html.lenis, html.lenis body {
@@ -35,36 +38,42 @@ html.lenis, html.lenis body {
 
 html {
   background-color: var(--bg-deep);
-  color: #fdf2f8;
+  color: #f8fafc;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
 body {
   overflow-x: hidden;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--bg-deep);
-  selection-background-color: #d946ef;
-  selection-color: #ffffff;
+  color: #cbd5e1;
+  line-height: 1.625;
 }
 
-/* Hairline dividers with elegant magenta-tinted contrast */
+::selection {
+  background-color: rgba(217, 70, 239, 0.35);
+  color: #ffffff;
+}
+
+/* Hairline dividers with soft, soothing contrast */
 .hairline-b {
-  border-bottom: 1px solid rgba(244, 114, 182, 0.14);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .hairline-t {
-  border-top: 1px solid rgba(244, 114, 182, 0.14);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .hairline-r {
-  border-right: 1px solid rgba(244, 114, 182, 0.14);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-/* Anime Japanese Manga Display Font */
+/* Refined, modern display typography */
 .font-manga {
-  font-family: 'Cinzel', serif;
-  letter-spacing: 0.12em;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.025em;
 }
 
 .font-kanji {
@@ -72,50 +81,40 @@ body {
 }
 
 .font-display {
-  font-family: 'Alumni Sans', sans-serif;
-  letter-spacing: -0.01em;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  letter-spacing: -0.03em;
 }
 
 .font-mono {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-/* Glassmorphism with Cyberpunk Magenta / Rose Anime Edge */
+/* Soothing, calm glassmorphism cards */
 .anime-glass {
-  background: rgba(18, 9, 24, 0.78);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(244, 114, 182, 0.22);
-  box-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.55), 0 0 24px -6px rgba(236, 72, 153, 0.15);
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.5), 0 0 30px -10px rgba(244, 114, 182, 0.08);
 }
 
 .anime-card-hover {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
 }
 
 .anime-card-hover:hover {
-  transform: translateY(-4px);
-  border-color: rgba(244, 114, 182, 0.65);
-  box-shadow: 0 20px 48px -10px rgba(217, 70, 239, 0.4);
+  transform: translateY(-3px);
+  border-color: rgba(244, 114, 182, 0.35);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.6), 0 0 25px -5px rgba(217, 70, 239, 0.2);
 }
 
-/* Manga Speed Lines / Halftone Overlay */
+/* Subtle atmospheric ambient glow (replacing harsh dot grid) */
 .manga-grid {
-  background-image: radial-gradient(rgba(244, 114, 182, 0.12) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background-image: radial-gradient(rgba(244, 114, 182, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
-/* Scanline Overlay */
-.anime-scanline {
-  background: linear-gradient(
-    rgba(38, 16, 34, 0) 50%,
-    rgba(0, 0, 0, 0.3) 50%
-  );
-  background-size: 100% 4px;
-  pointer-events: none;
-}
-
-/* Ticker Animations */
+/* Ticker Animations - Calm, soothing cadence */
 @keyframes ticker {
   0% { transform: translate3d(0, 0, 0); }
   100% { transform: translate3d(-50%, 0, 0); }
@@ -124,7 +123,7 @@ body {
 .animate-ticker {
   display: flex;
   width: 200%;
-  animation: ticker 32s linear infinite;
+  animation: ticker 50s linear infinite;
 }
 
 .animate-ticker:hover {
@@ -134,13 +133,13 @@ body {
 /* Laser Scan Sweep */
 @keyframes laserSweep {
   0% { top: 0%; opacity: 0; }
-  15% { opacity: 1; }
-  85% { opacity: 1; }
+  15% { opacity: 0.8; }
+  85% { opacity: 0.8; }
   100% { top: 100%; opacity: 0; }
 }
 
 .laser-beam {
-  animation: laserSweep 2.2s ease-in-out infinite;
+  animation: laserSweep 2.5s ease-in-out infinite;
 }
 
 /* Custom Scrollbar */
@@ -148,12 +147,12 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #08030b;
+  background: #0a0b12;
 }
 ::-webkit-scrollbar-thumb {
-  background: #701a75;
+  background: #371b3e;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #a21caf;
+  background: #6b21a8;
 }

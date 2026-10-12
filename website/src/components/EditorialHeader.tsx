@@ -56,20 +56,20 @@ export default function EditorialHeader() {
 
   return (
     <>
-      {/* Top Editorial Ticker Bar (Halcyon Announcement Style) */}
-      <div className="w-full bg-[#0a030e] hairline-b text-[11px] font-mono-tech tracking-wider text-slate-300 py-1.5 px-4 overflow-hidden z-50 relative select-none">
+      {/* Top Editorial Ticker Bar (Calm Announcement Style) */}
+      <div className="w-full bg-[#0a0b12] hairline-b text-xs font-mono text-slate-400 py-1.5 px-4 overflow-hidden z-50 relative select-none">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-pink-400 animate-ping" />
-            <span className="text-white font-bold tracking-wide">NEO-VISION PROTOCOL 1.0</span>
-            <span className="hidden sm:inline text-pink-500/40">/</span>
-            <span className="hidden sm:inline text-pink-200/80 font-medium">ON-DEVICE OCR & BARCODE ENGINE</span>
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-slate-200 font-medium">Native OCR & Barcode Utility</span>
+            <span className="hidden sm:inline text-white/20">•</span>
+            <span className="hidden sm:inline text-slate-400 font-normal">macOS 14+ Sonoma & Sequoia</span>
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-slate-300 hidden md:inline font-mono">{currentTime}</span>
-            <span className="text-pink-500/40 hidden md:inline">/</span>
-            <span className="text-pink-300 font-bold">100% PRIVATE & OFFLINE</span>
+            <span className="text-slate-400 hidden md:inline font-mono">{currentTime}</span>
+            <span className="text-white/20 hidden md:inline">•</span>
+            <span className="text-pink-300 font-medium">100% On-Device & Offline</span>
           </div>
         </div>
       </div>
@@ -78,14 +78,14 @@ export default function EditorialHeader() {
       <header
         className={`sticky top-0 z-40 w-full transition-all duration-300 ${
           scrolled
-            ? "bg-[#0c0412]/95 backdrop-blur-md hairline-b py-3.5 shadow-2xl"
-            : "bg-transparent hairline-b py-4 sm:py-5"
+            ? "bg-[#0a0b12]/95 backdrop-blur-md hairline-b py-3 shadow-lg"
+            : "bg-transparent hairline-b py-4"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           {/* Logo Lockup */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 rounded-lg overflow-hidden border border-pink-500/30 group-hover:border-pink-400 transition-colors bg-black flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/10 group-hover:border-pink-500/40 transition-colors bg-black flex items-center justify-center">
               <Image
                 src="/as-icon-dark.png"
                 alt="Byakugan Scan Monogram"
@@ -95,44 +95,44 @@ export default function EditorialHeader() {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-editorial-display text-2xl font-bold uppercase tracking-tight text-white leading-none">
+              <span className="text-lg font-bold text-slate-100 tracking-tight leading-tight">
                 Byakugan Scan
               </span>
-              <span className="text-[9px] font-mono-tech uppercase tracking-widest text-pink-300 font-semibold -mt-0.5">
-                白眼 // All-Seeing Eye
+              <span className="text-[10px] text-pink-300 font-medium tracking-wide">
+                白眼 // All-Seeing Vision
               </span>
             </div>
           </Link>
 
           {/* Clean, Spacious Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium tracking-wide text-slate-300">
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
             <Link
               href="/#philosophy"
-              className="hover:text-pink-300 transition-colors py-1"
+              className="hover:text-white transition-colors py-1"
             >
               Philosophy
             </Link>
             <Link
               href="/#capabilities"
-              className="hover:text-pink-300 transition-colors py-1"
+              className="hover:text-white transition-colors py-1"
             >
               Capabilities
             </Link>
             <Link
               href="/#specs"
-              className="hover:text-pink-300 transition-colors py-1"
+              className="hover:text-white transition-colors py-1"
             >
               Specs
             </Link>
             <Link
               href="/privacy"
-              className="hover:text-pink-300 transition-colors py-1"
+              className="hover:text-white transition-colors py-1"
             >
               Privacy
             </Link>
             <Link
               href="/terms"
-              className="hover:text-pink-300 transition-colors py-1"
+              className="hover:text-white transition-colors py-1"
             >
               Terms
             </Link>
@@ -144,7 +144,7 @@ export default function EditorialHeader() {
               href="https://github.com/halcyon-past/byakugan-scan"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-mono-tech text-slate-300 hover:text-white transition-colors flex items-center gap-1"
+              className="text-xs font-mono text-slate-300 hover:text-white transition-colors flex items-center gap-1"
             >
               <span>GitHub</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
@@ -154,7 +154,7 @@ export default function EditorialHeader() {
               href="https://github.com/halcyon-past/byakugan-scan"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 rounded transition-all active:scale-95 shadow-md shadow-pink-600/25 font-mono-tech"
+              className="px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 rounded-lg transition-all active:scale-95 shadow-md shadow-pink-600/20"
             >
               Get For Mac
             </a>

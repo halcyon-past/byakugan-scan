@@ -51,13 +51,13 @@ export default function ThreeScrollFollowerEye() {
       map: colorMap,
       normalMap: normalMap,
       normalScale: new THREE.Vector2(0.85, 0.85),
-      roughness: 0.15,
+      roughness: 0.18,
       metalness: 0.05,
       clearcoat: 1.0,
       clearcoatRoughness: 0.08,
       reflectivity: 0.95,
-      emissive: new THREE.Color(0x831843),
-      emissiveIntensity: 0.35,
+      emissive: new THREE.Color(0x4a0420),
+      emissiveIntensity: 0.22,
     });
     const eyeball = new THREE.Mesh(sphereGeo, eyeballMat);
     eyeOrbitGroup.add(eyeball);
@@ -105,14 +105,14 @@ export default function ThreeScrollFollowerEye() {
       const veinMat = new THREE.MeshBasicMaterial({
         color: veinColors[i % veinColors.length],
         transparent: true,
-        opacity: 0.8,
+        opacity: 0.55,
       });
       const veinMesh = new THREE.Mesh(veinGeo, veinMat);
       veinSystem.add(veinMesh);
     }
     eyeSystem.add(veinSystem);
 
-    // 6. Holographic Optical Reticle Rings (Neon Magenta / Fuchsia HUD)
+    // 6. Holographic Optical Reticle Rings (Soothing Luminescent HUD)
     const rings: THREE.Mesh[] = [];
     const ringConfigs = [
       { r: 1.6, color: 0xf43f5e, rotX: 0.15, rotY: 0.1, speed: 0.006 },
@@ -121,11 +121,11 @@ export default function ThreeScrollFollowerEye() {
     ];
 
     ringConfigs.forEach((cfg) => {
-      const geo = new THREE.TorusGeometry(cfg.r, 0.014, 16, 96);
+      const geo = new THREE.TorusGeometry(cfg.r, 0.012, 16, 96);
       const mat = new THREE.MeshBasicMaterial({
         color: cfg.color,
         transparent: true,
-        opacity: 0.75,
+        opacity: 0.45,
       });
       const ring = new THREE.Mesh(geo, mat);
       ring.rotation.x = cfg.rotX;
@@ -174,9 +174,9 @@ export default function ThreeScrollFollowerEye() {
 
     const particleMat = new THREE.PointsMaterial({
       color: 0xf472b6,
-      size: 0.055,
+      size: 0.035,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.45,
       blending: THREE.AdditiveBlending,
     });
     const particles = new THREE.Points(particleGeo, particleMat);

@@ -33,7 +33,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-xl font-bold text-white mb-3">3. Local Storage</h2>
           <p>
-            The optional scan history is stored strictly on your local disk at <code className="text-indigo-200 bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-700/40 font-mono">~/Library/Application Support/ByakuganScan/</code>. This file is under your full control and can be cleared at any time from Settings.
+            The optional scan history is stored strictly on your local disk at <code className="text-pink-300 bg-white/[0.06] px-1.5 py-0.5 rounded border border-white/10 font-mono text-xs">~/Library/Application Support/ByakuganScan/</code>. This file is under your full control and can be cleared at any time from Settings.
           </p>
         </section>
 
@@ -49,8 +49,8 @@ export default function PrivacyPage() {
           <p>
             For any privacy inquiries or questions, contact:<br />
             <strong className="text-white">Aritro Saha</strong><br />
-            Email: <a href="mailto:aritrosaha2025@gmail.com" className="text-indigo-300 underline font-semibold">aritrosaha2025@gmail.com</a><br />
-            Website: <a href="https://byakugan-scan.aritro.cloud" className="text-indigo-300 underline font-semibold">https://byakugan-scan.aritro.cloud</a>
+            Email: <a href="mailto:aritrosaha2025@gmail.com" className="text-pink-300 hover:text-white underline font-semibold transition-colors">aritrosaha2025@gmail.com</a><br />
+            Website: <a href="https://byakugan-scan.aritro.cloud" className="text-pink-300 hover:text-white underline font-semibold transition-colors">https://byakugan-scan.aritro.cloud</a>
           </p>
         </section>
       </div>
