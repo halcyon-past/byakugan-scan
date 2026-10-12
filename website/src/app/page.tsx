@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowDown,
@@ -10,11 +11,14 @@ import {
   Eye,
   Terminal,
   Sparkles,
+  Copy,
+  Check,
 } from "lucide-react";
 import MangaScrollSection from "@/components/MangaScrollSection";
 import { APP_DOWNLOAD_URL } from "@/constants/links";
 
 export default function AnimeMasterpieceHome() {
+  const [copiedBrew, setCopiedBrew] = useState(false);
   return (
     <div className="relative w-full overflow-hidden">
       {/* Soothing Atmospheric Radial Glow & Soft Ambient Grid */}
@@ -66,6 +70,29 @@ export default function AnimeMasterpieceHome() {
               >
                 <span>Explore Capabilities</span>
               </a>
+            </div>
+
+            {/* Homebrew Terminal One-Liner */}
+            <div className="mt-5 flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg bg-black/40 border border-white/10 font-mono text-xs text-slate-300 max-w-fit shadow-inner">
+              <span className="text-pink-400 select-none font-bold">$</span>
+              <span className="text-slate-200 select-all">brew install --cask halcyon-past/tap/byakugan-scan</span>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText("brew install --cask halcyon-past/tap/byakugan-scan");
+                  setCopiedBrew(true);
+                  setTimeout(() => setCopiedBrew(false), 2000);
+                }}
+                className="ml-2 p-1 text-slate-400 hover:text-pink-300 transition-colors rounded hover:bg-white/5"
+                title="Copy Homebrew command"
+                aria-label="Copy Homebrew command"
+              >
+                {copiedBrew ? (
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                ) : (
+                  <Copy className="w-3.5 h-3.5" />
+                )}
+              </button>
             </div>
           </div>
 

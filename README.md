@@ -31,6 +31,23 @@
 
 ---
 
+## 📦 Installation
+
+### Option 1: Homebrew Cask (Recommended)
+```bash
+brew install --cask halcyon-past/tap/byakugan-scan
+```
+*Or tap first, then install:*
+```bash
+brew tap halcyon-past/tap
+brew install --cask byakugan-scan
+```
+
+### Option 2: Direct DMG Download
+Download the latest universal DMG directly from [GitHub Releases](https://github.com/halcyon-past/byakugan-scan/releases/latest) or the [Official Website](https://byakugan-scan.aritro.cloud).
+
+---
+
 ## ⌨️ Default Shortcuts
 
 | Action | Shortcut | Description |
