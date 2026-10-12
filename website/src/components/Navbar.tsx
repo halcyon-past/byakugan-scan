@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { APP_DOWNLOAD_URL } from "@/constants/links";
 
 export default function Navbar() {
   return (
@@ -27,9 +28,7 @@ export default function Navbar() {
 
         <div className="flex items-center gap-4">
           <a
-            href="https://github.com/halcyon-past/byakugan-scan"
-            target="_blank"
-            rel="noopener noreferrer"
+            href={APP_DOWNLOAD_URL}
             className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-full shadow-lg shadow-indigo-600/30 transition-all hover:scale-105 active:scale-95"
           >
             Download Free

@@ -1,0 +1,143 @@
+name: Publish Release & DMG Installer
+
+on:
+  workflow_dispatch:
+    inputs:
+      custom_message:
+        description: 'Optional announcement message (displayed directly after the heading)'
+        required: false
+        type: string
+        default: ''
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build, Package & Publish Release
+    runs-on: macos-14
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract Current App Version
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(grep 'static let version =' ByakuganScan/Shared/Constants/AppConstants.swift | sed -E 's/.*"([^"]+)".*/\1/' | tr -d '[:space:]')
+          if [ -z "$VERSION" ]; then
+            echo "❌ ERROR: Could not extract version from ByakuganScan/Shared/Constants/AppConstants.swift!"
+            exit 1
+          fi
+          echo "CURRENT_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "TAG_NAME=v$VERSION" >> $GITHUB_ENV
+          echo "📌 Current version identified: $VERSION (Tag: v$VERSION)"
+
+      - name: Validate Version Novelty (Fail if no new versions)
+        id: check-version
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔍 Checking if release $TAG_NAME already exists in ${{ github.repository }}..."
+          
+          # Check 1: Check GitHub Releases via GitHub CLI
+          if gh release view "$TAG_NAME" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            echo "::error::Release $TAG_NAME already exists on GitHub!"
+            echo ""
+            echo "❌ THE RELEASE WORKFLOW HAS FAILED BECAUSE THERE IS NO NEW VERSION."
+            echo "Existing release: https://github.com/${{ github.repository }}/releases/tag/$TAG_NAME"
+            echo ""
+            echo "To publish a new release, please increment the app version in:"
+            echo "  1. ByakuganScan/Shared/Constants/AppConstants.swift (AppConstants.App.version)"
+            echo "  2. project.yml (MARKETING_VERSION)"
+            echo "  3. CHANGELOG.md (add ## [x.y.z] section)"
+            exit 1
+          fi
+
+          # Check 2: Check remote git tags
+          if git ls-remote --tags origin "refs/tags/$TAG_NAME" | grep -q "$TAG_NAME"; then
+            echo "::error::Git tag $TAG_NAME already exists on remote origin!"
+            echo "❌ THE RELEASE WORKFLOW HAS FAILED BECAUSE THERE IS NO NEW VERSION."
+            exit 1
+          fi
+
+          echo "✅ Verified: $TAG_NAME is a new, unpublished version. Proceeding with release build."
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'website/package-lock.json'
+
+      - name: Install Website Dependencies
+        working-directory: ./website
+        run: npm ci
+
+      - name: Execute Automated Test Suites
+        shell: bash
+        run: |
+          chmod +x ./scripts/run_tests.sh
+          ./scripts/run_tests.sh
+
+      - name: Build Signed App & Package Installer DMG
+        shell: bash
+        run: |
+          chmod +x ./scripts/build_app.sh
+          chmod +x ./scripts/package_dmg.sh
+          ./scripts/package_dmg.sh
+
+      - name: Verify DMG Artifacts Exist
+        shell: bash
+        run: |
+          if [ ! -f "build/ByakuganScan.dmg" ]; then
+            echo "::error::build/ByakuganScan.dmg was not generated!"
+            exit 1
+          fi
+          if [ ! -f "build/ByakuganScan-v$CURRENT_VERSION.dmg" ]; then
+            echo "::error::build/ByakuganScan-v$CURRENT_VERSION.dmg was not generated!"
+            exit 1
+          fi
+          ls -lh build/*.dmg
+
+      - name: Generate Formatted Release Notes
+        shell: bash
+        env:
+          CUSTOM_MESSAGE: ${{ github.event.inputs.custom_message }}
+        run: |
+          python3 scripts/generate_release_notes.py \
+            --version "$CURRENT_VERSION" \
+            --custom-message "$CUSTOM_MESSAGE" \
+            --changelog "CHANGELOG.md" \
+            --output "RELEASE_NOTES.md" \
+            --repo "${{ github.repository }}"
+
+          echo "==================== RELEASE NOTES PREVIEW ===================="
+          cat RELEASE_NOTES.md
+          echo "==============================================================="
+
+      - name: Publish GitHub Release & Upload DMG Assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🚀 Creating GitHub Release $TAG_NAME and attaching DMG installers..."
+          
+          gh release create "$TAG_NAME" \
+            "build/ByakuganScan.dmg#ByakuganScan.dmg (Latest Direct Download)" \
+            "build/ByakuganScan-v$CURRENT_VERSION.dmg#ByakuganScan-v$CURRENT_VERSION.dmg" \
+            --title "Byakugan Scan v$CURRENT_VERSION" \
+            --notes-file "RELEASE_NOTES.md"
+
+          echo ""
+          echo "🎉 RELEASE PUBLISHED SUCCESSFULLY!"
+          echo "Direct latest DMG download URL:"
+          echo "https://github.com/${{ github.repository }}/releases/latest/download/ByakuganScan.dmg"

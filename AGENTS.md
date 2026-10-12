@@ -154,6 +154,9 @@ flowchart LR
 # Build the macOS app bundle
 ./scripts/build_app.sh
 
+# Package macOS installer DMG
+./scripts/package_dmg.sh
+
 # Run Next.js website dev server
 cd website && npm run dev
 

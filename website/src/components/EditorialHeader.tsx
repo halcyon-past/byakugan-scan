@@ -3,12 +3,33 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ArrowUpRight, Terminal } from "lucide-react";
+import { Menu, X, ArrowUpRight, Terminal, Star, GitFork, Github } from "lucide-react";
+import { APP_DOWNLOAD_URL, GITHUB_REPO_URL } from "@/constants/links";
 
 export default function EditorialHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState("");
+  const [repoStats, setRepoStats] = useState<{ stars: number; forks: number } | null>(null);
+
+  useEffect(() => {
+    // Fetch repository stars and forks
+    fetch("https://api.github.com/repos/halcyon-past/byakugan-scan", {
+      headers: { Accept: "application/vnd.github.v3+json" },
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && typeof data.stargazers_count === "number") {
+          setRepoStats({
+            stars: data.stargazers_count,
+            forks: data.forks_count,
+          });
+        }
+      })
+      .catch(() => {
+        // Fallback gracefully on rate limits or offline
+      });
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -139,24 +160,34 @@ export default function EditorialHeader() {
           </nav>
 
           {/* Actions & Download */}
-          <div className="hidden sm:flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-3">
             <a
-              href="https://github.com/halcyon-past/byakugan-scan"
+              href={GITHUB_REPO_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-mono text-slate-300 hover:text-white transition-colors flex items-center gap-1"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-pink-500/30 text-xs font-mono text-slate-300 hover:text-white transition-all group shadow-sm"
+              title="View Byakugan Scan on GitHub"
             >
-              <span>GitHub</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
+              <Github className="w-3.5 h-3.5 text-slate-300 group-hover:text-pink-300 transition-colors" />
+              <span className="font-semibold text-slate-200">GitHub</span>
+              <div className="flex items-center gap-2 pl-2 border-l border-white/10 text-slate-400 group-hover:text-slate-300">
+                <span className="inline-flex items-center gap-1 text-[11px]" title="Stars">
+                  <Star className="w-3 h-3 text-amber-400 fill-amber-400/20" />
+                  <span>{repoStats ? repoStats.stars : "—"}</span>
+                </span>
+                <span className="inline-flex items-center gap-1 text-[11px]" title="Forks">
+                  <GitFork className="w-3 h-3 text-sky-400" />
+                  <span>{repoStats ? repoStats.forks : "—"}</span>
+                </span>
+              </div>
             </a>
 
             <a
-              href="https://github.com/halcyon-past/byakugan-scan"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 rounded-lg transition-all active:scale-95 shadow-md shadow-pink-600/20"
+              href={APP_DOWNLOAD_URL}
+              className="px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 rounded-lg transition-all active:scale-95 shadow-md shadow-pink-600/20 flex items-center gap-1.5"
             >
-              Get For Mac
+              <span>Get For Mac</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
             </a>
           </div>
 
@@ -214,12 +245,30 @@ export default function EditorialHeader() {
 
             <div className="pt-4 hairline-t flex flex-col gap-3">
               <a
-                href="https://github.com/halcyon-past/byakugan-scan"
-                target="_blank"
-                rel="noopener noreferrer"
+                href={APP_DOWNLOAD_URL}
                 className="w-full text-center py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-fuchsia-600 to-pink-600 rounded font-mono-tech shadow-md"
               >
                 Download Byakugan Scan
+              </a>
+
+              <a
+                href={GITHUB_REPO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-3 py-2 px-3 rounded bg-white/[0.04] border border-white/10 text-xs font-mono text-slate-300 hover:text-white"
+              >
+                <Github className="w-3.5 h-3.5 text-pink-300" />
+                <span className="font-semibold">GitHub</span>
+                <div className="flex items-center gap-2 pl-2 border-l border-white/10 text-slate-400">
+                  <span className="inline-flex items-center gap-1 text-[11px]">
+                    <Star className="w-3 h-3 text-amber-400 fill-amber-400/20" />
+                    <span>{repoStats ? repoStats.stars : "—"}</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[11px]">
+                    <GitFork className="w-3 h-3 text-sky-400" />
+                    <span>{repoStats ? repoStats.forks : "—"}</span>
+                  </span>
+                </div>
               </a>
             </div>
           </div>

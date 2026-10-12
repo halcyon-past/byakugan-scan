@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import MangaScrollSection from "@/components/MangaScrollSection";
+import { APP_DOWNLOAD_URL } from "@/constants/links";
 
 export default function AnimeMasterpieceHome() {
   return (
@@ -52,9 +53,7 @@ export default function AnimeMasterpieceHome() {
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-4">
               <a
-                href="https://github.com/halcyon-past/byakugan-scan"
-                target="_blank"
-                rel="noopener noreferrer"
+                href={APP_DOWNLOAD_URL}
                 className="px-7 py-3.5 bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 text-white text-sm font-semibold rounded-lg transition-all flex items-center gap-2 shadow-lg shadow-pink-600/20 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <span>Download Free (macOS)</span>
@@ -304,9 +303,7 @@ export default function AnimeMasterpieceHome() {
 
         <div className="flex flex-wrap items-center justify-center gap-4">
           <a
-            href="https://github.com/halcyon-past/byakugan-scan"
-            target="_blank"
-            rel="noopener noreferrer"
+            href={APP_DOWNLOAD_URL}
             className="px-8 py-4 bg-gradient-to-r from-fuchsia-600 via-pink-600 to-rose-600 hover:from-fuchsia-500 hover:to-rose-500 text-white text-sm font-semibold rounded-lg transition-all flex items-center gap-2 shadow-xl shadow-pink-600/25 hover:scale-[1.02] active:scale-[0.98]"
           >
             <span>Download Byakugan Scan</span>

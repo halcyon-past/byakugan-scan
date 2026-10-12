@@ -14,6 +14,9 @@ This document defines core instructions and commands for **Claude Code** when wo
 # Build and codesign the macOS app bundle (.app in ./build)
 ./scripts/build_app.sh
 
+# Package compressed macOS installer DMG (.dmg in ./build)
+./scripts/package_dmg.sh
+
 # Build website only
 cd website && npm run build
 
