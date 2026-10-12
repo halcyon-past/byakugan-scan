@@ -1,242 +1,146 @@
-# Byakugan Scan 👁️
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="Assets/Icons/AS_icon_darkmode_256x256.png" />
+    <source media="(prefers-color-scheme: light)" srcset="Assets/Icons/AS_icon_lightmode_256x256.png" />
+    <img alt="Byakugan Scan" src="Assets/Icons/AS_icon_darkmode_256x256.png" width="96" height="96" />
+  </picture>
 
-[![Version](https://img.shields.io/badge/Version-v1.0.4-fuchsia.svg?style=flat-square)](https://github.com/halcyon-past/byakugan-scan/releases/latest)
-[![Platform](https://img.shields.io/badge/Platform-macOS%2014.0%2B-blue.svg?style=flat-square&logo=apple)](https://apple.com)
-[![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg?style=flat-square&logo=swift)](https://swift.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
-[![Website](https://img.shields.io/badge/Website-byakugan--scan.aritro.cloud-purple.svg?style=flat-square)](https://byakugan-scan.aritro.cloud)
+  <h1>Byakugan Scan</h1>
 
-> **The all-seeing screen scanner for macOS.** Extract unselectable text with high-precision OCR, decode QR codes, and read industrial barcodes directly from your screen with a single hotkey.
+  <p>
+    <strong>Instant, in-memory screen OCR, QR code, and barcode recognition for macOS.</strong><br />
+    Zero temporary files. Zero network calls. Under 50ms on Apple Silicon.
+  </p>
 
----
+  <p>
+    <a href="https://github.com/halcyon-past/byakugan-scan/releases/latest"><img src="https://img.shields.io/github/v/release/halcyon-past/byakugan-scan?style=flat-square&color=d946ef&label=release" alt="Release" /></a>
+    <a href="https://github.com/halcyon-past/byakugan-scan/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/halcyon-past/byakugan-scan/ci.yml?branch=main&style=flat-square&label=ci" alt="CI" /></a>
+    <img src="https://img.shields.io/badge/macOS-14.0%2B-111827?style=flat-square&logo=apple" alt="macOS 14+" />
+    <img src="https://img.shields.io/badge/Swift-6.0-F05138?style=flat-square&logo=swift&logoColor=white" alt="Swift 6.0" />
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=flat-square" alt="MIT License" /></a>
+  </p>
 
-## 📸 Overview
-
-**Byakugan Scan** is a super-lightweight, native macOS utility (TextSniper alternative) living discretely in your menu bar. Powered directly by Apple's native Vision framework and Neural Engine, it offers instant on-device text and code recognition with zero latency and complete privacy.
-
-- 🌐 **Official Website:** [byakugan-scan.aritro.cloud](https://byakugan-scan.aritro.cloud)
-- 🔒 **100% Private:** Zero telemetry, zero network calls, completely offline.
-
----
-
-## ⚡️ Key Features
-
-- 🔍 **Accurate Screen OCR:** Snatch text from non-selectable PDFs, protected web pages, YouTube videos, screenshots, images, presentations, and Zoom screen shares.
-- 📱 **Instant QR Code Scanner:** Decode any QR code on screen directly into URLs, passwords, or text without pulling out your phone.
-- 🏷️ **Industrial Barcode Scanning:** Recognize 13+ barcode symbologies: EAN-8/13, UPC-E, Code 128, Code 39, Code 93, Data Matrix, Aztec, PDF417, ITF-14, and Micro QR.
-- ✨ **Floating HUD Toast Feedback:** Non-intrusive frosted-glass pill displaying word/character counts and context-aware one-click actions (`Open` for URLs, `Email` for addresses).
-- 🔊 **Configurable Sound Variations:** Choose from *Classic Glass*, *Subtle Click*, *Camera Shutter*, *Haptic Pop*, or *Mute* with live audio preview in Settings.
-- 👁️ **Live Menu Bar Activity State:** Menu bar reticle dynamically animates during active capture/OCR and flashes a confirmation checkmark upon completion.
-- 🎨 **Curated Theme Accents:** Customize selection box tints and UI highlights (*Byakugan Chakra Pink*, *Neon Cyan*, *Electric Purple*, *Terminal Emerald*, or *System Accent*).
-- 🔗 **Deep Links & macOS Shortcuts (`byakugan://`):** Trigger scans from Raycast, Alfred, Stream Deck, BetterTouchTool, or native macOS Shortcuts.app (`byakugan://scan?mode=text|qr|barcode|last`).
-- 📋 **Clipboard Automation:** Auto-copies results directly to your clipboard (with optional additive multi-clip mode).
-- ⌨️ **Global Keyboard Shortcuts:** Trigger actions from any application via customizable global hotkeys.
-- 📜 **Scan History:** Revisit, search, favorite, and recopy recent extractions locally.
-- ⚙️ **Customizable Formatting:** Control line breaks, join sentences with spaces, or trim extra whitespace.
+  <p>
+    <a href="https://byakugan-scan.aritro.cloud">Website</a> ·
+    <a href="https://github.com/halcyon-past/byakugan-scan/releases/latest/download/ByakuganScan.dmg">Download DMG</a> ·
+    <a href="https://byakugan-scan.aritro.cloud/support">Support &amp; FAQ</a> ·
+    <a href="CHANGELOG.md">Changelog</a>
+  </p>
+</div>
 
 ---
 
-## 📦 Installation
+## Why This Exists
 
-### Option 1: Homebrew Cask (Recommended for Power Users)
+Most screen OCR utilities on macOS work by spawning a screenshot to `/tmp`, reading the `.png` file back from disk, and deleting it afterward. On modern macOS, writing an image file to disk immediately wakes up Spotlight (`mdwrite`) and `MADService` media analysis daemons, which can stall the capture pipeline for several seconds.
 
-Install Byakugan Scan natively with [Homebrew](https://brew.sh) via our official tap repository ([`halcyon-past/homebrew-tap`](https://github.com/halcyon-past/homebrew-tap)):
+**Byakugan Scan** skips the filesystem entirely:
+
+1. A custom 60/120Hz AppKit overlay (`SelectionOverlayController`) lets you drag a selection rectangle across any display.
+2. The selected region is captured straight into `NSPasteboard` memory (`/usr/sbin/screencapture -c -x -R<x,y,w,h>`) and converted into a `CGImage` buffer in RAM.
+3. Apple's on-device Vision framework (`VNRecognizeTextRequest` / `VNDetectBarcodesRequest`) runs directly on the Neural Engine and copies the result to your clipboard.
+4. Screen Recording permission is checked silently via `CGPreflightScreenCaptureAccess()`—never `CGWindowListCreateImage`—so macOS never traps you in recurring permission prompt loops.
+
+The entire app has no network client entitlements, no analytics SDKs, and no external Swift package dependencies.
+
+## Install
+
+### Homebrew (Recommended)
 
 ```bash
-# Direct one-line installation (auto-taps repository)
 brew install --cask halcyon-past/tap/byakugan-scan
 ```
 
-Alternatively, tap the repository first and install:
+To upgrade later:
+
 ```bash
-brew tap halcyon-past/tap
-brew install --cask byakugan-scan
+brew upgrade --cask byakugan-scan
 ```
 
-#### Keeping Updated via Homebrew:
+### Direct Download
+
+Download [`ByakuganScan.dmg`](https://github.com/halcyon-past/byakugan-scan/releases/latest/download/ByakuganScan.dmg) from the [latest release](https://github.com/halcyon-past/byakugan-scan/releases/latest), drag **Byakugan Scan.app** to `/Applications`, and grant **Screen Recording** access in **System Settings → Privacy & Security → Screen Recording**.
+
+## Usage & Shortcuts
+
+Byakugan Scan runs in the macOS menu bar. Trigger a scan from anywhere using global hotkeys (all customizable in **Settings (`⌘,`) → Shortcuts**):
+
+| Mode | Default Shortcut | What it does |
+| :--- | :--- | :--- |
+| **Capture Text (OCR)** | `⌘` `⇧` `2` | Extracts unselectable text from videos, slides, PDFs, or images into your clipboard |
+| **Scan QR Code** | `⌘` `⇧` `3` | Decodes QR and MicroQR payloads on screen (with one-click `Open` / `Mail` / `Call` actions) |
+| **Scan Barcode** | `⌘` `⇧` `4` | Decodes EAN-8/13, UPC-E, Code 128/39/93, PDF417, Aztec, Data Matrix, and ITF-14 |
+| **Cancel Selection** | `Esc` | Dismisses the selection overlay without touching your clipboard |
+
+### Deep Links & Automation (`byakugan://`)
+
+You can trigger Byakugan Scan from Raycast, Alfred, BetterTouchTool, Stream Deck, or macOS Shortcuts without simulating keystrokes:
+
 ```bash
-brew update && brew upgrade --cask byakugan-scan
+open "byakugan://scan?mode=text"
+open "byakugan://scan?mode=qr"
+open "byakugan://scan?mode=barcode"
+open "byakugan://scan?mode=last"      # Re-copies the most recent scan result
+open "byakugan://settings"            # Opens the Settings window
+open "byakugan://history"             # Opens the menu bar popover to History
 ```
 
-#### Declarative Brewfile:
-Include Byakugan Scan in your dotfiles `Brewfile`:
-```ruby
-tap "halcyon-past/tap"
-cask "byakugan-scan"
-```
+## What's Inside
 
-#### Clean Uninstall:
+- **Custom Reticle & Theme Accents** — Customize the interactive selection box and UI tint (`Byakugan Violet`, `Tenseigan Cyan`, `Sharingan Crimson`, `Sage Emerald`, or `Nine-Tails Amber`) and backdrop dimming opacity (`10%–80%`), with a live preview in Settings.
+- **Floating HUD Pill** — Frosted-glass toast notification showing word/character counts and contextual actions (`Open URL`, `Send Email`, `Call Number`) without cluttering Notification Center.
+- **Configurable Audio Feedback** — Choose from *Glass*, *Tink*, *Pop*, *Purr*, *Funk*, or *Submarine* with instant preview in Settings.
+- **Multi-Language OCR & Formatting** — Automatic language detection across 13+ primary languages, with toggles to preserve line breaks, join multi-line paragraphs with spaces, or append scans additively to the clipboard.
+- **Local Scan History** — Searchable local history stored in `~/Library/Application Support/ByakuganScan/history.json` with category filters (`Text`, `QR`, `Barcode`, `Starred`) and pinning.
+
+## Building from Source
+
+Requires **macOS 14.0+**, **Xcode 15+ / Swift 6**, and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
+
 ```bash
-# Removes the app and purges local caches and preferences
-brew uninstall --zap --cask byakugan-scan
-```
+git clone https://github.com/halcyon-past/byakugan-scan.git
+cd byakugan-scan
 
----
+# Build and codesign the app bundle
+./scripts/build_app.sh
+open "build/Byakugan Scan.app"
 
-### Option 2: Direct Universal DMG Download
-
-Prefer a manual installer? Download the signed universal DMG bundle compatible with both Apple Silicon (M1/M2/M3/M4) and Intel Macs:
-
-1. Download [`ByakuganScan.dmg`](https://github.com/halcyon-past/byakugan-scan/releases/latest/download/ByakuganScan.dmg) from [GitHub Releases](https://github.com/halcyon-past/byakugan-scan/releases/latest) or our [Official Website](https://byakugan-scan.aritro.cloud).
-2. Open the downloaded `.dmg` and drag **Byakugan Scan** into your `/Applications` folder.
-3. Launch the app and grant **Screen Recording** permission when prompted in **System Settings > Privacy & Security > Screen Recording** (used strictly for silent on-device Vision screen analysis).
-
----
-
-## ⌨️ Default Shortcuts
-
-| Action | Shortcut | Description |
-|---|---|---|
-| **Capture Text** | `⌘ ⇧ 2` | Interactive crosshair selection for OCR text extraction |
-| **Scan QR Code** | `⌘ ⇧ 6` | Select any region containing a QR code to decode its payload |
-| **Scan Barcode** | `⌘ ⇧ 7` | Decode 1D and 2D commercial/logistics barcodes |
-
-*All shortcuts can be customized in **Settings > Shortcuts**.*
-
----
-
-## 🗂️ Project Architecture
-
-Built following clean architecture and Apple engineering standards:
-
-```
-byakugan-scan/
-├── ByakuganScan.xcodeproj/        # Xcode Project
-├── project.yml                    # XcodeGen declaration file
-├── ByakuganScan/
-│   ├── App/
-│   │   ├── ByakuganScanApp.swift  # SwiftUI Application entry point
-│   │   └── AppDelegate.swift      # Menu bar lifecycle, statusItem, global hotkeys
-│   ├── Core/
-│   │   ├── Models/
-│   │   │   ├── ScanResult.swift   # Scan data models & symbologies
-│   │   │   └── AppSettings.swift  # App preferences state & UserDefaults
-│   │   ├── Services/
-│   │   │   ├── OCRService.swift         # Apple Vision text recognition
-│   │   │   ├── BarcodeService.swift     # QR & barcode detection pipeline
-│   │   │   ├── ScreenCaptureService.swift # Interactive capture controller
-│   │   │   ├── ClipboardService.swift   # NSPasteboard operations
-│   │   │   ├── HotkeyService.swift      # Carbon event tap hotkey registration
-│   │   │   ├── HistoryService.swift     # Local JSON history storage
-│   │   │   └── ScanCoordinator.swift   # Central scan orchestrator
-│   │   └── Extensions/
-│   │       ├── NSImage+Extensions.swift
-│   │       └── String+Extensions.swift
-│   ├── Features/
-│   │   ├── Home/HomeView.swift          # Primary App Window / Dashboard
-│   │   ├── Settings/SettingsView.swift  # 6-pane preferences window
-│   │   └── Legal/
-│   │       ├── PrivacyPolicyView.swift  # In-app Privacy Policy
-│   │       └── TermsOfServiceView.swift # In-app Terms of Service
-│   ├── Shared/
-│   │   ├── Components/MenuBarPopoverView.swift # Native Menu Bar UI
-│   │   └── Constants/AppConstants.swift
-│   └── Resources/
-│       ├── Assets.xcassets/       # AppIcon & MenuBarIcon (Light + Dark mode)
-│       ├── Info.plist             # macOS permissions & bundle configuration
-│       └── ByakuganScan.entitlements # App Sandbox configuration
-├── Assets/Icons/                  # Exported standalone icon assets (Light + Dark)
-├── docs/                          # App Store and Website documentation
-│   ├── APP_STORE_METADATA.md      # Ready-to-copy metadata for App Store Connect
-│   ├── PRIVACY_POLICY.md          # Full privacy policy text
-│   ├── TERMS_OF_SERVICE.md        # Full terms of service text
-│   ├── SUPPORT.md                 # Support documentation & FAQ
-│   ├── CHANGELOG.md               # Version history
-│   └── WEBSITE_CONTENT.md         # Web copy for byakugan-scan.aritro.cloud
-└── LICENSE
-```
-
----
-
-## 🛠️ Build & Run Locally
-
-### Requirements
-- macOS 14.0 (Sonoma) or newer
-- Xcode 15.0+ or Command Line Tools with Swift 6.0+
-- [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`)
-
-### Building
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/aritrosaha/byakugan-scan.git
-   cd byakugan-scan
-   ```
-
-2. Generate or update the Xcode project using XcodeGen:
-   ```bash
-   xcodegen generate
-   ```
-
-3. Build the macOS .app bundle directly:
-   ```bash
-   ./scripts/build_app.sh
-   open "build/Byakugan Scan.app"
-   ```
-
-4. Or open in Xcode:
-   ```bash
-   open ByakuganScan.xcodeproj
-   ```
-
----
-
-## 🧪 Automated Testing
-
-Run the full automated test suite (Swift unit tests + Next.js build verification):
-```bash
+# Run the Swift unit test suite & Next.js website build check
 ./scripts/run_tests.sh
 ```
 
-Tests cover:
-- String extensions (URL, email, phone number, and whitespace formatting)
-- Model serialization (Codable `ScanResult`, `ScanType` symbols)
-- `AppSettings` preferences mutations and defaults
-- `HotkeyService` global shortcut parser
-- `NSImage` resizing and PNG data generation
-- `HistoryService` insertion, removal, favorite toggling, and persistence
-- Next.js website production build validation
+> **Note on TCC permissions when building locally:** [`scripts/build_app.sh`](scripts/build_app.sh) signs the bundle with a stable designated requirement (`designated => identifier "cloud.aritro.byakugan-scan"`) so rebuilding locally does not invalidate your macOS Screen Recording permission entry. If macOS ever caches a stale signature, reset it with:
+> ```bash
+> tccutil reset ScreenCapture cloud.aritro.byakugan-scan
+> ```
 
----
+## Repository Layout
 
-## 🌿 Branching & Contributing
+```text
+ByakuganScan/
+├── App/                  # App entry point, menu bar NSStatusItem, hotkey lifecycle
+├── Core/
+│   ├── Models/           # ScanResult, AppSettings, ThemeAccent, SoundEffect, FeedbackStyle
+│   ├── Services/         # OCRService, BarcodeService, ScreenCaptureService, HotkeyService,
+│   │                     # ClipboardService, HistoryService, UpdateService, URLRouteService
+│   └── Extensions/       # String formatting/regex helpers & NSImage utilities
+├── Features/
+│   ├── Home/             # Dashboard window
+│   ├── Settings/         # 6-tab Settings window (General, Shortcuts, OCR, Clipboard, Appearance, About)
+│   └── Legal/            # In-app Privacy Policy & Terms of Service views
+└── Shared/
+    ├── Components/       # SelectionOverlayController, FloatingHUDController, MenuBarPopoverView
+    └── Constants/        # AppConstants
+Tests/                    # Zero-dependency Swift test runner (RunAllTests.swift)
+website/                  # Next.js 15 site for byakugan-scan.aritro.cloud
+Casks/                    # Homebrew Cask definition synced to halcyon-past/homebrew-tap
+scripts/                  # Build, DMG packaging, test runner, and release automation scripts
+```
 
-We maintain three primary protected branches:
-- **`main`**: Production releases.
-- **`uat`**: Pre-release user acceptance testing.
-- **`dev`**: Active development integration branch (default target for PRs).
+## Contributing
 
-### Branch Naming Conventions:
-- **Feature branches:** `feature/<base-branch>/<feature-name>` (e.g., `feature/dev/ocr-speedup`)
-- **Hotfix branches:** `hotfix/<feature-name>` (e.g., `hotfix/permissions-patch`)
-- **Fork contributions:** Pull requests from forks are automatically recognized by CI and permitted.
+Pull requests should target the `dev` branch using the branch naming convention `feature/dev/<short-name>` or `hotfix/<short-name>`. Before opening a PR, make sure `./scripts/run_tests.sh` passes cleanly. See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-All pull requests require code owner review and passing automated tests before merge. See our complete [Contributing Guide](CONTRIBUTING.md) and [AI Agent Instructions](AGENTS.md) for details.
+## License
 
----
-
-## 📄 Privacy & Permissions
-
-- **Screen Recording Permission:** Required by macOS to capture screen content. Byakugan Scan only captures the exact rectangular frame selected by your cursor. Pixels are processed in volatile memory and never saved to disk or network.
-- **Offline Guarantee:** Byakugan Scan has no networking entitlements (`com.apple.security.network.client: false`). It cannot communicate with the internet.
-
----
-
-## 📜 Legal & Policies
-
-- [Privacy Policy](docs/PRIVACY_POLICY.md)
-- [Terms of Service](docs/TERMS_OF_SERVICE.md)
-- [Support Documentation](docs/SUPPORT.md)
-
----
-
-## 👤 Author
-
-**Aritro Saha**  
-- Website: [byakugan-scan.aritro.cloud](https://byakugan-scan.aritro.cloud)
-- Email: [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)
-
----
-
-## ⚖️ License
-
-Distributed under the MIT License. See [LICENSE](LICENSE) for details.
+MIT © [Aritro Saha](https://aritro.cloud)
