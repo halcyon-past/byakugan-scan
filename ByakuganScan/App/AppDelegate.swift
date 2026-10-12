@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import UserNotifications
+import Combine
 
 /// Application delegate: sets up the menu bar item, hotkeys, settings window, and notification permissions.
 @MainActor
@@ -15,6 +16,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     
     // Hotkey IDs for cleanup
     private var activeHotkeyIDs: [UInt32] = []
+    private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Lifecycle
     
@@ -27,6 +29,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         setupMenuBarItem()
         setupHotkeys()
         requestNotificationPermissions()
+        setupScanningStateObserver()
         
         // Pre-warm the Vision & Neural Engine models in background
         OCRService.shared.warmUp()
@@ -103,15 +106,53 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupMenuBarItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem?.button {
-            let customImage = NSImage(named: "MenuBarIcon")
-            let fallbackImage = NSImage(systemSymbolName: "eye.viewfinder", accessibilityDescription: "Byakugan Scan")
-            let finalImage = customImage ?? fallbackImage
-            finalImage?.isTemplate = true
-            button.image = finalImage
+            resetMenuBarIcon()
             button.action = #selector(statusBarButtonClicked(_:))
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
             button.target = self
         }
+    }
+    
+    private func setupScanningStateObserver() {
+        ScanCoordinator.shared.$isScanning
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isScanning in
+                self?.handleScanningStateChange(isScanning)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func handleScanningStateChange(_ isScanning: Bool) {
+        guard let button = statusItem?.button else { return }
+        
+        if isScanning {
+            // Live scanning activity state: illuminated/active reticle
+            let activeImage = NSImage(systemSymbolName: "viewfinder.circle.fill", accessibilityDescription: "Byakugan Scanning...")
+            activeImage?.isTemplate = true
+            button.image = activeImage
+        } else {
+            // Briefly flash success check reticle before restoring default state
+            if ScanCoordinator.shared.lastResult != nil && ScanCoordinator.shared.lastError == nil {
+                let checkImage = NSImage(systemSymbolName: "checkmark.circle.fill", accessibilityDescription: "Scan Complete")
+                checkImage?.isTemplate = true
+                button.image = checkImage
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { [weak self] in
+                    self?.resetMenuBarIcon()
+                }
+            } else {
+                resetMenuBarIcon()
+            }
+        }
+    }
+    
+    private func resetMenuBarIcon() {
+        guard let button = statusItem?.button else { return }
+        let customImage = NSImage(named: "MenuBarIcon")
+        let fallbackImage = NSImage(systemSymbolName: "eye.viewfinder", accessibilityDescription: "Byakugan Scan")
+        let finalImage = customImage ?? fallbackImage
+        finalImage?.isTemplate = true
+        button.image = finalImage
     }
     
     @objc private func statusBarButtonClicked(_ sender: NSStatusBarButton) {
