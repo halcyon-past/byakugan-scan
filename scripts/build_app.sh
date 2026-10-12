@@ -30,9 +30,13 @@ swiftc -target arm64-apple-macos14.0 \
 
 # 2. Copy Info.plist
 echo "📄 Copying Info.plist..."
+VERSION=$(grep 'static let version =' "$PROJECT_DIR/ByakuganScan/Shared/Constants/AppConstants.swift" | sed -E 's/.*"([^"]+)".*/\1/' | tr -d '[:space:]')
+BUILD_NUM=$(grep 'static let build =' "$PROJECT_DIR/ByakuganScan/Shared/Constants/AppConstants.swift" | sed -E 's/.*"([^"]+)".*/\1/' | tr -d '[:space:]')
 cp "$PROJECT_DIR/ByakuganScan/Resources/Info.plist" "$CONTENTS/Info.plist"
 plutil -replace CFBundleExecutable -string "ByakuganScan" "$CONTENTS/Info.plist"
 plutil -replace CFBundleIdentifier -string "cloud.aritro.byakugan-scan" "$CONTENTS/Info.plist"
+plutil -replace CFBundleShortVersionString -string "${VERSION:-1.0.3}" "$CONTENTS/Info.plist"
+plutil -replace CFBundleVersion -string "${BUILD_NUM:-4}" "$CONTENTS/Info.plist"
 
 # 3. Create .icns file for macOS
 echo "🎨 Generating AppIcon.icns..."

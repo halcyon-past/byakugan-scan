@@ -20,6 +20,7 @@ struct SettingsView: View {
                 case .ocr: OCRSettingsView()
                 case .clipboard: ClipboardSettingsView()
                 case .speech: SpeechSettingsView()
+                case .appearance: AppearanceSettingsView()
                 case .about: AboutSettingsView()
                 }
             }
@@ -34,7 +35,7 @@ struct SettingsView: View {
 // MARK: - Settings Sections
 
 enum SettingsSection: String, CaseIterable, Identifiable, Hashable {
-    case general, shortcuts, ocr, clipboard, speech, about
+    case general, shortcuts, ocr, clipboard, speech, appearance, about
     var id: String { rawValue }
     
     var title: String {
@@ -44,6 +45,7 @@ enum SettingsSection: String, CaseIterable, Identifiable, Hashable {
         case .ocr: return "Recognition"
         case .clipboard: return "Clipboard"
         case .speech: return "Text to Speech"
+        case .appearance: return "Appearance"
         case .about: return "About"
         }
     }
@@ -55,6 +57,7 @@ enum SettingsSection: String, CaseIterable, Identifiable, Hashable {
         case .ocr: return "text.viewfinder"
         case .clipboard: return "doc.on.clipboard"
         case .speech: return "speaker.wave.2"
+        case .appearance: return "paintpalette"
         case .about: return "info.circle"
         }
     }
@@ -74,10 +77,38 @@ struct GeneralSettingsView: View {
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                 
-                Toggle("Play Sound Effects on Capture", isOn: $settings.playSoundOnCapture)
-                Toggle("Show Success Notifications", isOn: $settings.showNotificationOnCapture)
                 Toggle("Automatically Open Links", isOn: $settings.automaticallyOpenLinks)
                 Toggle("Automatically Check for Updates on Launch", isOn: $settings.autoCheckForUpdates)
+            }
+            
+            Section("Feedback & Audio") {
+                Picker("Visual Feedback", selection: $settings.feedbackStyle) {
+                    ForEach(FeedbackStyle.allCases) { style in
+                        Label(style.displayName, systemImage: style.systemImage).tag(style)
+                    }
+                }
+                
+                Toggle("Play Sound on Capture", isOn: $settings.playSoundOnCapture)
+                
+                if settings.playSoundOnCapture {
+                    HStack {
+                        Picker("Sound Effect", selection: $settings.captureSoundEffect) {
+                            ForEach(SoundEffect.allCases) { sound in
+                                Label(sound.displayName, systemImage: sound.systemImage).tag(sound)
+                            }
+                        }
+                        
+                        Button {
+                            settings.captureSoundEffect.play()
+                        } label: {
+                            Image(systemName: "speaker.wave.2.fill")
+                                .font(.system(size: 14))
+                                .foregroundStyle(Color.accentColor)
+                        }
+                        .buttonStyle(.plain)
+                        .help("Preview Sound Effect")
+                    }
+                }
             }
             
             Section("Screen Recording Permission") {
@@ -368,7 +399,71 @@ struct SpeechSettingsView: View {
     }
 }
 
-// MARK: - 6. About Settings (Matches Screenshot 2)
+// MARK: - 6. Appearance Settings (Issue #6)
+
+struct AppearanceSettingsView: View {
+    @EnvironmentObject private var settings: AppSettings
+    
+    var body: some View {
+        Form {
+            Section("Theme & Accent Color") {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Customize your primary accent color for selection boxes, HUD highlights, and badge accents:")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    
+                    HStack(spacing: 16) {
+                        ForEach(ThemeAccent.allCases) { accent in
+                            Button {
+                                settings.themeAccent = accent
+                            } label: {
+                                VStack(spacing: 6) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(accent.color)
+                                            .frame(width: 36, height: 36)
+                                            .shadow(color: accent.color.opacity(0.4), radius: 4, x: 0, y: 2)
+                                        
+                                        if settings.themeAccent == accent {
+                                            Image(systemName: "checkmark")
+                                                .font(.system(size: 14, weight: .bold))
+                                                .foregroundStyle(.white)
+                                        }
+                                    }
+                                    
+                                    Text(accent.displayName)
+                                        .font(.system(size: 10, weight: settings.themeAccent == accent ? .bold : .regular))
+                                        .multilineTextAlignment(.center)
+                                        .frame(width: 80)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.vertical, 8)
+                }
+            }
+            
+            Section("Capture Selection Overlay") {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Overlay Dimming Opacity:")
+                        Spacer()
+                        Text("\(Int(settings.overlayOpacity * 100))%")
+                            .font(.system(.body, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                    }
+                    Slider(value: $settings.overlayOpacity, in: 0.1...0.7, step: 0.05)
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .navigationTitle("Appearance")
+        .padding()
+    }
+}
+
+// MARK: - 7. About Settings (Matches Screenshot 2)
 
 struct AboutSettingsView: View {
     @ObservedObject private var updateService = UpdateService.shared
