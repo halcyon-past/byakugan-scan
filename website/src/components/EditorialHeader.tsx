@@ -57,19 +57,19 @@ export default function EditorialHeader() {
   return (
     <>
       {/* Top Editorial Ticker Bar (Halcyon Announcement Style) */}
-      <div className="w-full bg-[#060814] hairline-b text-[11px] font-mono-tech tracking-wider text-slate-300 py-1.5 px-4 overflow-hidden z-50 relative select-none">
+      <div className="w-full bg-[#0a030e] hairline-b text-[11px] font-mono-tech tracking-wider text-slate-300 py-1.5 px-4 overflow-hidden z-50 relative select-none">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-teal-400 animate-ping" />
-            <span className="text-white font-bold">NEO-VISION PROTOCOL 1.0</span>
-            <span className="hidden sm:inline text-slate-600">/</span>
-            <span className="hidden sm:inline text-slate-300 font-medium">ON-DEVICE OCR & BARCODE ENGINE</span>
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-pink-400 animate-ping" />
+            <span className="text-white font-bold tracking-wide">NEO-VISION PROTOCOL 1.0</span>
+            <span className="hidden sm:inline text-pink-500/40">/</span>
+            <span className="hidden sm:inline text-pink-200/80 font-medium">ON-DEVICE OCR & BARCODE ENGINE</span>
           </div>
 
           <div className="flex items-center gap-4">
             <span className="text-slate-300 hidden md:inline font-mono">{currentTime}</span>
-            <span className="text-slate-600 hidden md:inline">/</span>
-            <span className="text-teal-300 font-bold">100% PRIVATE & OFFLINE</span>
+            <span className="text-pink-500/40 hidden md:inline">/</span>
+            <span className="text-pink-300 font-bold">100% PRIVATE & OFFLINE</span>
           </div>
         </div>
       </div>
@@ -78,14 +78,14 @@ export default function EditorialHeader() {
       <header
         className={`sticky top-0 z-40 w-full transition-all duration-300 ${
           scrolled
-            ? "bg-[#080a18]/95 backdrop-blur-md hairline-b py-3.5 shadow-2xl"
-            : "bg-transparent hairline-b py-5"
+            ? "bg-[#0c0412]/95 backdrop-blur-md hairline-b py-3.5 shadow-2xl"
+            : "bg-transparent hairline-b py-4 sm:py-5"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           {/* Logo Lockup */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/20 group-hover:border-indigo-400/80 transition-colors bg-black flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg overflow-hidden border border-pink-500/30 group-hover:border-pink-400 transition-colors bg-black flex items-center justify-center">
               <Image
                 src="/as-icon-dark.png"
                 alt="Byakugan Scan Monogram"
@@ -98,47 +98,41 @@ export default function EditorialHeader() {
               <span className="font-editorial-display text-2xl font-bold uppercase tracking-tight text-white leading-none">
                 Byakugan Scan
               </span>
-              <span className="text-[9px] font-mono-tech uppercase tracking-widest text-slate-300 font-semibold -mt-0.5">
+              <span className="text-[9px] font-mono-tech uppercase tracking-widest text-pink-300 font-semibold -mt-0.5">
                 白眼 // All-Seeing Eye
               </span>
             </div>
           </Link>
 
-          {/* Desktop Editorial Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-10 text-[13px] font-medium tracking-wide text-slate-200">
+          {/* Clean, Spacious Navigation Links */}
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium tracking-wide text-slate-300">
             <Link
-              href="/#editorial-proof"
-              className="hover:text-white transition-colors relative py-1"
+              href="/#philosophy"
+              className="hover:text-pink-300 transition-colors py-1"
             >
-              01 // The Philosophy
+              Philosophy
             </Link>
             <Link
-              href="/#features"
-              className="hover:text-white transition-colors relative py-1"
+              href="/#capabilities"
+              className="hover:text-pink-300 transition-colors py-1"
             >
-              02 // Capabilities
+              Capabilities
             </Link>
             <Link
-              href="/#shortcuts"
-              className="hover:text-white transition-colors relative py-1"
+              href="/#specs"
+              className="hover:text-pink-300 transition-colors py-1"
             >
-              03 // Keybinds
-            </Link>
-            <Link
-              href="/#interactive-hud"
-              className="hover:text-white transition-colors relative py-1"
-            >
-              04 // Live Simulator
+              Specs
             </Link>
             <Link
               href="/privacy"
-              className="hover:text-white transition-colors relative py-1 text-slate-300"
+              className="hover:text-pink-300 transition-colors py-1"
             >
               Privacy
             </Link>
             <Link
               href="/terms"
-              className="hover:text-white transition-colors relative py-1 text-slate-300"
+              className="hover:text-pink-300 transition-colors py-1"
             >
               Terms
             </Link>
@@ -160,7 +154,7 @@ export default function EditorialHeader() {
               href="https://github.com/halcyon-past/byakugan-scan"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-black bg-white hover:bg-slate-100 rounded transition-all active:scale-95 shadow-md font-mono-tech"
+              className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 rounded transition-all active:scale-95 shadow-md shadow-pink-600/25 font-mono-tech"
             >
               Get For Mac
             </a>
@@ -169,56 +163,50 @@ export default function EditorialHeader() {
           {/* Mobile Menu Trigger */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-slate-300 hover:text-white focus:outline-none"
+            className="md:hidden p-2 text-slate-300 hover:text-white focus:outline-none"
             aria-label="Toggle Navigation"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6 text-pink-300" />}
           </button>
         </div>
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-[#07080d] hairline-b px-6 py-8 space-y-6">
-            <div className="flex flex-col space-y-4 text-base font-medium text-slate-200">
+          <div className="md:hidden bg-[#0c0412] hairline-b px-6 py-6 space-y-5">
+            <div className="flex flex-col space-y-3.5 text-base font-medium text-slate-200">
               <Link
-                href="/#editorial-proof"
+                href="/#philosophy"
                 onClick={() => setMobileMenuOpen(false)}
-                className="hover:text-white"
+                className="hover:text-pink-300 transition-colors"
               >
-                01 // The Philosophy
+                Philosophy
               </Link>
               <Link
-                href="/#features"
+                href="/#capabilities"
                 onClick={() => setMobileMenuOpen(false)}
-                className="hover:text-white"
+                className="hover:text-pink-300 transition-colors"
               >
-                02 // Capabilities
+                Capabilities
               </Link>
               <Link
-                href="/#shortcuts"
+                href="/#specs"
                 onClick={() => setMobileMenuOpen(false)}
-                className="hover:text-white"
+                onClickCapture={() => setMobileMenuOpen(false)}
+                className="hover:text-pink-300 transition-colors"
               >
-                03 // Keybinds
-              </Link>
-              <Link
-                href="/#interactive-hud"
-                onClick={() => setMobileMenuOpen(false)}
-                className="hover:text-white"
-              >
-                04 // Live Simulator
+                Specs
               </Link>
               <Link
                 href="/privacy"
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-300 hover:text-pink-300 transition-colors"
               >
                 Privacy Policy
               </Link>
               <Link
                 href="/terms"
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-300 hover:text-pink-300 transition-colors"
               >
                 Terms of Service
               </Link>
@@ -229,7 +217,7 @@ export default function EditorialHeader() {
                 href="https://github.com/halcyon-past/byakugan-scan"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full text-center py-3 text-xs font-semibold uppercase tracking-wider text-black bg-white rounded font-mono-tech"
+                className="w-full text-center py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-fuchsia-600 to-pink-600 rounded font-mono-tech shadow-md"
               >
                 Download Byakugan Scan
               </a>

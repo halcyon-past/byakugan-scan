@@ -5,10 +5,12 @@
 @tailwind utilities;
 
 :root {
-  --bg-deep: #060812;
-  --chakra-glow: rgba(129, 140, 248, 0.5);
-  --chakra-cyan: #38bdf8;
+  --bg-deep: #08030b;
+  --magenta-glow: rgba(236, 72, 153, 0.45);
+  --magenta-neon: #f43f5e;
+  --fuchsia-bright: #d946ef;
   --gold-accent: #f59e0b;
+  --cyan-accent: #06b6d4;
 }
 
 html.lenis, html.lenis body {
@@ -33,7 +35,7 @@ html.lenis, html.lenis body {
 
 html {
   background-color: var(--bg-deep);
-  color: #f8fafc;
+  color: #fdf2f8;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -42,21 +44,21 @@ body {
   overflow-x: hidden;
   font-family: 'Plus Jakarta Sans', sans-serif;
   background-color: var(--bg-deep);
-  selection-background-color: #6366f1;
+  selection-background-color: #d946ef;
   selection-color: #ffffff;
 }
 
-/* Hairline dividers with high-visibility contrast */
+/* Hairline dividers with elegant magenta-tinted contrast */
 .hairline-b {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(244, 114, 182, 0.14);
 }
 
 .hairline-t {
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid rgba(244, 114, 182, 0.14);
 }
 
 .hairline-r {
-  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  border-right: 1px solid rgba(244, 114, 182, 0.14);
 }
 
 /* Anime Japanese Manga Display Font */
@@ -78,13 +80,13 @@ body {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Glassmorphism with Cyberpunk / Anime Edge - High Readability */
+/* Glassmorphism with Cyberpunk Magenta / Rose Anime Edge */
 .anime-glass {
-  background: rgba(12, 16, 32, 0.88);
+  background: rgba(18, 9, 24, 0.78);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(147, 197, 253, 0.22);
-  box-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(244, 114, 182, 0.22);
+  box-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.55), 0 0 24px -6px rgba(236, 72, 153, 0.15);
 }
 
 .anime-card-hover {
@@ -93,20 +95,20 @@ body {
 
 .anime-card-hover:hover {
   transform: translateY(-4px);
-  border-color: rgba(147, 197, 253, 0.55);
-  box-shadow: 0 16px 40px -10px rgba(99, 102, 241, 0.35);
+  border-color: rgba(244, 114, 182, 0.65);
+  box-shadow: 0 20px 48px -10px rgba(217, 70, 239, 0.4);
 }
 
 /* Manga Speed Lines / Halftone Overlay */
 .manga-grid {
-  background-image: radial-gradient(rgba(129, 140, 248, 0.16) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image: radial-gradient(rgba(244, 114, 182, 0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
 
 /* Scanline Overlay */
 .anime-scanline {
   background: linear-gradient(
-    rgba(18, 16, 38, 0) 50%,
+    rgba(38, 16, 34, 0) 50%,
     rgba(0, 0, 0, 0.3) 50%
   );
   background-size: 100% 4px;
@@ -122,7 +124,7 @@ body {
 .animate-ticker {
   display: flex;
   width: 200%;
-  animation: ticker 28s linear infinite;
+  animation: ticker 32s linear infinite;
 }
 
 .animate-ticker:hover {
@@ -146,12 +148,12 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #060812;
+  background: #08030b;
 }
 ::-webkit-scrollbar-thumb {
-  background: #252354;
+  background: #701a75;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #4338ca;
+  background: #a21caf;
 }

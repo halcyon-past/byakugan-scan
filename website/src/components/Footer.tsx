@@ -4,9 +4,9 @@ import { ArrowUpRight, Github, Mail, ShieldCheck, Heart } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-[#060814] text-slate-300 text-sm py-16 relative overflow-hidden">
+    <footer className="border-t border-pink-500/15 bg-[#08030b] text-slate-300 text-sm py-16 relative overflow-hidden">
       {/* Subtle background chakra line */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-pink-500/40 to-transparent" />
 
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
@@ -27,35 +27,30 @@ export default function Footer() {
             </p>
 
             <div className="flex items-center gap-2 text-xs font-mono text-slate-300">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span>Production Version 1.0.0 (Apple Silicon & Intel)</span>
+              <span className="w-2 h-2 rounded-full bg-pink-500" />
+              <span>Production Version 1.0.0 (Universal Apple Silicon & Intel)</span>
             </div>
           </div>
 
           {/* Product Links */}
           <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-white mb-4 font-mono">
+            <div className="text-xs font-bold uppercase tracking-wider text-pink-400 mb-4 font-mono">
               Product
             </div>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <Link href="/#features" className="text-slate-200 hover:text-white transition-colors">
-                  Core Capabilities
+                <Link href="/#philosophy" className="text-slate-200 hover:text-pink-300 transition-colors">
+                  The Philosophy
                 </Link>
               </li>
               <li>
-                <Link href="/#shortcuts" className="text-slate-200 hover:text-white transition-colors">
-                  Global Shortcuts
+                <Link href="/#capabilities" className="text-slate-200 hover:text-pink-300 transition-colors">
+                  Capabilities
                 </Link>
               </li>
               <li>
-                <Link href="/#interactive-hud" className="text-slate-200 hover:text-white transition-colors">
-                  Workflow
-                </Link>
-              </li>
-              <li>
-                <Link href="/#shortcuts" className="text-slate-200 hover:text-white transition-colors">
-                  FAQ & Permissions
+                <Link href="/#specs" className="text-slate-200 hover:text-pink-300 transition-colors">
+                  Specs & Permissions
                 </Link>
               </li>
             </ul>
@@ -63,26 +58,26 @@ export default function Footer() {
 
           {/* Legal & Author */}
           <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-white mb-4 font-mono">
+            <div className="text-xs font-bold uppercase tracking-wider text-pink-400 mb-4 font-mono">
               Legal & Creator
             </div>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <Link href="/privacy" className="text-slate-200 hover:text-white transition-colors">
+                <Link href="/privacy" className="text-slate-200 hover:text-pink-300 transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-slate-200 hover:text-white transition-colors">
+                <Link href="/terms" className="text-slate-200 hover:text-pink-300 transition-colors">
                   Terms of Service
                 </Link>
               </li>
               <li>
                 <a
                   href="mailto:aritrosaha2025@gmail.com"
-                  className="text-slate-200 hover:text-white transition-colors inline-flex items-center gap-1.5"
+                  className="text-slate-200 hover:text-pink-300 transition-colors inline-flex items-center gap-1.5"
                 >
-                  <Mail className="w-3.5 h-3.5 text-indigo-300" />
+                  <Mail className="w-3.5 h-3.5 text-pink-400" />
                   <span>Support Email</span>
                 </a>
               </li>
@@ -91,9 +86,9 @@ export default function Footer() {
                   href="https://github.com/halcyon-past/byakugan-scan"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-slate-200 hover:text-white transition-colors inline-flex items-center gap-1.5"
+                  className="text-slate-200 hover:text-pink-300 transition-colors inline-flex items-center gap-1.5"
                 >
-                  <Github className="w-3.5 h-3.5 text-indigo-300" />
+                  <Github className="w-3.5 h-3.5 text-pink-400" />
                   <span>GitHub Repository</span>
                 </a>
               </li>
@@ -102,7 +97,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Attribution Bar */}
-        <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-300">
+        <div className="pt-8 border-t border-pink-500/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-300">
           <div className="flex items-center gap-2">
             <span>© 2026 Byakugan Scan. All rights reserved.</span>
           </div>
@@ -114,7 +109,7 @@ export default function Footer() {
               href="https://aritro.cloud"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-bold text-indigo-300 hover:text-white transition-colors inline-flex items-center gap-0.5 underline decoration-indigo-400/60 underline-offset-4"
+              className="font-bold text-pink-400 hover:text-pink-300 transition-colors inline-flex items-center gap-0.5 underline decoration-pink-500/50 underline-offset-4"
             >
               <span>Aritro Saha</span>
               <ArrowUpRight className="w-3.5 h-3.5" />

@@ -56,8 +56,8 @@ export default function ThreeScrollFollowerEye() {
       clearcoat: 1.0,
       clearcoatRoughness: 0.08,
       reflectivity: 0.95,
-      emissive: new THREE.Color(0x312e81),
-      emissiveIntensity: 0.22,
+      emissive: new THREE.Color(0x831843),
+      emissiveIntensity: 0.35,
     });
     const eyeball = new THREE.Mesh(sphereGeo, eyeballMat);
     eyeOrbitGroup.add(eyeball);
@@ -77,8 +77,9 @@ export default function ThreeScrollFollowerEye() {
     const cornea = new THREE.Mesh(corneaGeo, corneaMat);
     eyeOrbitGroup.add(cornea);
 
-    // 5. Anime Byakugan Jutsu Chakra Veins (3D Procedural Vein Network)
+    // 5. Anime Byakugan Jutsu Chakra Veins (Multi-Color Anime Palette)
     const veinSystem = new THREE.Group();
+    const veinColors = [0xf43f5e, 0xd946ef, 0x06b6d4, 0xfbbf24];
     const veinCount = 14;
     for (let i = 0; i < veinCount; i++) {
       const theta = (i / veinCount) * Math.PI * 2 + (Math.random() - 0.5) * 0.2;
@@ -102,21 +103,21 @@ export default function ThreeScrollFollowerEye() {
       const curve = new THREE.CatmullRomCurve3(points);
       const veinGeo = new THREE.TubeGeometry(curve, 24, 0.022 - (i % 3) * 0.005, 8, false);
       const veinMat = new THREE.MeshBasicMaterial({
-        color: i % 2 === 0 ? 0x60a5fa : 0xa78bfa,
+        color: veinColors[i % veinColors.length],
         transparent: true,
-        opacity: 0.75,
+        opacity: 0.8,
       });
       const veinMesh = new THREE.Mesh(veinGeo, veinMat);
       veinSystem.add(veinMesh);
     }
     eyeSystem.add(veinSystem);
 
-    // 6. Holographic Optical Reticle Rings (Anime HUD Targeting)
+    // 6. Holographic Optical Reticle Rings (Neon Magenta / Fuchsia HUD)
     const rings: THREE.Mesh[] = [];
     const ringConfigs = [
-      { r: 1.6, color: 0x818cf8, rotX: 0.15, rotY: 0.1, speed: 0.006 },
-      { r: 2.1, color: 0x38bdf8, rotX: -0.25, rotY: 0.2, speed: -0.005 },
-      { r: 2.65, color: 0xc084fc, rotX: 0.2, rotY: -0.15, speed: 0.004 },
+      { r: 1.6, color: 0xf43f5e, rotX: 0.15, rotY: 0.1, speed: 0.006 },
+      { r: 2.1, color: 0xd946ef, rotX: -0.25, rotY: 0.2, speed: -0.005 },
+      { r: 2.65, color: 0x06b6d4, rotX: 0.2, rotY: -0.15, speed: 0.004 },
     ];
 
     ringConfigs.forEach((cfg) => {
@@ -124,7 +125,7 @@ export default function ThreeScrollFollowerEye() {
       const mat = new THREE.MeshBasicMaterial({
         color: cfg.color,
         transparent: true,
-        opacity: 0.7,
+        opacity: 0.75,
       });
       const ring = new THREE.Mesh(geo, mat);
       ring.rotation.x = cfg.rotX;
@@ -147,7 +148,7 @@ export default function ThreeScrollFollowerEye() {
       const tickLine = new THREE.Line(
         tickGeo,
         new THREE.LineBasicMaterial({
-          color: isMajor ? 0x38bdf8 : 0x818cf8,
+          color: isMajor ? 0xf43f5e : 0xfb7185,
           transparent: true,
           opacity: isMajor ? 0.9 : 0.45,
         })
@@ -156,7 +157,7 @@ export default function ThreeScrollFollowerEye() {
     }
     eyeSystem.add(tickGroup);
 
-    // 7. Swirling Chakra Particle Aura
+    // 7. Swirling Chakra Particle Aura (Pink/Rose Luminescence)
     const particleCount = 280;
     const particleGeo = new THREE.BufferGeometry();
     const particlePositions = new Float32Array(particleCount * 3);
@@ -172,30 +173,34 @@ export default function ThreeScrollFollowerEye() {
     particleGeo.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
 
     const particleMat = new THREE.PointsMaterial({
-      color: 0xc4b5fd,
-      size: 0.05,
+      color: 0xf472b6,
+      size: 0.055,
       transparent: true,
-      opacity: 0.75,
+      opacity: 0.8,
       blending: THREE.AdditiveBlending,
     });
     const particles = new THREE.Points(particleGeo, particleMat);
     eyeSystem.add(particles);
 
-    // 8. Dynamic Lighting
+    // 8. Dynamic Lighting (Magenta & Cyberpunk Accents)
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
-    const mainKeyLight = new THREE.DirectionalLight(0xffffff, 2.5);
+    const mainKeyLight = new THREE.DirectionalLight(0xffffff, 2.4);
     mainKeyLight.position.set(4, 5, 6);
     scene.add(mainKeyLight);
 
-    const purpleFillLight = new THREE.PointLight(0xa855f7, 3.5, 15);
-    purpleFillLight.position.set(-4, -2, 3);
-    scene.add(purpleFillLight);
+    const magentaFillLight = new THREE.PointLight(0xf43f5e, 4.0, 16);
+    magentaFillLight.position.set(-4, -2, 3);
+    scene.add(magentaFillLight);
 
-    const cyanRimLight = new THREE.PointLight(0x38bdf8, 3.0, 12);
+    const cyanRimLight = new THREE.PointLight(0x06b6d4, 2.8, 12);
     cyanRimLight.position.set(0, -4, -2);
     scene.add(cyanRimLight);
+
+    const topFuchsiaLight = new THREE.PointLight(0xd946ef, 3.0, 14);
+    topFuchsiaLight.position.set(2, 4, 2);
+    scene.add(topFuchsiaLight);
 
     // 9. Seamless Waypoint Choreography & Dynamic Mouse Tracking
     let mouseX = 0;
@@ -204,15 +209,17 @@ export default function ThreeScrollFollowerEye() {
     let targetEyeRotY = 0;
     let currentScrollProgress = 0;
 
-    // Semantic trajectory keyframes mapped directly to page sections:
+    // Semantic trajectory keyframes mapped to the updated clean page structure:
     // 1. Hero: Rests naturally in the open right stage beside the typography
-    // 2. Manga Lore: Glides across smoothly to nestle into the dedicated left stage
-    // 3. Product Matrix / Demo: Recedes with depth (z: -1.2) onto the right perimeter, avoiding text
-    // 4. Finale CTA: Smoothly descends into the top center above "ACTIVATE YOUR VISION"
+    // 2. Manga Lore / Philosophy: Glides smoothly to the left stage
+    // 3. Capabilities: Recedes with depth onto the right perimeter
+    // 4. Specs: Hovers at upper-left depth
+    // 5. Finale CTA: Smoothly descends into the top center above "ACTIVATE YOUR VISION"
     const WAYPOINTS_DESKTOP = [
       { t: 0.00, x: 2.2,  y: 0.05, z: 0.0,  scale: 1.05 },
-      { t: 0.32, x: -2.2, y: 0.0,  z: 0.1,  scale: 1.05 },
-      { t: 0.65, x: 2.2,  y: 0.2,  z: -1.2, scale: 0.82 },
+      { t: 0.30, x: -2.2, y: 0.0,  z: 0.1,  scale: 1.05 },
+      { t: 0.65, x: 2.2,  y: 0.25, z: -1.2, scale: 0.82 },
+      { t: 0.85, x: -2.0, y: 0.15, z: -1.0, scale: 0.85 },
       { t: 1.00, x: 0.0,  y: 0.95, z: -0.3, scale: 1.15 },
     ];
 

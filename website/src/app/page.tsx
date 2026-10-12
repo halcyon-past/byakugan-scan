@@ -4,60 +4,55 @@ import { motion } from "framer-motion";
 import {
   ArrowDown,
   ArrowUpRight,
-  Scan,
   Shield,
   Zap,
   Cpu,
-  Layers,
   Eye,
-  CheckCircle2,
   Terminal,
   Sparkles,
-  Command,
 } from "lucide-react";
-import InteractiveScanDemo from "@/components/InteractiveScanDemo";
 import MangaScrollSection from "@/components/MangaScrollSection";
 
 export default function AnimeMasterpieceHome() {
   return (
     <div className="relative w-full overflow-hidden">
-      {/* Ambient Manga Grid & Chakra Dust Overlays */}
+      {/* Ambient Manga Grid Overlay */}
       <div className="absolute inset-0 manga-grid pointer-events-none opacity-40 z-0" />
 
       {/* ======================================================== */}
       {/* 1. HERO SECTION: ANIME CINEMATIC IMPACT */}
       {/* ======================================================== */}
-      <section className="relative min-h-[95vh] flex flex-col justify-between pt-12 sm:pt-20 pb-16 px-6 max-w-7xl mx-auto hairline-b z-20">
+      <section className="relative min-h-[92vh] flex flex-col justify-between pt-10 sm:pt-16 pb-16 px-6 max-w-7xl mx-auto hairline-b z-20">
         {/* Top Monospace Status Telemetry */}
         <div className="flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-300 uppercase tracking-widest hairline-b pb-4">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
-            <span className="text-white font-bold">[01] // JUTSU INITIALIZATION</span>
-            <span className="text-slate-600">|</span>
-            <span className="text-slate-200">APPLE SILICON NEURAL ENGINE</span>
+            <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
+            <span className="text-white font-bold">JUTSU PROTOCOL</span>
+            <span className="text-pink-500/30">|</span>
+            <span className="text-slate-200">APPLE SILICON NEURAL CORE</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-slate-300">CHAKRA FREQUENCY:</span>
-            <span className="text-teal-300 font-bold">100% PURIFIED / OFFLINE</span>
+            <span className="text-slate-300">VISION ENGINE:</span>
+            <span className="text-pink-300 font-bold">100% ON-DEVICE / OFFLINE</span>
           </div>
         </div>
 
         {/* Hero Central Focus */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center my-auto py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center my-auto py-10">
           {/* Left Column: Bold Manga Callout Typography */}
           <div className="lg:col-span-7 flex flex-col justify-center">
             {/* Japanese Kanji Eyebrow */}
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-sm font-kanji font-bold text-indigo-300 tracking-widest uppercase">
+              <span className="text-sm font-kanji font-bold text-pink-400 tracking-widest uppercase">
                 白眼の目覚め // ALL-SEEING VISION SYSTEM
               </span>
-              <div className="h-[1px] w-16 bg-gradient-to-r from-indigo-400 to-transparent" />
+              <div className="h-[1px] w-16 bg-gradient-to-r from-pink-500 to-transparent" />
             </div>
 
             {/* Giant Monumental Headline */}
             <h1 className="font-manga text-5xl sm:text-7xl xl:text-8xl font-black uppercase text-white tracking-wide leading-[0.92] mb-6">
               SEES THROUGH <br />
-              <span className="bg-gradient-to-r from-indigo-200 via-teal-100 to-purple-200 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-pink-400 via-fuchsia-300 to-rose-400 bg-clip-text text-transparent drop-shadow-sm">
                 EVERY OBSTACLE.
               </span>
             </h1>
@@ -73,40 +68,40 @@ export default function AnimeMasterpieceHome() {
                 href="https://github.com/halcyon-past/byakugan-scan"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-8 py-4 bg-white text-black text-xs font-bold font-mono uppercase tracking-wider rounded hover:bg-slate-100 transition-all flex items-center gap-2 shadow-2xl hover:scale-105 active:scale-95"
+                className="px-8 py-4 bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 text-white text-xs font-bold font-mono uppercase tracking-wider rounded transition-all flex items-center gap-2 shadow-2xl shadow-pink-600/30 hover:scale-105 active:scale-95"
               >
-                <span>Get For Mac (Free)</span>
+                <span>Download Free (macOS)</span>
                 <ArrowUpRight className="w-4 h-4" />
               </a>
 
               <a
-                href="#interactive-hud"
-                className="px-6 py-4 bg-white/5 border border-white/20 hover:border-white/40 text-white text-xs font-bold font-mono uppercase tracking-wider rounded hover:bg-white/10 transition-all flex items-center gap-2"
+                href="#capabilities"
+                className="px-6 py-4 bg-pink-950/20 border border-pink-500/30 hover:border-pink-400 text-pink-200 hover:text-white text-xs font-bold font-mono uppercase tracking-wider rounded transition-all flex items-center gap-2"
               >
-                <span>Live Neural HUD</span>
-                <Scan className="w-3.5 h-3.5 text-teal-300" />
+                <span>Explore Capabilities</span>
               </a>
             </div>
           </div>
 
           {/* Right Column: Visual Stage for 3D Follower Eye */}
           <div className="lg:col-span-5 hidden lg:flex items-center justify-center relative min-h-[420px] pointer-events-none">
-            {/* Subtle atmospheric ambient glow behind the 3D eye */}
-            <div className="w-[320px] h-[320px] rounded-full bg-gradient-to-tr from-indigo-500/15 via-purple-500/10 to-transparent blur-3xl" />
+            {/* Ambient magenta/plum atmospheric glow behind the 3D eye */}
+            <div className="w-[340px] h-[340px] rounded-full bg-gradient-to-tr from-fuchsia-600/25 via-pink-600/15 to-rose-600/10 blur-3xl" />
           </div>
         </div>
 
         {/* Hero Bottom Bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6 hairline-t text-xs font-mono text-slate-300">
-          <div className="flex items-center gap-4">
-            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded text-slate-200 font-semibold">[⌘⇧2 TEXT OCR]</span>
-            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded text-slate-200 font-semibold">[⌘⇧3 QR SCAN]</span>
-            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded text-slate-200 font-semibold">[⌘⇧4 BARCODE]</span>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-slate-400 font-medium">QUICK SHORTCUTS:</span>
+            <span className="bg-pink-950/40 border border-pink-500/30 px-2.5 py-1 rounded text-pink-200 font-semibold font-mono">⌘⇧2 Text</span>
+            <span className="bg-fuchsia-950/40 border border-fuchsia-500/30 px-2.5 py-1 rounded text-fuchsia-200 font-semibold font-mono">⌘⇧3 QR</span>
+            <span className="bg-amber-950/40 border border-amber-500/30 px-2.5 py-1 rounded text-amber-200 font-semibold font-mono">⌘⇧4 Barcode</span>
           </div>
 
           <div className="flex items-center gap-2 text-slate-300 font-medium">
-            <span>SCROLL DOWN FOR SPECIFICATIONS</span>
-            <ArrowDown className="w-3.5 h-3.5 animate-bounce text-teal-300" />
+            <span>SCROLL TO EXPLORE</span>
+            <ArrowDown className="w-3.5 h-3.5 animate-bounce text-pink-400" />
           </div>
         </div>
       </section>
@@ -114,51 +109,53 @@ export default function AnimeMasterpieceHome() {
       {/* ======================================================== */}
       {/* 2. INFINITE JUTSU TICKER (Anime Speed Marquee) */}
       {/* ======================================================== */}
-      <div className="w-full bg-[#080a18] hairline-b py-3.5 overflow-hidden select-none z-20 relative">
+      <div className="w-full bg-[#0a030f] hairline-b py-3.5 overflow-hidden select-none z-20 relative">
         <div className="animate-ticker flex items-center gap-8 text-xs font-mono tracking-[0.25em] uppercase text-slate-300 font-medium">
           <span>// ALL-SEEING VISION SYSTEM</span>
-          <span className="text-indigo-400">◆</span>
+          <span className="text-pink-500">◆</span>
           <span>APPLE NEURAL ENGINE CONCURRENCY</span>
-          <span className="text-teal-400">◆</span>
+          <span className="text-cyan-400">◆</span>
           <span>ZERO CLOUD TELEMETRY</span>
-          <span className="text-indigo-400">◆</span>
+          <span className="text-amber-400">◆</span>
           <span>13+ INDUSTRIAL BARCODES</span>
-          <span className="text-teal-400">◆</span>
+          <span className="text-fuchsia-400">◆</span>
           <span>SUB-SECOND REGION OCR</span>
-          <span className="text-indigo-400">◆</span>
+          <span className="text-pink-400">◆</span>
           <span>INVISIBLE MENUBAR UTILITY</span>
-          <span className="text-teal-400">◆</span>
+          <span className="text-cyan-400">◆</span>
           <span>// ALL-SEEING VISION SYSTEM</span>
-          <span className="text-indigo-400">◆</span>
+          <span className="text-pink-500">◆</span>
           <span>APPLE NEURAL ENGINE CONCURRENCY</span>
-          <span className="text-teal-400">◆</span>
+          <span className="text-cyan-400">◆</span>
           <span>ZERO CLOUD TELEMETRY</span>
-          <span className="text-indigo-400">◆</span>
+          <span className="text-amber-400">◆</span>
           <span>13+ INDUSTRIAL BARCODES</span>
-          <span className="text-teal-400">◆</span>
+          <span className="text-fuchsia-400">◆</span>
           <span>SUB-SECOND REGION OCR</span>
-          <span className="text-indigo-400">◆</span>
+          <span className="text-pink-400">◆</span>
           <span>INVISIBLE MENUBAR UTILITY</span>
-          <span className="text-teal-400">◆</span>
+          <span className="text-cyan-400">◆</span>
         </div>
       </div>
 
       {/* ======================================================== */}
       {/* 3. MANGA STORYBOARD PARALLAX LORE SECTION */}
       {/* ======================================================== */}
-      <MangaScrollSection />
+      <div id="philosophy">
+        <MangaScrollSection />
+      </div>
 
       {/* ======================================================== */}
       {/* 4. PRODUCT MATRIX: CAPABILITIES & SYMBOLOGY */}
       {/* ======================================================== */}
-      <section id="features" className="py-28 px-6 max-w-7xl mx-auto hairline-b z-20 relative">
+      <section id="capabilities" className="py-24 px-6 max-w-7xl mx-auto hairline-b z-20 relative">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
-            <span className="text-xs font-mono tracking-widest text-indigo-300 font-semibold uppercase block mb-2">
-              02 // PRODUCT MATRIX
+            <span className="text-xs font-mono tracking-widest text-pink-400 font-semibold uppercase block mb-2">
+              CORE CAPABILITIES
             </span>
             <h2 className="font-manga text-3xl sm:text-5xl font-black uppercase text-white leading-none">
-              TACTICAL CAPABILITIES
+              TACTICAL MODULES
             </h2>
           </div>
 
@@ -173,8 +170,8 @@ export default function AnimeMasterpieceHome() {
           <div className="anime-glass rounded-2xl p-8 flex flex-col justify-between anime-card-hover group">
             <div>
               <div className="flex items-center justify-between text-xs font-mono text-slate-300 mb-6 hairline-b pb-4">
-                <span className="font-semibold text-slate-300">MODULE // OCR-01</span>
-                <span className="text-indigo-300 font-bold">VNRecognizeTextRequest</span>
+                <span className="font-semibold text-slate-300">MODULE // OCR</span>
+                <span className="text-pink-400 font-bold">VNRecognizeTextRequest</span>
               </div>
               <h3 className="font-manga text-2xl font-bold uppercase text-white mb-3">
                 Sub-Second Text Extraction
@@ -186,7 +183,7 @@ export default function AnimeMasterpieceHome() {
 
             <div className="pt-6 hairline-t flex items-center justify-between text-xs font-mono">
               <span className="text-slate-400 font-medium">DEFAULT KEYBIND</span>
-              <span className="text-white font-bold bg-white/15 border border-white/20 px-2.5 py-1 rounded">⌘ + ⇧ + 2</span>
+              <span className="text-pink-200 font-bold bg-pink-950/50 border border-pink-500/40 px-2.5 py-1 rounded">⌘ + ⇧ + 2</span>
             </div>
           </div>
 
@@ -194,8 +191,8 @@ export default function AnimeMasterpieceHome() {
           <div className="anime-glass rounded-2xl p-8 flex flex-col justify-between anime-card-hover group">
             <div>
               <div className="flex items-center justify-between text-xs font-mono text-slate-300 mb-6 hairline-b pb-4">
-                <span className="font-semibold text-slate-300">MODULE // QR-02</span>
-                <span className="text-teal-300 font-bold">VNBarcodeSymbology.qr</span>
+                <span className="font-semibold text-slate-300">MODULE // QR MATRIX</span>
+                <span className="text-cyan-400 font-bold">VNBarcodeSymbology.qr</span>
               </div>
               <h3 className="font-manga text-2xl font-bold uppercase text-white mb-3">
                 Display QR Matrix Decoder
@@ -207,7 +204,7 @@ export default function AnimeMasterpieceHome() {
 
             <div className="pt-6 hairline-t flex items-center justify-between text-xs font-mono">
               <span className="text-slate-400 font-medium">DEFAULT KEYBIND</span>
-              <span className="text-white font-bold bg-white/15 border border-white/20 px-2.5 py-1 rounded">⌘ + ⇧ + 3</span>
+              <span className="text-cyan-200 font-bold bg-cyan-950/50 border border-cyan-500/40 px-2.5 py-1 rounded">⌘ + ⇧ + 3</span>
             </div>
           </div>
 
@@ -215,11 +212,11 @@ export default function AnimeMasterpieceHome() {
           <div className="anime-glass rounded-2xl p-8 flex flex-col justify-between anime-card-hover group">
             <div>
               <div className="flex items-center justify-between text-xs font-mono text-slate-300 mb-6 hairline-b pb-4">
-                <span className="font-semibold text-slate-300">MODULE // BARCODE-03</span>
-                <span className="text-amber-300 font-bold">13 SYMBOLOGIES</span>
+                <span className="font-semibold text-slate-300">MODULE // BARCODE</span>
+                <span className="text-amber-400 font-bold">13 SYMBOLOGIES</span>
               </div>
               <h3 className="font-manga text-2xl font-bold uppercase text-white mb-3">
-                Industrial Commercial Barcodes
+                Industrial Barcodes
               </h3>
               <p className="text-sm text-slate-200 leading-relaxed mb-6 font-normal">
                 Decodes EAN-13, UPC-E, Code 128, Code 39, Data Matrix, Aztec, and PDF417 format standards for logistics, retail, and hardware engineering.
@@ -228,39 +225,20 @@ export default function AnimeMasterpieceHome() {
 
             <div className="pt-6 hairline-t flex items-center justify-between text-xs font-mono">
               <span className="text-slate-400 font-medium">DEFAULT KEYBIND</span>
-              <span className="text-white font-bold bg-white/15 border border-white/20 px-2.5 py-1 rounded">⌘ + ⇧ + 4</span>
+              <span className="text-amber-200 font-bold bg-amber-950/50 border border-amber-500/40 px-2.5 py-1 rounded">⌘ + ⇧ + 4</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* ======================================================== */}
-      {/* 5. INTERACTIVE LIVE PRODUCT DEMO */}
+      {/* 5. TECHNICAL ARCHITECTURE SPECIFICATIONS */}
       {/* ======================================================== */}
-      <section id="interactive-hud" className="py-28 px-6 max-w-7xl mx-auto hairline-b z-20 relative">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-mono tracking-widest text-indigo-300 font-semibold uppercase block mb-2">
-            03 // HOW IT WORKS
-          </span>
-          <h2 className="font-manga text-3xl sm:text-5xl font-black uppercase text-white leading-none mb-4">
-            FROM SCREEN TO CLIPBOARD
-          </h2>
-          <p className="text-slate-200 text-sm sm:text-base font-normal max-w-2xl mx-auto leading-relaxed">
-            Select a scan mode below and click &quot;Test Capture&quot; to see how raw screen content transforms into clean, formatted clipboard data.
-          </p>
-        </div>
-
-        <InteractiveScanDemo />
-      </section>
-
-      {/* ======================================================== */}
-      {/* 6. TECHNICAL ARCHITECTURE SPECIFICATIONS */}
-      {/* ======================================================== */}
-      <section id="shortcuts" className="py-28 px-6 max-w-7xl mx-auto hairline-b z-20 relative">
+      <section id="specs" className="py-24 px-6 max-w-7xl mx-auto hairline-b z-20 relative">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           <div className="lg:col-span-4">
-            <span className="text-xs font-mono tracking-widest text-indigo-300 font-semibold uppercase block mb-2">
-              04 // HARDWARE PROFILE
+            <span className="text-xs font-mono tracking-widest text-pink-400 font-semibold uppercase block mb-2">
+              HARDWARE PROFILE
             </span>
             <h2 className="font-manga text-3xl sm:text-5xl font-black uppercase text-white leading-none mb-6">
               SYSTEM SPECS
@@ -268,7 +246,7 @@ export default function AnimeMasterpieceHome() {
             <p className="text-slate-200 text-sm leading-relaxed mb-6 font-normal">
               Built natively with Swift 6 and Apple Vision to ensure negligible memory overhead and zero UI stuttering.
             </p>
-            <div className="p-5 rounded-xl bg-[#0b0e1e] border border-white/15 font-mono text-xs text-slate-200 space-y-3.5 shadow-xl">
+            <div className="p-6 rounded-2xl bg-[#130719] border border-pink-500/20 font-mono text-xs text-slate-200 space-y-3.5 shadow-xl">
               <div className="flex justify-between items-center">
                 <span className="text-slate-300 font-medium">SUPPORTED OS</span>
                 <span className="text-white font-bold">macOS 14.0+</span>
@@ -283,7 +261,7 @@ export default function AnimeMasterpieceHome() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-300 font-medium">RAM USAGE</span>
-                <span className="text-teal-300 font-bold">&lt; 14 MB Resident</span>
+                <span className="text-pink-300 font-bold">&lt; 14 MB Resident</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-300 font-medium">SANDBOX</span>
@@ -293,7 +271,7 @@ export default function AnimeMasterpieceHome() {
           </div>
 
           <div className="lg:col-span-8 space-y-6">
-            <div className="p-6 rounded-xl bg-[#0b0e1e] border border-white/15 shadow-xl">
+            <div className="p-6 rounded-2xl bg-[#130719] border border-pink-500/20 shadow-xl">
               <h4 className="text-base font-bold text-white mb-2 font-manga tracking-wide">
                 Why is Screen Recording permission required?
               </h4>
@@ -302,16 +280,16 @@ export default function AnimeMasterpieceHome() {
               </p>
             </div>
 
-            <div className="p-6 rounded-xl bg-[#0b0e1e] border border-white/15 shadow-xl">
+            <div className="p-6 rounded-2xl bg-[#130719] border border-pink-500/20 shadow-xl">
               <h4 className="text-base font-bold text-white mb-2 font-manga tracking-wide">
                 Does Byakugan Scan transmit telemetry to external servers?
               </h4>
               <p className="text-sm text-slate-200 leading-relaxed font-normal">
-                None. The app sandbox completely excludes network client entitlements (<code className="text-indigo-200 font-mono bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-700/40">com.apple.security.network.client: false</code>). It cannot make outbound network connections. Your screen content is 100% private and offline.
+                None. The app sandbox completely excludes network client entitlements (<code className="text-pink-200 font-mono bg-pink-950/60 px-1.5 py-0.5 rounded border border-pink-500/40">com.apple.security.network.client: false</code>). It cannot make outbound network connections. Your screen content is 100% private and offline.
               </p>
             </div>
 
-            <div className="p-6 rounded-xl bg-[#0b0e1e] border border-white/15 shadow-xl">
+            <div className="p-6 rounded-2xl bg-[#130719] border border-pink-500/20 shadow-xl">
               <h4 className="text-base font-bold text-white mb-2 font-manga tracking-wide">
                 Can I customize the keyboard shortcuts?
               </h4>
@@ -324,10 +302,10 @@ export default function AnimeMasterpieceHome() {
       </section>
 
       {/* ======================================================== */}
-      {/* 7. FINALE CALL TO ACTION */}
+      {/* 6. FINALE CALL TO ACTION */}
       {/* ======================================================== */}
-      <section className="py-32 px-6 max-w-5xl mx-auto text-center z-20 relative">
-        <span className="text-xs font-mono tracking-widest text-slate-300 font-semibold uppercase block mb-3">
+      <section className="py-28 px-6 max-w-5xl mx-auto text-center z-20 relative">
+        <span className="text-xs font-mono tracking-widest text-pink-400 font-semibold uppercase block mb-3">
           OPEN SOURCE MAC UTILITY // MIT LICENSE
         </span>
         <h2 className="font-manga text-5xl sm:text-7xl font-black uppercase text-white tracking-wider leading-none mb-6">
@@ -342,7 +320,7 @@ export default function AnimeMasterpieceHome() {
             href="https://github.com/halcyon-past/byakugan-scan"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-8 py-4 bg-white text-black text-xs font-bold font-mono uppercase tracking-wider rounded hover:bg-slate-100 transition-all flex items-center gap-2 shadow-2xl hover:scale-105 active:scale-95"
+            className="px-8 py-4 bg-gradient-to-r from-fuchsia-600 via-pink-600 to-rose-600 hover:from-fuchsia-500 hover:to-rose-500 text-white text-xs font-bold font-mono uppercase tracking-wider rounded transition-all flex items-center gap-2 shadow-2xl shadow-pink-600/30 hover:scale-105 active:scale-95"
           >
             <span>Download Byakugan Scan</span>
             <ArrowUpRight className="w-4 h-4" />
