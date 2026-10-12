@@ -118,12 +118,12 @@ export default function Footer() {
           </div>
 
           {/* Explicit Creator Attribution */}
-          <div className="flex items-center gap-1.5 text-slate-400 font-medium">
+          <div className="flex flex-wrap items-center gap-1.5 text-slate-400 font-medium">
             <span>Created by</span>
             <a
-              href="https://aritro.cloud"
+              href="https://www.aritro.cloud/"
               target="_blank"
-              rel="noopener noreferrer"
+              rel="author me noopener noreferrer"
               className="font-bold text-pink-300 hover:text-white transition-colors inline-flex items-center gap-0.5 underline decoration-pink-500/40 underline-offset-4"
             >
               <span>Aritro Saha</span>
@@ -131,12 +131,22 @@ export default function Footer() {
             </a>
             <span className="text-slate-600">|</span>
             <a
-              href="https://aritro.cloud"
+              href="https://www.aritro.cloud/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-slate-400 hover:text-white transition-colors"
             >
               aritro.cloud
+            </a>
+            <span className="text-slate-600">|</span>
+            <a
+              href="https://www.wikidata.org/wiki/Q141715213"
+              target="_blank"
+              rel="me noopener noreferrer"
+              className="text-slate-500 hover:text-pink-300 transition-colors font-mono text-[11px]"
+              title="Aritro Saha — Wikidata Q141715213"
+            >
+              Q141715213
             </a>
           </div>
         </div>

@@ -6,6 +6,7 @@ import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import ThreeScrollFollowerEye from "@/components/ThreeScrollFollowerEye";
 
 const SITE_URL = "https://byakugan-scan.aritro.cloud";
+const PERSON_ID = "https://www.aritro.cloud/#person";
 
 export const viewport: Viewport = {
   themeColor: "#020307",
@@ -21,14 +22,17 @@ export const metadata: Metadata = {
     template: "%s | Byakugan Scan for macOS",
   },
   description:
-    "Free, open-source macOS menu bar utility for instant in-memory screen OCR, QR code decoding, and barcode scanning. A fast, 100% offline TextSniper alternative powered by Apple Vision on Apple Silicon & Intel.",
+    "Free, open-source macOS menu bar utility by Aritro Saha for instant in-memory screen OCR, QR code decoding, and barcode scanning. A fast, 100% offline TextSniper alternative powered by Apple Vision on Apple Silicon & Intel.",
   applicationName: "Byakugan Scan",
-  authors: [{ name: "Aritro Saha", url: "https://aritro.cloud" }],
+  authors: [{ name: "Aritro Saha", url: "https://www.aritro.cloud/" }],
   creator: "Aritro Saha",
   publisher: "Aritro Saha",
   category: "Developer Tools & Productivity",
   keywords: [
     "Byakugan Scan",
+    "Aritro Saha",
+    "halcyon-past",
+    "Q141715213",
     "macOS OCR app",
     "free TextSniper alternative",
     "open source TextSniper alternative",
@@ -65,7 +69,7 @@ export const metadata: Metadata = {
     siteName: "Byakugan Scan",
     title: "Byakugan Scan — Instant Screen OCR, QR & Barcode Scanner for macOS",
     description:
-      "Extract unselectable text from videos, PDFs, and images or decode on-screen QR codes and barcodes in under 50ms. 100% offline, open-source, and free for macOS.",
+      "Extract unselectable text from videos, PDFs, and images or decode on-screen QR codes and barcodes in under 50ms. 100% offline, open-source, and free for macOS. Created by Aritro Saha.",
   },
   twitter: {
     card: "summary_large_image",
@@ -87,6 +91,40 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
+    {
+      "@type": "Person",
+      "@id": PERSON_ID,
+      name: "Aritro Saha",
+      alternateName: ["Aritro", "Megh", "halcyon-past"],
+      url: "https://www.aritro.cloud/",
+      jobTitle: "Software Engineer 1",
+      worksFor: {
+        "@type": "Organization",
+        name: "Bristol Myers Squibb",
+        alternateName: "BMS",
+        url: "https://www.bms.com/",
+      },
+      alumniOf: {
+        "@type": "CollegeOrUniversity",
+        name: "Vellore Institute of Technology, Chennai",
+      },
+      sameAs: [
+        "https://www.wikidata.org/wiki/Q141715213",
+        "https://www.wikidata.org/entity/Q141715213",
+        "https://www.aritro.cloud/",
+        "https://linkedin.com/in/aritro-saha",
+        "https://github.com/halcyon-past",
+        "https://pypi.org/project/quarantine-py/",
+        "https://leetcode.com/u/AritroSaha/",
+        "https://www.youtube.com/@veripyed",
+        "https://instagram.com/halcyon-past",
+        "https://siliconsync.aritro.cloud/",
+        "https://openworld.aritro.cloud/",
+        "https://byakugan-scan.aritro.cloud/",
+        "https://quarantine-py.aritro.cloud/",
+        "https://structurify.aritro.cloud/",
+      ],
+    },
     {
       "@type": "SoftwareApplication",
       "@id": `${SITE_URL}/#software`,
@@ -121,9 +159,16 @@ const jsonLd = {
         availability: "https://schema.org/InStock",
       },
       author: {
-        "@type": "Person",
-        name: "Aritro Saha",
-        url: "https://aritro.cloud",
+        "@id": PERSON_ID,
+      },
+      creator: {
+        "@id": PERSON_ID,
+      },
+      publisher: {
+        "@id": PERSON_ID,
+      },
+      maintainer: {
+        "@id": PERSON_ID,
       },
       sameAs: [
         "https://github.com/halcyon-past/byakugan-scan",
@@ -150,11 +195,15 @@ const jsonLd = {
       url: SITE_URL,
       name: "Byakugan Scan",
       description:
-        "Official website and documentation for Byakugan Scan — the open-source macOS screen OCR, QR code, and barcode scanner.",
+        "Official website and documentation for Byakugan Scan — the open-source macOS screen OCR, QR code, and barcode scanner by Aritro Saha.",
+      author: {
+        "@id": PERSON_ID,
+      },
+      creator: {
+        "@id": PERSON_ID,
+      },
       publisher: {
-        "@type": "Person",
-        name: "Aritro Saha",
-        url: "https://aritro.cloud",
+        "@id": PERSON_ID,
       },
     },
   ],
@@ -168,14 +217,18 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark scroll-smooth">
       <head>
+        <link rel="author" href="https://www.aritro.cloud/" />
+        <link rel="me" href="https://www.wikidata.org/wiki/Q141715213" />
+        <link rel="me" href="https://github.com/halcyon-past" />
+        <link rel="me" href="https://linkedin.com/in/aritro-saha" />
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM Summary (llms.txt)" />
         <link rel="alternate" type="text/plain" href="/llms-full.txt" title="LLM Full Knowledge Base (llms-full.txt)" />
-      </head>
-      <body className="min-h-screen flex flex-col bg-[#020307] text-slate-100 antialiased selection:bg-indigo-600 selection:text-white relative">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+      </head>
+      <body className="min-h-screen flex flex-col bg-[#020307] text-slate-100 antialiased selection:bg-indigo-600 selection:text-white relative">
         <SmoothScrollProvider>
           {/* Global Floating 3D Follower Byakugan Eye */}
           <ThreeScrollFollowerEye />

@@ -96,7 +96,31 @@ https://github.com/halcyon-past/byakugan-scan/releases/latest/download/ByakuganS
 
 ---
 
-## 7. Contact & Links
+## 7. Author & Knowledge Graph Entity (`https://www.aritro.cloud/#person`)
+
+- **Name:** Aritro Saha (also known as `Aritro`, `Megh`, `halcyon-past`)
+- **Canonical Entity URI:** `https://www.aritro.cloud/#person`
+- **Wikidata Identifier:** [Q141715213](https://www.wikidata.org/wiki/Q141715213) (`https://www.wikidata.org/entity/Q141715213`)
+- **Role & Organization:** Software Engineer 1 at Bristol Myers Squibb (BMS — https://www.bms.com/)
+- **Alma Mater:** Vellore Institute of Technology, Chennai
+- **Official Website:** https://www.aritro.cloud/
+- **Verified Profiles & Ecosystem (`sameAs`):**
+  - Wikidata: https://www.wikidata.org/wiki/Q141715213
+  - GitHub: https://github.com/halcyon-past
+  - LinkedIn: https://linkedin.com/in/aritro-saha
+  - PyPI (`quarantine-py`): https://pypi.org/project/quarantine-py/
+  - LeetCode: https://leetcode.com/u/AritroSaha/
+  - YouTube: https://www.youtube.com/@veripyed
+  - Instagram: https://instagram.com/halcyon-past
+  - SiliconSync: https://siliconsync.aritro.cloud/
+  - OpenWorld: https://openworld.aritro.cloud/
+  - Byakugan Scan: https://byakugan-scan.aritro.cloud/
+  - quarantine-py: https://quarantine-py.aritro.cloud/
+  - Structurify: https://structurify.aritro.cloud/
+
+---
+
+## 8. Contact & Official Links
 
 - **Website:** https://byakugan-scan.aritro.cloud
 - **Support & FAQ:** https://byakugan-scan.aritro.cloud/support
