@@ -11,7 +11,7 @@ struct SettingsView: View {
                 Label(section.title, systemImage: section.systemImage)
                     .tag(section)
             }
-            .navigationSplitViewColumnWidth(min: 160, ideal: 180, max: 200)
+            .navigationSplitViewColumnWidth(min: 175, ideal: 190, max: 215)
         } detail: {
             Group {
                 switch selectedSection {
@@ -27,7 +27,11 @@ struct SettingsView: View {
             .environmentObject(settings)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .frame(minWidth: 620, minHeight: 520)
+        .tint(settings.themeAccent.color)
+        .frame(
+            minWidth: AppConstants.UI.settingsWindowWidth,
+            minHeight: AppConstants.UI.settingsWindowHeight
+        )
         .navigationTitle("Byakugan Scan Settings")
     }
 }
@@ -103,7 +107,7 @@ struct GeneralSettingsView: View {
                         } label: {
                             Image(systemName: "speaker.wave.2.fill")
                                 .font(.system(size: 14))
-                                .foregroundStyle(Color.accentColor)
+                                .foregroundStyle(settings.themeAccent.color)
                         }
                         .buttonStyle(.plain)
                         .help("Preview Sound Effect")
@@ -145,7 +149,6 @@ struct GeneralSettingsView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("General")
-        .padding()
     }
 }
 
@@ -207,7 +210,6 @@ struct ShortcutsSettingsView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("Shortcuts")
-        .padding()
     }
 }
 
@@ -311,7 +313,6 @@ struct OCRSettingsView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("Recognition")
-        .padding()
     }
 }
 
@@ -355,7 +356,6 @@ struct ClipboardSettingsView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("Clipboard")
-        .padding()
     }
 }
 
@@ -395,7 +395,6 @@ struct SpeechSettingsView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("Text to Speech")
-        .padding()
     }
 }
 
@@ -407,59 +406,180 @@ struct AppearanceSettingsView: View {
     var body: some View {
         Form {
             Section("Theme & Accent Color") {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Customize your primary accent color for selection boxes, HUD highlights, and badge accents:")
+                VStack(alignment: .leading, spacing: 14) {
+                    Text("Customize your primary accent color for capture selection boxes, HUD toast highlights, and popover badges:")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                     
-                    HStack(spacing: 16) {
+                    HStack(alignment: .top, spacing: 8) {
                         ForEach(ThemeAccent.allCases) { accent in
+                            let isSelected = settings.themeAccent == accent
                             Button {
-                                settings.themeAccent = accent
+                                withAnimation(.easeInOut(duration: 0.15)) {
+                                    settings.themeAccent = accent
+                                }
                             } label: {
-                                VStack(spacing: 6) {
+                                VStack(spacing: 7) {
                                     ZStack {
                                         Circle()
                                             .fill(accent.color)
                                             .frame(width: 36, height: 36)
-                                            .shadow(color: accent.color.opacity(0.4), radius: 4, x: 0, y: 2)
+                                            .overlay(
+                                                Circle()
+                                                    .strokeBorder(
+                                                        isSelected ? Color.white : Color.white.opacity(0.18),
+                                                        lineWidth: isSelected ? 2.5 : 1.0
+                                                    )
+                                            )
+                                            .shadow(
+                                                color: accent.color.opacity(isSelected ? 0.55 : 0.20),
+                                                radius: isSelected ? 6 : 2,
+                                                x: 0,
+                                                y: 2
+                                            )
                                         
-                                        if settings.themeAccent == accent {
+                                        if isSelected {
                                             Image(systemName: "checkmark")
-                                                .font(.system(size: 14, weight: .bold))
+                                                .font(.system(size: 13, weight: .bold))
                                                 .foregroundStyle(.white)
                                         }
                                     }
                                     
-                                    Text(accent.displayName)
-                                        .font(.system(size: 10, weight: settings.themeAccent == accent ? .bold : .regular))
+                                    Text(accent.shortDisplayName)
+                                        .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
+                                        .foregroundStyle(isSelected ? .primary : .secondary)
                                         .multilineTextAlignment(.center)
-                                        .frame(width: 80)
+                                        .lineLimit(2)
+                                        .fixedSize(horizontal: false, vertical: true)
                                 }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                        .fill(isSelected ? accent.color.opacity(0.12) : Color.clear)
+                                )
                             }
                             .buttonStyle(.plain)
                         }
                     }
-                    .padding(.vertical, 8)
+                    
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(settings.themeAccent.color)
+                            .frame(width: 8, height: 8)
+                        Text("Active Theme: \(settings.themeAccent.displayName)")
+                            .font(.caption.weight(.medium))
+                        Spacer()
+                        Text(settings.themeAccent.hexString.uppercased())
+                            .font(.system(size: 11, weight: .medium, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.top, 2)
                 }
             }
             
             Section("Capture Selection Overlay") {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        Text("Overlay Dimming Opacity:")
+                        Text("Overlay Dimming Opacity")
                         Spacer()
-                        Text("\(Int(settings.overlayOpacity * 100))%")
+                        Text("\(Int((settings.overlayOpacity * 100).rounded()))%")
                             .font(.system(.body, design: .monospaced))
                             .foregroundStyle(.secondary)
                     }
-                    Slider(value: $settings.overlayOpacity, in: 0.1...0.7, step: 0.05)
+                    
+                    Slider(value: $settings.overlayOpacity, in: 0.10...0.70, step: 0.05)
+                        .tint(settings.themeAccent.color)
+                    
+                    // Live Interactive Selection Reticle Preview
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack {
+                            Text("Live Selection Box Preview")
+                                .font(.caption.weight(.medium))
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Button {
+                                ScanCoordinator.shared.startTextScan()
+                            } label: {
+                                Label("Test Capture Overlay", systemImage: "viewfinder")
+                                    .font(.caption.weight(.semibold))
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(settings.themeAccent.color)
+                            .controlSize(.small)
+                        }
+                        
+                        ZStack {
+                            // Simulated desktop code background
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            Color(red: 0.14, green: 0.16, blue: 0.24),
+                                            Color(red: 0.09, green: 0.10, blue: 0.16)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                            
+                            // Simulated background lines
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("func recognizeText(in region: CGRect) async throws -> String")
+                                    .font(.system(size: 10, design: .monospaced))
+                                    .foregroundStyle(.white.opacity(0.65))
+                                Text("let request = VNRecognizeTextRequest()")
+                                    .font(.system(size: 10, design: .monospaced))
+                                    .foregroundStyle(.white.opacity(0.92))
+                                Text("request.recognitionLevel = .accurate")
+                                    .font(.system(size: 10, design: .monospaced))
+                                    .foregroundStyle(.white.opacity(0.92))
+                                Text("try handler.perform([request])")
+                                    .font(.system(size: 10, design: .monospaced))
+                                    .foregroundStyle(.white.opacity(0.65))
+                            }
+                            .padding(14)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            // Dimming backdrop overlay
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(Color.black.opacity(settings.overlayOpacity * 0.85))
+                            
+                            // Active selection box cutout + theme tint
+                            ZStack(alignment: .bottomTrailing) {
+                                RoundedRectangle(cornerRadius: 3)
+                                    .fill(settings.themeAccent.color.opacity(0.16))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 3)
+                                            .strokeBorder(settings.themeAccent.color, lineWidth: 2)
+                                    )
+                                    .shadow(color: settings.themeAccent.color.opacity(0.55), radius: 6)
+                                    .frame(width: 240, height: 56)
+                                
+                                Text("240 × 56")
+                                    .font(.system(size: 9, weight: .bold, design: .monospaced))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(settings.themeAccent.color, in: RoundedRectangle(cornerRadius: 4))
+                                    .offset(x: 0, y: 20)
+                            }
+                            .offset(y: -4)
+                        }
+                        .frame(height: 118)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .strokeBorder(Color.white.opacity(0.10), lineWidth: 1)
+                        )
+                    }
+                    .padding(.top, 4)
                 }
             }
         }
         .formStyle(.grouped)
         .navigationTitle("Appearance")
-        .padding()
     }
 }
 

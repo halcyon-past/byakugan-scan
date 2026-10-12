@@ -239,11 +239,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         
         if settingsWindow == nil {
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 620, height: 520),
+                contentRect: NSRect(
+                    x: 0,
+                    y: 0,
+                    width: AppConstants.UI.settingsWindowWidth,
+                    height: AppConstants.UI.settingsWindowHeight
+                ),
                 styleMask: [.titled, .closable, .miniaturizable, .resizable],
                 backing: .buffered,
                 defer: false
             )
+            window.minSize = NSSize(width: 660, height: 500)
             window.center()
             window.title = "Byakugan Scan Settings"
             window.isReleasedWhenClosed = false

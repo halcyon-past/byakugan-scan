@@ -40,6 +40,7 @@ struct MenuBarPopoverView: View {
             footerSection
         }
         .frame(width: 340)
+        .tint(settings.themeAccent.color)
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("SwitchToHistoryTab"))) { _ in
             selectedTab = .history
         }
@@ -51,7 +52,7 @@ struct MenuBarPopoverView: View {
         HStack {
             Image(systemName: "eye.viewfinder")
                 .font(.title2)
-                .foregroundStyle(.indigo)
+                .foregroundStyle(settings.themeAccent.color)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Byakugan Scan")
                     .font(.headline)
@@ -83,7 +84,7 @@ struct MenuBarPopoverView: View {
                 title: "Capture Text",
                 subtitle: settings.textScanShortcut,
                 icon: "text.viewfinder",
-                color: .indigo
+                color: settings.themeAccent.color
             ) {
                 AppDelegate.shared?.closePopover()
                 ScanCoordinator.shared.startTextScan()
