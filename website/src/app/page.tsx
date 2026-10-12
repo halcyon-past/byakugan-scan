@@ -90,21 +90,9 @@ export default function AnimeMasterpieceHome() {
           </div>
 
           {/* Right Column: Visual Stage for 3D Follower Eye */}
-          <div className="lg:col-span-5 hidden lg:flex items-center justify-center relative min-h-[380px]">
-            {/* Ambient HUD target frame that frames the 3D canvas floating above it */}
-            <div className="w-[360px] h-[360px] rounded-3xl border border-dashed border-indigo-500/30 p-4 flex flex-col justify-between relative pointer-events-none">
-              <div className="flex justify-between text-[10px] font-mono text-indigo-400">
-                <span>[360° RETICLE]</span>
-                <span>[M1-M4 ACCELERATED]</span>
-              </div>
-              <div className="text-center font-mono text-[10px] text-slate-500 tracking-widest uppercase">
-                SCROLL TO TRACK THE EYE
-              </div>
-              <div className="flex justify-between text-[10px] font-mono text-teal-400">
-                <span>[NEO-BYAKUGAN]</span>
-                <span>[100% OFFLINE]</span>
-              </div>
-            </div>
+          <div className="lg:col-span-5 hidden lg:flex items-center justify-center relative min-h-[420px] pointer-events-none">
+            {/* Subtle atmospheric ambient glow behind the 3D eye */}
+            <div className="w-[320px] h-[320px] rounded-full bg-gradient-to-tr from-indigo-500/10 via-purple-500/5 to-transparent blur-3xl" />
           </div>
         </div>
 
