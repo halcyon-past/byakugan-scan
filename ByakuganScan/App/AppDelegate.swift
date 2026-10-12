@@ -31,6 +31,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Pre-warm the Vision & Neural Engine models in background
         OCRService.shared.warmUp()
         
+        // Check for updates if enabled in user settings
+        if AppSettings.shared.autoCheckForUpdates {
+            Task {
+                await UpdateService.shared.checkForUpdates(silent: true)
+            }
+        }
+        
         // Listen for settings window triggers & setting changes
         NotificationCenter.default.addObserver(
             self,

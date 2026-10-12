@@ -198,6 +198,76 @@ struct TestRunner {
             try assertEqual(history.history.count, 0)
         }
 
+        // 7. UpdateService & In-Place Updater Tests
+        print("\n▶️ [Suite 7/7] Native In-Place UpdateService")
+        test("Semantic version comparison: basic increments") {
+            try assertTrue(UpdateService.compareVersions("1.0.1", "1.0.0") == .orderedDescending)
+            try assertTrue(UpdateService.compareVersions("1.0.0", "1.0.0") == .orderedSame)
+            try assertTrue(UpdateService.compareVersions("1.0.0", "1.0.1") == .orderedAscending)
+        }
+
+        test("Semantic version comparison: prefix and formatting normalization") {
+            try assertTrue(UpdateService.compareVersions("v1.0.1", "1.0.0") == .orderedDescending)
+            try assertTrue(UpdateService.compareVersions("V2.0.0", "v1.9.9") == .orderedDescending)
+            try assertTrue(UpdateService.compareVersions("  1.0.0  ", "1.0.0") == .orderedSame)
+        }
+
+        test("Semantic version comparison: multi-digit numerical sorting") {
+            // "1.10.0" must be greater than "1.2.0" (numerical, not ASCII string comparison)
+            try assertTrue(UpdateService.compareVersions("1.10.0", "1.2.0") == .orderedDescending)
+            try assertTrue(UpdateService.compareVersions("1.2.0", "1.10.0") == .orderedAscending)
+        }
+
+        test("Semantic version comparison: varying length segments") {
+            try assertTrue(UpdateService.compareVersions("1.0.0.1", "1.0.0") == .orderedDescending)
+            try assertTrue(UpdateService.compareVersions("1.0", "1.0.0") == .orderedSame)
+            try assertTrue(UpdateService.compareVersions("2.0", "1.9.9") == .orderedDescending)
+        }
+
+        test("isVersion newerThan helper") {
+            try assertTrue(UpdateService.isVersion("1.0.1", newerThan: "1.0.0"))
+            try assertFalse(UpdateService.isVersion("1.0.0", newerThan: "1.0.0"))
+            try assertFalse(UpdateService.isVersion("0.9.9", newerThan: "1.0.0"))
+        }
+
+        test("GitHubReleaseInfo preferred asset selection") {
+            let zipURL = URL(string: "https://github.com/halcyon-past/byakugan-scan/releases/download/v1.0.1/ByakuganScan.zip")!
+            let dmgURL = URL(string: "https://github.com/halcyon-past/byakugan-scan/releases/download/v1.0.1/ByakuganScan.dmg")!
+            let htmlURL = URL(string: "https://github.com/halcyon-past/byakugan-scan/releases/tag/v1.0.1")!
+
+            let infoWithBoth = GitHubReleaseInfo(
+                tagName: "v1.0.1",
+                version: "1.0.1",
+                releaseNotes: "New features",
+                zipAssetURL: zipURL,
+                dmgAssetURL: dmgURL,
+                htmlURL: htmlURL
+            )
+            // Prefers ZIP for in-place auto-update speed
+            try assertEqual(infoWithBoth.preferredAssetURL, zipURL)
+            try assertTrue(infoWithBoth.isZip)
+
+            let infoWithDmgOnly = GitHubReleaseInfo(
+                tagName: "v1.0.1",
+                version: "1.0.1",
+                releaseNotes: "New features",
+                zipAssetURL: nil,
+                dmgAssetURL: dmgURL,
+                htmlURL: htmlURL
+            )
+            try assertEqual(infoWithDmgOnly.preferredAssetURL, dmgURL)
+            try assertFalse(infoWithDmgOnly.isZip)
+        }
+
+        test("UpdateState equality verification") {
+            try assertTrue(UpdateState.idle == UpdateState.idle)
+            try assertTrue(UpdateState.checking == UpdateState.checking)
+            try assertTrue(UpdateState.upToDate(version: "1.0.0") == UpdateState.upToDate(version: "1.0.0"))
+            try assertFalse(UpdateState.upToDate(version: "1.0.0") == UpdateState.upToDate(version: "1.0.1"))
+            try assertTrue(UpdateState.error(message: "Failed") == UpdateState.error(message: "Failed"))
+            try assertFalse(UpdateState.error(message: "Failed") == UpdateState.error(message: "Other"))
+        }
+
         // Summary Report
         print("\n=======================================================")
         print("📊 TEST EXECUTION SUMMARY")

@@ -6,6 +6,17 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [1.0.1] — 2026-10-12
+
+### Added
+- **Native Zero-Dependency In-Place Auto-Updater:** Seamless in-app version checker in the About settings tab that queries the GitHub Releases API and executes an atomic in-place binary swap and restart without requiring users to download or drag a DMG.
+- **Automatic Background Update Checks on Launch:** Configurable user preference in General settings to silently check for new releases when Byakugan Scan launches.
+- **Interactive Update Notification Banner:** Dynamic notification badge in the menu bar popover and About settings directing users to update with a single click.
+- **ZIP Release Artifacts:** Added compressed `ByakuganScan.zip` release packages alongside universal DMGs for instantaneous in-place extraction via native macOS `ditto`.
+- **Automated Test Suite Expansion:** Added automated unit tests covering semantic version comparison, numeric chunk sorting, GitHub release asset discovery, and update lifecycle states (21 passing tests).
+
+---
+
 ## [1.0.0] — 2026-10-12
 
 ### 🎉 Initial Release

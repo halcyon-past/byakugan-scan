@@ -15,6 +15,7 @@ SWIFT_FILES=(
   "$PROJECT_DIR/ByakuganScan/Core/Models/AppSettings.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Services/HotkeyService.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Services/HistoryService.swift"
+  "$PROJECT_DIR/ByakuganScan/Core/Services/UpdateService.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Extensions/NSImage+Extensions.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Extensions/String+Extensions.swift"
   "$PROJECT_DIR/ByakuganScan/Shared/Constants/AppConstants.swift"

@@ -57,7 +57,13 @@ struct MenuBarPopoverView: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            if coordinator.isScanning {
+            if case .available(let ver, _, _, _) = UpdateService.shared.state {
+                Button("Update (v\(ver))") {
+                    AppDelegate.shared?.openSettings()
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.mini)
+            } else if coordinator.isScanning {
                 ProgressView()
                     .scaleEffect(0.7)
             }

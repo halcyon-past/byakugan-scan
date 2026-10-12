@@ -14,8 +14,8 @@ options:
 settings:
   SWIFT_VERSION: "6.0"
   MACOSX_DEPLOYMENT_TARGET: "14.0"
-  MARKETING_VERSION: "1.0.0"
-  CURRENT_PROJECT_VERSION: "1"
+  MARKETING_VERSION: "1.0.1"
+  CURRENT_PROJECT_VERSION: "2"
   PRODUCT_BUNDLE_IDENTIFIER: "cloud.aritro.byakugan-scan"
   CODE_SIGN_STYLE: Automatic
   DEVELOPMENT_TEAM: ""
@@ -57,7 +57,7 @@ targets:
         com.apple.security.files.user-selected.read-write: true
         com.apple.security.temporary-exception.files.absolute-path.read-write:
           - "/tmp/"
-        com.apple.security.network.client: false
+        com.apple.security.network.client: true
 
     sources:
       - path: ByakuganScan

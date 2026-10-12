@@ -77,6 +77,7 @@ struct GeneralSettingsView: View {
                 Toggle("Play Sound Effects on Capture", isOn: $settings.playSoundOnCapture)
                 Toggle("Show Success Notifications", isOn: $settings.showNotificationOnCapture)
                 Toggle("Automatically Open Links", isOn: $settings.automaticallyOpenLinks)
+                Toggle("Automatically Check for Updates on Launch", isOn: $settings.autoCheckForUpdates)
             }
             
             Section("Screen Recording Permission") {
@@ -367,48 +368,167 @@ struct SpeechSettingsView: View {
 // MARK: - 6. About Settings (Matches Screenshot 2)
 
 struct AboutSettingsView: View {
+    @ObservedObject private var updateService = UpdateService.shared
+    @State private var isPerformingUpdate = false
+    
     var body: some View {
-        VStack(spacing: 20) {
-            Image(nsImage: NSImage(named: "MenuBarIcon") ?? NSImage())
-                .resizable()
-                .frame(width: 80, height: 80)
-                .background(.quaternary, in: RoundedRectangle(cornerRadius: 18))
-            
-            VStack(spacing: 4) {
-                Text(AppConstants.App.name)
-                    .font(.title2.weight(.bold))
-                Text("Version \(AppConstants.App.version) (\(AppConstants.App.build))")
+        ScrollView {
+            VStack(spacing: 20) {
+                Image(nsImage: NSImage(named: "MenuBarIcon") ?? NSImage())
+                    .resizable()
+                    .frame(width: 80, height: 80)
+                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 18))
+                
+                VStack(spacing: 4) {
+                    Text(AppConstants.App.name)
+                        .font(.title2.weight(.bold))
+                    Text("Version \(AppConstants.App.version) (\(AppConstants.App.build))")
+                        .foregroundStyle(.secondary)
+                }
+                
+                // In-App Update Engine Card
+                updateSectionView
+                
+                Text("High-performance on-device screen text capture, QR code, and barcode scanner for macOS.")
+                    .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
+                    .frame(maxWidth: 360)
+                
+                HStack(spacing: 16) {
+                    Link("Website", destination: AppConstants.App.websiteURL)
+                    Link("Privacy Policy", destination: AppConstants.App.privacyURL)
+                    Link("Terms of Service", destination: AppConstants.App.termsURL)
+                    Link("Support", destination: AppConstants.App.supportURL)
+                }
+                .font(.callout)
+                
+                Divider()
+                
+                HStack {
+                    Text("Send Feedback:")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Link("aritrosaha2025@gmail.com", destination: URL(string: "mailto:aritrosaha2025@gmail.com")!)
+                        .font(.caption)
+                }
+                
+                Text("© 2026 Aritro Saha. All rights reserved.")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
             }
-            
-            Text("High-performance on-device screen text capture, QR code, and barcode scanner for macOS.")
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: 360)
-            
-            HStack(spacing: 16) {
-                Link("Website", destination: AppConstants.App.websiteURL)
-                Link("Privacy Policy", destination: AppConstants.App.privacyURL)
-                Link("Terms of Service", destination: AppConstants.App.termsURL)
-                Link("Support", destination: AppConstants.App.supportURL)
-            }
-            .font(.callout)
-            
-            Divider()
-            
-            HStack {
-                Text("Send Feedback:")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Link("aritrosaha2025@gmail.com", destination: URL(string: "mailto:aritrosaha2025@gmail.com")!)
-                    .font(.caption)
-            }
-            
-            Text("© 2026 Aritro Saha. All rights reserved.")
-                .font(.caption2)
-                .foregroundStyle(.tertiary)
+            .padding(32)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .padding(32)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    @ViewBuilder
+    private var updateSectionView: some View {
+        VStack(spacing: 10) {
+            switch updateService.state {
+            case .idle:
+                Button {
+                    Task { await updateService.checkForUpdates() }
+                } label: {
+                    Label("Check for Updates", systemImage: "arrow.triangle.2.circlepath")
+                }
+                .buttonStyle(.borderedProminent)
+                
+            case .checking:
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .scaleEffect(0.7)
+                    Text("Checking for updates...")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 4)
+                
+            case .upToDate(let version):
+                VStack(spacing: 6) {
+                    Label("You're on the latest version (v\(version))", systemImage: "checkmark.circle.fill")
+                        .font(.callout.weight(.medium))
+                        .foregroundStyle(.green)
+                    Button("Check Again") {
+                        Task { await updateService.checkForUpdates() }
+                    }
+                    .font(.caption)
+                    .buttonStyle(.link)
+                }
+                
+            case .available(let version, let notes, _, _):
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack {
+                        Label("New Version Available: v\(version)", systemImage: "sparkles")
+                            .font(.headline)
+                            .foregroundStyle(.indigo)
+                        Spacer()
+                    }
+                    
+                    Text(notes)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(4)
+                    
+                    HStack(spacing: 12) {
+                        Button {
+                            isPerformingUpdate = true
+                            Task {
+                                do {
+                                    try await updateService.downloadAndInstallUpdate()
+                                } catch {
+                                    isPerformingUpdate = false
+                                }
+                            }
+                        } label: {
+                            if isPerformingUpdate {
+                                HStack(spacing: 6) {
+                                    ProgressView().scaleEffect(0.6)
+                                    Text("Updating...")
+                                }
+                            } else {
+                                Text("Update & Relaunch")
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .disabled(isPerformingUpdate)
+                        
+                        Link("Download DMG", destination: URL(string: "https://github.com/halcyon-past/byakugan-scan/releases/latest/download/ByakuganScan.dmg")!)
+                            .font(.caption)
+                    }
+                }
+                .padding(14)
+                .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+                .frame(maxWidth: 380)
+                
+            case .downloading(let progress):
+                VStack(spacing: 6) {
+                    ProgressView(value: progress > 0 ? progress : nil)
+                    Text("Downloading update...")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: 240)
+                
+            case .installing:
+                HStack(spacing: 8) {
+                    ProgressView().scaleEffect(0.7)
+                    Text("Installing update & relaunching...")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                
+            case .error(let message):
+                VStack(spacing: 6) {
+                    Label(message, systemImage: "exclamationmark.triangle.fill")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                    Button("Try Again") {
+                        Task { await updateService.checkForUpdates() }
+                    }
+                    .font(.caption)
+                    .buttonStyle(.link)
+                }
+            }
+        }
     }
 }

@@ -54,9 +54,20 @@ cp "$DMG_OUTPUT" "$VERSIONED_DMG_OUTPUT"
 # Clean staging directory
 rm -rf "$STAGING_DIR"
 
+# 5. Generate signed ZIP archive for native in-place auto-updater
+echo "📦 Packaging ZIP archive for in-place auto-updater..."
+ZIP_OUTPUT="$BUILD_DIR/ByakuganScan.zip"
+VERSIONED_ZIP_OUTPUT="$BUILD_DIR/ByakuganScan-v$VERSION.zip"
+rm -f "$ZIP_OUTPUT" "$VERSIONED_ZIP_OUTPUT"
+
+ditto -c -k --keepParent "$APP_BUNDLE" "$ZIP_OUTPUT"
+cp "$ZIP_OUTPUT" "$VERSIONED_ZIP_OUTPUT"
+
 echo ""
 echo "======================================================="
-echo "🎉 DMG PACKAGE GENERATED SUCCESSFULLY!"
-echo "   Standard Asset:  $DMG_OUTPUT"
-echo "   Versioned Asset: $VERSIONED_DMG_OUTPUT"
+echo "🎉 RELEASE PACKAGES GENERATED SUCCESSFULLY!"
+echo "   DMG Asset:  $DMG_OUTPUT"
+echo "   DMG Tagged: $VERSIONED_DMG_OUTPUT"
+echo "   ZIP Asset:  $ZIP_OUTPUT"
+echo "   ZIP Tagged: $VERSIONED_ZIP_OUTPUT"
 echo "======================================================="

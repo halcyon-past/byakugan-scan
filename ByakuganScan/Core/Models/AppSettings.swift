@@ -54,6 +54,9 @@ final class AppSettings: ObservableObject {
     @Published var automaticallyOpenLinks: Bool {
         didSet { UserDefaults.standard.set(automaticallyOpenLinks, forKey: Keys.automaticallyOpenLinks) }
     }
+    @Published var autoCheckForUpdates: Bool {
+        didSet { UserDefaults.standard.set(autoCheckForUpdates, forKey: Keys.autoCheckForUpdates) }
+    }
     
     // MARK: - Recognition Language
     @Published var ocrLanguage: String {
@@ -132,6 +135,7 @@ final class AppSettings: ObservableObject {
         self.playSoundOnCapture = ud.object(forKey: Keys.playSoundOnCapture) as? Bool ?? true
         self.showNotificationOnCapture = ud.object(forKey: Keys.showNotificationOnCapture) as? Bool ?? true
         self.automaticallyOpenLinks = ud.object(forKey: Keys.automaticallyOpenLinks) as? Bool ?? false
+        self.autoCheckForUpdates = ud.object(forKey: Keys.autoCheckForUpdates) as? Bool ?? true
         
         self.ocrLanguage = ud.string(forKey: Keys.ocrLanguage) ?? "en-US"
         // Default to FALSE for ultra-fast instant OCR (no multi-lingual detector stall)
@@ -175,6 +179,7 @@ final class AppSettings: ObservableObject {
         static let playSoundOnCapture = "playSoundOnCapture"
         static let showNotificationOnCapture = "showNotificationOnCapture"
         static let automaticallyOpenLinks = "automaticallyOpenLinks"
+        static let autoCheckForUpdates = "autoCheckForUpdates"
         
         static let ocrLanguage = "ocrLanguage"
         static let automaticallyDetectLanguage = "automaticallyDetectLanguage"
@@ -215,6 +220,7 @@ final class AppSettings: ObservableObject {
         playSoundOnCapture = true
         showNotificationOnCapture = true
         automaticallyOpenLinks = false
+        autoCheckForUpdates = true
         
         ocrLanguage = "en-US"
         automaticallyDetectLanguage = false
