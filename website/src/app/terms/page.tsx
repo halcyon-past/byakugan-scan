@@ -1,0 +1,62 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Terms of Service — Byakugan Scan",
+  description: "Terms of Service for Byakugan Scan macOS app and website.",
+};
+
+export default function TermsPage() {
+  return (
+    <div className="py-20 px-6 max-w-4xl mx-auto">
+      <h1 className="text-4xl font-extrabold text-white mb-2">Terms of Service</h1>
+      <div className="text-sm text-slate-500 mb-10">Effective Date: October 1, 2026 | Last Updated: October 1, 2026</div>
+
+      <div className="space-y-8 text-slate-300 text-sm sm:text-base leading-relaxed">
+        <section>
+          <h2 className="text-xl font-bold text-white mb-3">1. Acceptance of Terms</h2>
+          <p>
+            By downloading, installing, or using Byakugan Scan (&quot;the Software&quot;), you agree to be bound by these Terms of Service. If you do not agree to these terms, do not install or use the Software.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-bold text-white mb-3">2. License Grant</h2>
+          <p>
+            Aritro Saha grants you a personal, non-exclusive, revocable license to use Byakugan Scan on any macOS computer you own or control, in accordance with applicable open-source and App Store license terms.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-bold text-white mb-3">3. Acceptable Use</h2>
+          <p>
+            You agree to use Byakugan Scan strictly for lawful purposes. You may not use the app to intercept or capture content in violation of third-party copyrights, confidentiality agreements, or privacy laws.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-bold text-white mb-3">4. Disclaimer of Warranties</h2>
+          <p>
+            The Software is provided &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; without warranties of any kind, either express or implied, including warranties of merchantability, fitness for a particular purpose, or non-infringement.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-bold text-white mb-3">5. Limitation of Liability</h2>
+          <p>
+            In no event shall Aritro Saha be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use the Software.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-bold text-white mb-3">6. Contact Information</h2>
+          <p>
+            For questions regarding these Terms, contact:<br />
+            <strong>Aritro Saha</strong><br />
+            Email: <a href="mailto:aritrosaha2025@gmail.com" className="text-indigo-400 underline">aritrosaha2025@gmail.com</a><br />
+            Website: <a href="https://byakugan-scan.aritro.cloud" className="text-indigo-400 underline">https://byakugan-scan.aritro.cloud</a>
+          </p>
+        </section>
+      </div>
+    </div>
+  );
+}
