@@ -1,6 +1,13 @@
 name: Publish Release & DMG Installer
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'ByakuganScan/Shared/Constants/AppConstants.swift'
+      - 'project.yml'
+      - 'Casks/byakugan-scan.rb'
   workflow_dispatch:
     inputs:
       custom_message:
@@ -29,6 +36,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Extract Current App Version
         id: version
@@ -43,38 +51,30 @@ jobs:
           echo "TAG_NAME=v$VERSION" >> $GITHUB_ENV
           echo "📌 Current version identified: $VERSION (Tag: v$VERSION)"
 
-      - name: Validate Version Novelty (Fail if no new versions)
+      - name: Check Release Existence & Determine Mode
         id: check-version
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "🔍 Checking if release $TAG_NAME already exists in ${{ github.repository }}..."
-          
-          # Check 1: Check GitHub Releases via GitHub CLI
+
           if gh release view "$TAG_NAME" --repo "${{ github.repository }}" >/dev/null 2>&1; then
-            echo "::error::Release $TAG_NAME already exists on GitHub!"
-            echo ""
-            echo "❌ THE RELEASE WORKFLOW HAS FAILED BECAUSE THERE IS NO NEW VERSION."
-            echo "Existing release: https://github.com/${{ github.repository }}/releases/tag/$TAG_NAME"
-            echo ""
-            echo "To publish a new release, please increment the app version in:"
-            echo "  1. ByakuganScan/Shared/Constants/AppConstants.swift (AppConstants.App.version)"
-            echo "  2. project.yml (MARKETING_VERSION)"
-            echo "  3. CHANGELOG.md (add ## [x.y.z] section)"
-            exit 1
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+              echo "::error::Release $TAG_NAME already exists on GitHub!"
+              echo "❌ THE MANUAL RELEASE WORKFLOW FAILED BECAUSE $TAG_NAME IS ALREADY PUBLISHED."
+              echo "To publish a new release, increment the version in AppConstants.swift, project.yml, and CHANGELOG.md."
+              exit 1
+            fi
+            echo "ℹ️ Release $TAG_NAME already exists on GitHub. Skipping DMG rebuild and verifying Homebrew tap sync."
+            echo "is_new_release=false" >> $GITHUB_OUTPUT
+          else
+            echo "✅ Verified: $TAG_NAME is a new, unpublished version. Proceeding with full release build."
+            echo "is_new_release=true" >> $GITHUB_OUTPUT
           fi
-
-          # Check 2: Check remote git tags
-          if git ls-remote --tags origin "refs/tags/$TAG_NAME" | grep -q "$TAG_NAME"; then
-            echo "::error::Git tag $TAG_NAME already exists on remote origin!"
-            echo "❌ THE RELEASE WORKFLOW HAS FAILED BECAUSE THERE IS NO NEW VERSION."
-            exit 1
-          fi
-
-          echo "✅ Verified: $TAG_NAME is a new, unpublished version. Proceeding with release build."
 
       - name: Setup Node.js 20
+        if: steps.check-version.outputs.is_new_release == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -82,44 +82,42 @@ jobs:
           cache-dependency-path: 'website/package-lock.json'
 
       - name: Install Website Dependencies
+        if: steps.check-version.outputs.is_new_release == 'true'
         working-directory: ./website
         run: npm ci
 
       - name: Execute Automated Test Suites
+        if: steps.check-version.outputs.is_new_release == 'true'
         shell: bash
         run: |
           chmod +x ./scripts/run_tests.sh
           ./scripts/run_tests.sh
 
       - name: Build Signed App & Package Installer DMG
+        if: steps.check-version.outputs.is_new_release == 'true'
         shell: bash
         run: |
           chmod +x ./scripts/build_app.sh
           chmod +x ./scripts/package_dmg.sh
           ./scripts/package_dmg.sh
 
-      - name: Verify Release Artifacts Exist
+      - name: Verify Release Artifacts & Compute DMG SHA-256
+        if: steps.check-version.outputs.is_new_release == 'true'
         shell: bash
         run: |
-          if [ ! -f "build/ByakuganScan.dmg" ]; then
-            echo "::error::build/ByakuganScan.dmg was not generated!"
-            exit 1
-          fi
-          if [ ! -f "build/ByakuganScan-v$CURRENT_VERSION.dmg" ]; then
-            echo "::error::build/ByakuganScan-v$CURRENT_VERSION.dmg was not generated!"
-            exit 1
-          fi
-          if [ ! -f "build/ByakuganScan.zip" ]; then
-            echo "::error::build/ByakuganScan.zip was not generated!"
-            exit 1
-          fi
-          if [ ! -f "build/ByakuganScan-v$CURRENT_VERSION.zip" ]; then
-            echo "::error::build/ByakuganScan-v$CURRENT_VERSION.zip was not generated!"
-            exit 1
-          fi
+          for file in "build/ByakuganScan.dmg" "build/ByakuganScan-v$CURRENT_VERSION.dmg" "build/ByakuganScan.zip" "build/ByakuganScan-v$CURRENT_VERSION.zip"; do
+            if [ ! -f "$file" ]; then
+              echo "::error::$file was not generated!"
+              exit 1
+            fi
+          done
           ls -lh build/*.dmg build/*.zip
+          DMG_SHA256=$(shasum -a 256 "build/ByakuganScan-v$CURRENT_VERSION.dmg" | awk '{print $1}')
+          echo "DMG_SHA256=$DMG_SHA256" >> $GITHUB_ENV
+          echo "🔐 Computed DMG SHA-256: $DMG_SHA256"
 
       - name: Generate Formatted Release Notes
+        if: steps.check-version.outputs.is_new_release == 'true'
         shell: bash
         env:
           CUSTOM_MESSAGE: ${{ github.event.inputs.custom_message }}
@@ -131,17 +129,13 @@ jobs:
             --output "RELEASE_NOTES.md" \
             --repo "${{ github.repository }}"
 
-          echo "==================== RELEASE NOTES PREVIEW ===================="
-          cat RELEASE_NOTES.md
-          echo "==============================================================="
-
       - name: Publish GitHub Release & Upload Assets
+        if: steps.check-version.outputs.is_new_release == 'true'
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "🚀 Creating GitHub Release $TAG_NAME and attaching DMG and ZIP installers..."
-          
           gh release create "$TAG_NAME" \
             "build/ByakuganScan.dmg#ByakuganScan.dmg (Latest Direct Download)" \
             "build/ByakuganScan-v$CURRENT_VERSION.dmg#ByakuganScan-v$CURRENT_VERSION.dmg" \
@@ -150,7 +144,41 @@ jobs:
             --title "Byakugan Scan v$CURRENT_VERSION" \
             --notes-file "RELEASE_NOTES.md"
 
-          echo ""
-          echo "🎉 RELEASE PUBLISHED SUCCESSFULLY!"
-          echo "Direct latest DMG download URL:"
-          echo "https://github.com/${{ github.repository }}/releases/latest/download/ByakuganScan.dmg"
+      - name: Fetch Existing Release DMG SHA-256 (If Release Already Exists)
+        if: steps.check-version.outputs.is_new_release == 'false'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DIGEST=$(gh release view "$TAG_NAME" --repo "${{ github.repository }}" --json assets --jq ".assets[] | select(.name == \"ByakuganScan-v$CURRENT_VERSION.dmg\") | .digest" | sed 's/^sha256://')
+          if [ -z "$DIGEST" ]; then
+            DIGEST=$(grep 'sha256 "' Casks/byakugan-scan.rb | sed -E 's/.*"([0-9a-f]{64})".*/\1/')
+          fi
+          echo "DMG_SHA256=$DIGEST" >> $GITHUB_ENV
+          echo "🔐 Resolved existing DMG SHA-256: $DIGEST"
+
+      - name: Synchronize Homebrew Cask & Website Checksum (Local + halcyon-past/homebrew-tap)
+        shell: bash
+        env:
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          chmod +x ./scripts/sync_homebrew_tap.py
+          python3 ./scripts/sync_homebrew_tap.py \
+            --version "$CURRENT_VERSION" \
+            --sha256 "$DMG_SHA256"
+
+          # Commit & sync back to main, uat, and dev only if local files changed
+          if ! git diff --quiet Casks/byakugan-scan.rb website/src/app/page.tsx; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add Casks/byakugan-scan.rb website/src/app/page.tsx
+            git commit -m "chore(release): auto-sync v$CURRENT_VERSION DMG SHA-256 across cask and website [skip ci]"
+            git push origin HEAD:main
+            git fetch origin uat dev
+            git push origin HEAD:uat || true
+            git push origin HEAD:dev || true
+            echo "✅ Synced updated SHA-256 checksum across main, uat, and dev."
+          else
+            echo "✅ Local Cask and Website already contain the latest SHA-256; no extra commit needed."
+          fi
