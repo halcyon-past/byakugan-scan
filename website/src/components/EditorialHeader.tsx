@@ -16,11 +16,34 @@ export default function EditorialHeader() {
     };
     window.addEventListener("scroll", handleScroll);
 
-    // Live Tokyo / UTC Chronometer ticking in header
+    // Live chronometer in user's local timezone (with graceful fallback to UTC)
     const updateTime = () => {
       const now = new Date();
-      const utcString = now.toISOString().substring(11, 19) + " UTC";
-      setCurrentTime(utcString);
+      try {
+        const formatter = new Intl.DateTimeFormat(undefined, {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+          timeZoneName: "short",
+        });
+        const localFormatted = formatter.format(now);
+        if (localFormatted) {
+          setCurrentTime(localFormatted);
+          return;
+        }
+      } catch {
+        // Fall through to UTC fallback if local timezone detection fails
+      }
+
+      try {
+        const utcHours = String(now.getUTCHours()).padStart(2, "0");
+        const utcMinutes = String(now.getUTCMinutes()).padStart(2, "0");
+        const utcSeconds = String(now.getUTCSeconds()).padStart(2, "0");
+        setCurrentTime(`${utcHours}:${utcMinutes}:${utcSeconds} UTC`);
+      } catch {
+        setCurrentTime("12:00:00 UTC");
+      }
     };
     updateTime();
     const interval = setInterval(updateTime, 1000);

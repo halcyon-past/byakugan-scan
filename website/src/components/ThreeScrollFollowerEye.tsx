@@ -197,67 +197,82 @@ export default function ThreeScrollFollowerEye() {
     cyanRimLight.position.set(0, -4, -2);
     scene.add(cyanRimLight);
 
-    // 9. Interactive Mouse Gaze + Scroll Trajectory
+    // 9. Seamless Waypoint Choreography & Dynamic Mouse Tracking
     let mouseX = 0;
     let mouseY = 0;
     let targetEyeRotX = 0;
     let targetEyeRotY = 0;
-    let scrollProgress = 0;
+    let currentScrollProgress = 0;
+
+    // Semantic trajectory keyframes mapped directly to page sections:
+    // 1. Hero: Rests naturally in the open right stage beside the typography
+    // 2. Manga Lore: Glides across smoothly to nestle into the dedicated left stage
+    // 3. Product Matrix / Demo: Recedes with depth (z: -1.2) onto the right perimeter, avoiding text
+    // 4. Finale CTA: Smoothly descends into the top center above "ACTIVATE YOUR VISION"
+    const WAYPOINTS_DESKTOP = [
+      { t: 0.00, x: 2.2,  y: 0.05, z: 0.0,  scale: 1.05 },
+      { t: 0.32, x: -2.2, y: 0.0,  z: 0.1,  scale: 1.05 },
+      { t: 0.65, x: 2.2,  y: 0.2,  z: -1.2, scale: 0.82 },
+      { t: 1.00, x: 0.0,  y: 0.95, z: -0.3, scale: 1.15 },
+    ];
+
+    const getTrajectoryAt = (p: number, isMobile: boolean) => {
+      const clampedP = Math.max(0, Math.min(1, p));
+
+      if (isMobile) {
+        return {
+          x: 0,
+          y: THREE.MathUtils.lerp(0.7, -0.1, clampedP),
+          z: -1.8,
+          scale: 0.65,
+        };
+      }
+
+      for (let i = 0; i < WAYPOINTS_DESKTOP.length - 1; i++) {
+        const w0 = WAYPOINTS_DESKTOP[i];
+        const w1 = WAYPOINTS_DESKTOP[i + 1];
+
+        if (clampedP >= w0.t && clampedP <= w1.t) {
+          const span = w1.t - w0.t;
+          const localT = span > 0 ? (clampedP - w0.t) / span : 0;
+          // Smooth cosine easing for continuous, zero-jerk velocity transition
+          const ease = 0.5 * (1 - Math.cos(localT * Math.PI));
+
+          return {
+            x: THREE.MathUtils.lerp(w0.x, w1.x, ease),
+            y: THREE.MathUtils.lerp(w0.y, w1.y, ease),
+            z: THREE.MathUtils.lerp(w0.z, w1.z, ease),
+            scale: THREE.MathUtils.lerp(w0.scale, w1.scale, ease),
+          };
+        }
+      }
+
+      const last = WAYPOINTS_DESKTOP[WAYPOINTS_DESKTOP.length - 1];
+      return { x: last.x, y: last.y, z: last.z, scale: last.scale };
+    };
 
     let targetX = 2.2;
-    let targetY = 0;
-    let targetZ = 0;
-    let targetScale = 1;
+    let targetY = 0.05;
+    let targetZ = 0.0;
+    let targetScale = 1.05;
 
     const handleScroll = () => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      scrollProgress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+      currentScrollProgress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
       const isMobile = window.innerWidth < 768;
-
-      if (isMobile) {
-        targetX = 0;
-        targetY = 0.6 - scrollProgress * 0.9;
-        targetZ = -1.5;
-        targetScale = 0.68;
-      } else {
-        if (scrollProgress < 0.22) {
-          // Section 1: Hero Right
-          const p = scrollProgress / 0.22;
-          targetX = THREE.MathUtils.lerp(2.2, 1.8, p);
-          targetY = THREE.MathUtils.lerp(0, -0.4, p);
-          targetZ = 0;
-          targetScale = THREE.MathUtils.lerp(1, 0.9, p);
-        } else if (scrollProgress < 0.48) {
-          // Section 2: Manga Lore Left
-          const p = (scrollProgress - 0.22) / 0.26;
-          targetX = THREE.MathUtils.lerp(1.8, -2.6, p);
-          targetY = THREE.MathUtils.lerp(-0.4, 0.2, p);
-          targetZ = THREE.MathUtils.lerp(0, 0.5, p);
-          targetScale = THREE.MathUtils.lerp(0.9, 1.15, p);
-        } else if (scrollProgress < 0.72) {
-          // Section 3: Behind Interactive HUD
-          const p = (scrollProgress - 0.48) / 0.24;
-          targetX = THREE.MathUtils.lerp(-2.6, 2.5, p);
-          targetY = THREE.MathUtils.lerp(0.2, -0.1, p);
-          targetZ = THREE.MathUtils.lerp(0.5, -0.5, p);
-          targetScale = THREE.MathUtils.lerp(1.15, 0.85, p);
-        } else {
-          // Section 4: Finale Center Top
-          const p = (scrollProgress - 0.72) / 0.28;
-          targetX = THREE.MathUtils.lerp(2.5, 0, p);
-          targetY = THREE.MathUtils.lerp(-0.1, 1.2, p);
-          targetZ = THREE.MathUtils.lerp(-0.5, -0.2, p);
-          targetScale = THREE.MathUtils.lerp(0.85, 1.25, p);
-        }
-      }
+      const traj = getTrajectoryAt(currentScrollProgress, isMobile);
+      targetX = traj.x;
+      targetY = traj.y;
+      targetZ = traj.z;
+      targetScale = traj.scale;
     };
 
     const handleMouseMove = (e: MouseEvent) => {
       mouseX = (e.clientX / window.innerWidth) * 2 - 1;
       mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-      // Eyeball tracks the cursor directly
-      targetEyeRotY = mouseX * 0.55;
-      targetEyeRotX = -mouseY * 0.45;
+      // Eyeball tracks the cursor smoothly
+      targetEyeRotY = mouseX * 0.45;
+      targetEyeRotX = -mouseY * 0.35;
     };
 
     const handleResize = () => {
@@ -280,18 +295,23 @@ export default function ThreeScrollFollowerEye() {
       animId = requestAnimationFrame(animate);
       const time = clock.getElapsedTime();
 
-      // Smooth position interpolation
-      eyeSystem.position.x += (targetX - eyeSystem.position.x) * 0.05;
-      eyeSystem.position.y += (targetY - eyeSystem.position.y) * 0.05;
-      eyeSystem.position.z += (targetZ - eyeSystem.position.z) * 0.05;
+      // Smooth position & scale lerping (6.5% per frame provides buttery organic physics)
+      eyeSystem.position.x = THREE.MathUtils.lerp(eyeSystem.position.x, targetX, 0.065);
+      eyeSystem.position.y = THREE.MathUtils.lerp(eyeSystem.position.y, targetY, 0.065);
+      eyeSystem.position.z = THREE.MathUtils.lerp(eyeSystem.position.z, targetZ, 0.065);
 
       const currScale = eyeSystem.scale.x;
-      const nextScale = currScale + (targetScale - currScale) * 0.05;
+      const nextScale = THREE.MathUtils.lerp(currScale, targetScale, 0.065);
       eyeSystem.scale.set(nextScale, nextScale, nextScale);
 
-      // Saccadic natural eye gaze tracking towards user cursor
-      eyeOrbitGroup.rotation.y += (targetEyeRotY - eyeOrbitGroup.rotation.y) * 0.08;
-      eyeOrbitGroup.rotation.x += (targetEyeRotX - eyeOrbitGroup.rotation.x) * 0.08;
+      // Natural eye gaze: cursor tracking combined with subtle organic saccades
+      const saccadeX = Math.sin(time * 0.9) * 0.015;
+      const saccadeY = Math.cos(time * 0.7) * 0.012;
+      const finalRotY = targetEyeRotY + saccadeX;
+      const finalRotX = targetEyeRotX + saccadeY;
+
+      eyeOrbitGroup.rotation.y = THREE.MathUtils.lerp(eyeOrbitGroup.rotation.y, finalRotY, 0.07);
+      eyeOrbitGroup.rotation.x = THREE.MathUtils.lerp(eyeOrbitGroup.rotation.x, finalRotX, 0.07);
 
       // Optical rings counter-spin
       rings.forEach((ring, idx) => {
@@ -303,7 +323,7 @@ export default function ThreeScrollFollowerEye() {
       particles.rotation.y += 0.0012;
       veinSystem.rotation.z += 0.0015;
 
-      // Pulse chakra
+      // Pulse chakra gently
       const pulse = 1 + Math.sin(time * 3) * 0.02;
       eyeball.scale.set(pulse, pulse, pulse);
       cornea.scale.set(pulse, pulse, pulse);
