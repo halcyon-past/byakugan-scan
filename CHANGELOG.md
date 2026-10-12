@@ -6,100 +6,52 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-## [Unreleased]
-
-> Features and fixes that are in development and not yet released.
-
----
-
-## [1.0.0] — 2026-10-01
+## [1.0.0] — 2026-10-12
 
 ### 🎉 Initial Release
 
-This is the first public release of Byakugan Scan — a native macOS app for instant, fully on-device OCR, QR code scanning, and barcode decoding.
+The official 1.0.0 release of **Byakugan Scan** — a high-performance, lightweight, fully on-device macOS utility for instant OCR, QR code scanning, and barcode recognition.
 
 ### Added
 
-#### Core Scanning Features
-- **Screen Region OCR** — Select any rectangular area of your screen using a crosshair overlay and instantly extract all text using Apple's Vision framework (`VNRecognizeTextRequest`)
-- **Screen QR/Barcode Capture** — Select a region of your screen to decode any QR code or barcode visible on your display
-- **Live Camera Scanner** — Real-time QR code and barcode detection via AVFoundation camera capture pipeline
-- **Multi-language OCR** — Support for all languages available in Apple's Vision OCR model, including English, French, German, Spanish, Portuguese, Italian, Chinese (Simplified & Traditional), Japanese, Korean, Russian, and Arabic
+#### Core Performance & Capture Pipeline
+- **Instant In-Memory Screen Capture:** Direct RAM capture via `/usr/sbin/screencapture -c -s -x` eliminating disk I/O and Spotlight metadata (`mdwrite`) indexing delays.
+- **Hardware-Accelerated Vision OCR:** Native `VNRecognizeTextRequest` Revision 3 running directly on the Apple Silicon Neural Engine (ANE) with sub-90ms recognition speed.
+- **Background Pre-Warming:** Vision and CoreML neural models pre-warm automatically on launch to eliminate cold-start latency on the first scan.
+- **Re-scan Last Selection:** Instantly re-process the most recent rectangular region (`⌘⌥S`) without re-dragging.
+- **TCC Screen Recording Stability:** Persistent ad-hoc Designated Requirement (`designated => identifier "cloud.aritro.byakugan-scan"`) ensuring macOS Privacy permissions stay valid across updates.
 
-#### Barcode Format Support
-- QR Code
-- Aztec Code
-- PDF417
-- Data Matrix
-- Code 128
-- Code 39
-- Code 93
-- EAN-13
-- EAN-8
-- UPC-A
-- UPC-E
-- Interleaved 2 of 5 (ITF)
-- ITF-14
-- GS1 DataBar
-- CodaBar
-- MicroQR
-- MicroPDF417
+#### Scanning Modes & Formats
+- **Text OCR:** Instant text extraction across 30+ BCP-47 language models with automatic whitespace trimming and line-break controls.
+- **QR Code Detection:** High-speed QR code decoding with optional automatic URL opening.
+- **Universal Barcode Detection:** Full support for Aztec, Code 128, Code 39, Code 93, Data Matrix, EAN-8, EAN-13, ITF-14, PDF417, UPC-E, Micro QR, and Micro PDF417.
 
-#### Results & Actions
-- Structured result panel showing recognized text or decoded barcode content
-- **Copy to Clipboard** — one-click copy of any scan result
-- **Open in Browser** — directly open decoded URLs from QR codes
-- Barcode type badge displayed on each scan result
-- Confidence indicator for OCR results
+#### Advanced Productivity Controls
+- **Additive Clipboard Mode:** Seamlessly accumulate successive screen captures onto the clipboard separated by newlines.
+- **Text-to-Speech Engine:** Built-in `AVSpeechSynthesizer` narration with customizable speech rate (90–300 WPM).
+- **In-Flight Capture Modifiers:** Dedicated shortcuts for text capture with line breaks (`⌘⇧2` / `⌘L`), single-line capture (`⌘H`), and text-to-speech capture (`⌘S`).
+- **Auto-Open URLs:** Automatically detects and opens captured web links in the default browser.
 
-#### Scan History
-- Automatic local history for all successful scans
-- Full-text search across scan history
-- History item detail view with full result and metadata
-- Per-item delete (right-click context menu or Delete key)
-- **Clear All History** action with confirmation dialog
-- History stored entirely on-device in the app's sandboxed container
+#### Menu Bar Utility & User Interface
+- **Menu Bar Companion:** Lightweight accessory app (`LSUIElement = true`) living in the status bar with custom Light/Dark mode template icons.
+- **Quick-Access Popover:** Recent scans, instant action buttons, and segmented view switcher.
+- **Floating Settings Window:** Dedicated `NSWindow` with floating window-level focus (`⌘,`) featuring General, Shortcuts, OCR, Clipboard, Appearance, and About preferences.
+- **Local Scan History:** Searchable, favorite-toggleable history list persisted locally in `~/Library/Application Support/ByakuganScan/history.json`.
 
-#### Keyboard Shortcuts
-- Global shortcut for Screen Region OCR: **⌃⌥⌘T**
-- Global shortcut for Screen QR/Barcode Scan: **⌃⌥⌘Q**
-- Global shortcut for Camera Scanner: **⌃⌥⌘C**
-- Global shortcut to show/bring app to front: **⌃⌥⌘B**
-- Fully customizable shortcuts in Settings → Shortcuts
+#### Privacy, Security & Offline Guarantee
+- **100% On-Device:** Zero cloud dependencies, zero external network requests (`com.apple.security.network.client: false`).
+- **Zero Telemetry:** No analytics, user tracking, or crash-reporting daemons.
+- **Privacy Policy & Terms:** Full in-app and web-published legal policies.
 
-#### User Interface
-- Native SwiftUI + AppKit interface following macOS design guidelines
-- **Light and Dark Mode** support with automatic system-following appearance
-- Sidebar navigation (Scan Modes, History, Settings)
-- Menu bar extra (optional) for quick access to scan modes without opening the main window
-- Scan overlay with real-time region size indicator
-- Smooth animations for scan activation, result appearance, and history transitions
-
-#### Settings & Preferences
-- Keyboard Shortcuts configuration panel
-- Option to launch at login
-- Menu bar icon toggle (show/hide menu bar extra)
-- History retention preferences (keep all / keep last N items)
-- OCR language selection override
-- Camera device selection (for Macs with multiple cameras or external cameras)
-
-#### Privacy & Security
-- **Zero network requests** — all processing is fully on-device
-- Screen captures processed in-memory only; never written to disk
-- No analytics, telemetry, or crash reporting
-- No accounts, no sign-in
-- macOS App Sandbox compliant
-- Hardened Runtime enabled
-
-#### Platform
-- Built with **Swift 6** and **SwiftUI**
-- Requires **macOS 14.0 (Sonoma)** or later
-- Universal Binary — native support for both **Apple Silicon (M-series)** and **Intel** Macs
-- Distributed via Mac App Store
+#### Engineering & CI/CD
+- **Branch Strategy:** Tri-branch architecture (`main`, `uat`, `dev`) protected by GitHub branch rules and code owner review.
+- **Branch Naming Policy:** Enforced `feature/<base>/<feature-name>` and `hotfix/<feature-name>` conventions with fork PR exemptions.
+- **Automated CI Quality Gate:** GitHub Actions workflows running on Apple Silicon (`macos-14`) validating 14 unit test suites and Next.js website production builds.
 
 ---
 
 ## Links
 
-[Unreleased]: https://github.com/aritro-saha/byakugan-scan/compare/v1.0.0...HEAD  
-[1.0.0]: https://github.com/aritro-saha/byakugan-scan/releases/tag/v1.0.0
+- **Repository:** [https://github.com/halcyon-past/byakugan-scan](https://github.com/halcyon-past/byakugan-scan)
+- **Website:** [https://byakugan-scan.aritro.cloud](https://byakugan-scan.aritro.cloud)
+- **Support:** [https://byakugan-scan.aritro.cloud/support](https://byakugan-scan.aritro.cloud/support)
