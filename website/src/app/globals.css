@@ -1,69 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Alumni+Sans:ital,wght@0,100..900;1,100..900&family=Cinzel:wght@400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg-deep: #05060b;
-  --bg-surface: #0a0c16;
-  --bg-card: rgba(14, 17, 32, 0.72);
-  --chakra-glow: rgba(129, 140, 248, 0.4);
-  --byakugan-white: #f5f3ff;
-  --vein-blue: #38bdf8;
-  --accent-gold: #fbbf24;
+  /* Editorial Palette Inspired by Halcyon + Neo-Anime */
+  --bg-lacquer: #07080d;
+  --bg-deep: #030408;
+  --bg-surface: #0e1019;
+  --bg-raised: #141724;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-hairline: rgba(255, 255, 255, 0.14);
+  --border-active: rgba(147, 197, 253, 0.5);
+  
+  --text-primary: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
+  
+  --accent-chakra: #818cf8;
+  --accent-verdigris: #38bdf8;
+  --accent-gold: #e2e8f0;
+}
+
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--bg-lacquer);
+  color: var(--text-primary);
 }
 
 body {
-  background-color: var(--bg-deep);
-  color: #f1f5f9;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   selection-background-color: #4f46e5;
   selection-color: #ffffff;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #05060b;
+  background: var(--bg-lacquer);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e1b4b;
-  border-radius: 4px;
+  background: #1e2235;
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #312e81;
+  background: #333a56;
 }
 
-/* Anime scanline & grid effects */
-.scanline-overlay {
-  background: linear-gradient(
-    rgba(18, 16, 38, 0) 50%,
-    rgba(0, 0, 0, 0.25) 50%
-  );
-  background-size: 100% 4px;
-  pointer-events: none;
+/* Typography Classes */
+.font-editorial-display {
+  font-family: 'Alumni Sans', sans-serif;
+  letter-spacing: -0.02em;
 }
 
-.radar-sweep {
-  animation: radar 6s linear infinite;
+.font-kanji {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.12em;
 }
 
-@keyframes radar {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.font-mono-tech {
+  font-family: 'JetBrains Mono', monospace;
 }
 
-.glow-text {
-  text-shadow: 0 0 20px rgba(165, 180, 252, 0.6), 0 0 40px rgba(99, 102, 241, 0.4);
+/* Editorial Rules & Hairlines */
+.hairline-b {
+  border-bottom: 1px solid var(--border-subtle);
+}
+.hairline-t {
+  border-top: 1px solid var(--border-subtle);
+}
+.hairline-r {
+  border-right: 1px solid var(--border-subtle);
+}
+.hairline-l {
+  border-left: 1px solid var(--border-subtle);
 }
 
-.chakra-border {
-  border: 1px solid rgba(129, 140, 248, 0.22);
-  box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.15), inset 0 0 15px -3px rgba(129, 140, 248, 0.08);
+/* Halcyon Ticker Marquee */
+@keyframes ticker {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.animate-ticker {
+  display: flex;
+  width: 200%;
+  animation: ticker 32s linear infinite;
+}
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+/* Smooth Image Shimmer */
+.shimmer-card {
+  background: linear-gradient(135deg, rgba(14, 16, 25, 0.9) 0%, rgba(10, 11, 18, 0.95) 100%);
+  border: 1px solid var(--border-subtle);
+  transition: border-color 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.shimmer-card:hover {
+  border-color: rgba(129, 140, 248, 0.35);
+  transform: translateY(-2px);
 }

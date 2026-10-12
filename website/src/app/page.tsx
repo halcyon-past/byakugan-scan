@@ -1,278 +1,406 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
-  Eye,
-  QrCode,
-  Barcode,
-  Clipboard,
-  Clock,
-  ShieldCheck,
+  ArrowDown,
+  ArrowUpRight,
+  Scan,
+  Shield,
   Zap,
-  ArrowRight,
-  Download,
-  Terminal,
+  Cpu,
   Layers,
-  Sparkles,
+  Eye,
+  CheckCircle2,
+  Terminal,
 } from "lucide-react";
 import ThreeHeroEye from "@/components/ThreeHeroEye";
 import InteractiveScanDemo from "@/components/InteractiveScanDemo";
 
-export default function Home() {
-  return (
-    <div className="relative overflow-hidden">
-      {/* Background Anime Chakra Grid & Ambient Glows */}
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-indigo-600/15 blur-[160px] rounded-full -z-10 pointer-events-none" />
-      <div className="absolute top-[800px] right-0 w-[500px] h-[500px] bg-purple-600/10 blur-[140px] rounded-full -z-10 pointer-events-none" />
-      <div className="absolute top-[1600px] left-0 w-[600px] h-[600px] bg-teal-500/10 blur-[150px] rounded-full -z-10 pointer-events-none" />
+export default function EditorialHome() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
 
-      {/* HERO SECTION */}
-      <section className="pt-16 pb-20 px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Column: Typography & CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:col-span-7 text-left"
-          >
-            {/* Top Eyebrow Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-950/70 border border-indigo-500/40 text-indigo-300 text-xs font-mono font-medium mb-6">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
-              <span>THE ALL-SEEING EYE // BYAKUGAN SCAN v1.0</span>
+  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.96]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0.2]);
+
+  return (
+    <div ref={containerRef} className="relative w-full overflow-hidden bg-[#07080d]">
+      {/* ======================================================== */}
+      {/* 1. EDITORIAL HERO: CINEMATIC TYPOGRAPHY & 3D BYAKUGAN RETICLE */}
+      {/* ======================================================== */}
+      <section className="relative min-h-[92vh] flex flex-col justify-between pt-10 sm:pt-16 pb-12 px-6 max-w-7xl mx-auto hairline-b">
+        {/* Subtle radial chakra ambient aura */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-indigo-900/10 blur-[180px] rounded-full pointer-events-none -z-10" />
+
+        {/* Top Monospace Metadata Row */}
+        <div className="flex flex-wrap items-center justify-between gap-4 text-xs font-mono-tech text-slate-500 uppercase tracking-widest hairline-b pb-4">
+          <div className="flex items-center gap-2">
+            <span className="text-white font-semibold">[01] // ARCHITECTURE</span>
+            <span className="text-slate-700">|</span>
+            <span>APPLE SILICON NEURAL PIPELINE</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span>RELEASE STAGE:</span>
+            <span className="text-teal-400 font-semibold">GA 1.0.0</span>
+          </div>
+        </div>
+
+        {/* Hero Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center my-auto py-8 sm:py-12">
+          {/* Left Column: Monument Display Typography */}
+          <div className="lg:col-span-7 flex flex-col justify-center">
+            {/* Japanese Subtitle / Kanji */}
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-xs font-kanji font-bold text-indigo-400 tracking-widest uppercase">
+                白眼の覚醒 // THE AWAKENED EYE
+              </span>
+              <div className="h-[1px] w-12 bg-indigo-500/40" />
             </div>
 
-            <h1 className="text-4xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight text-white mb-6 leading-[1.08]">
-              Snatch Uncopyable Text & Codes{" "}
-              <span className="bg-gradient-to-r from-indigo-300 via-purple-300 to-teal-200 bg-clip-text text-transparent">
-                At The Speed of Thought.
-              </span>
+            {/* Giant Architectural Headline (Halcyon Style) */}
+            <h1 className="font-editorial-display text-5xl sm:text-7xl xl:text-8xl font-black uppercase text-white tracking-tight leading-[0.92] mb-6">
+              SEES WHAT CANNOT BE COPIED.
             </h1>
 
-            <p className="text-base sm:text-lg text-slate-300 max-w-xl mb-8 leading-relaxed font-normal">
-              A high-precision macOS menu bar utility powered entirely by Apple&apos;s native Vision Neural Engine. Extract locked text, decode QR payloads, and read industrial barcodes from any screen area in single-digit milliseconds.
+            {/* Editorial Lead Paragraph */}
+            <p className="text-slate-300 text-base sm:text-lg max-w-xl font-normal leading-relaxed mb-8">
+              Inspired by the all-seeing Byakugan eye. Snatch locked text from video frames, diagrams, and protected documents in 11 milliseconds. Decode QR codes and commercial barcodes straight from your monitor with zero cloud reliance.
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 mb-10">
+            {/* Call to Actions (Restrained luxury style) */}
+            <div className="flex flex-wrap items-center gap-4">
               <a
                 href="https://github.com/halcyon-past/byakugan-scan"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full font-semibold text-white bg-indigo-600 hover:bg-indigo-500 shadow-xl shadow-indigo-600/35 transition-all hover:scale-105 active:scale-95 text-sm"
+                className="px-8 py-3.5 bg-white text-black text-xs font-bold font-mono-tech uppercase tracking-wider rounded hover:bg-slate-200 transition-all flex items-center gap-2 shadow-lg hover:-translate-y-0.5 active:translate-y-0"
               >
-                <Download className="w-4 h-4" />
-                <span>Download for macOS</span>
+                <span>Download For macOS</span>
+                <ArrowUpRight className="w-4 h-4" />
               </a>
 
               <a
-                href="#demo"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full font-semibold text-slate-300 bg-slate-900/90 border border-slate-700 hover:bg-slate-800 hover:text-white transition-all text-sm"
+                href="#interactive-hud"
+                className="px-6 py-3.5 bg-transparent border border-white/20 text-white text-xs font-bold font-mono-tech uppercase tracking-wider rounded hover:bg-white/5 transition-all flex items-center gap-2"
               >
-                <span>Live Interactive Demo</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>Launch Live HUD</span>
+                <Scan className="w-3.5 h-3.5 text-teal-400" />
               </a>
             </div>
-
-            {/* Micro specs badge */}
-            <div className="flex flex-wrap items-center gap-6 pt-6 border-t border-indigo-950/80 text-xs font-mono text-slate-400">
-              <div className="flex items-center gap-1.5">
-                <span className="text-teal-400 font-bold">●</span>
-                <span>Zero Cloud / 100% Offline</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-indigo-400 font-bold">●</span>
-                <span>Native Swift 6 & Vision</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-purple-400 font-bold">●</span>
-                <span>Sonoma & Sequoia</span>
-              </div>
-            </div>
-          </motion.div>
+          </div>
 
           {/* Right Column: 3D Holographic Byakugan Eye */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:col-span-5 relative flex items-center justify-center"
-          >
-            <div className="w-full max-w-[460px] aspect-square rounded-3xl bg-gradient-to-b from-indigo-950/40 to-transparent p-1 chakra-border relative">
-              {/* Corner reticle decorations */}
-              <div className="absolute top-3 left-3 font-mono text-[9px] text-indigo-400/80">
-                [RADAR: 360° RANGE]
+          <div className="lg:col-span-5 flex items-center justify-center relative">
+            <div className="w-full max-w-[420px] aspect-square rounded-2xl bg-[#090b14] border border-white/10 p-2 relative shadow-2xl overflow-hidden group">
+              {/* Corner Coordinate HUD Marks */}
+              <div className="absolute top-3 left-3 font-mono-tech text-[10px] text-slate-500">
+                POS: 360° RETICLE
               </div>
-              <div className="absolute bottom-3 right-3 font-mono text-[9px] text-teal-400/80">
-                [TRACKING: ACTIVE]
+              <div className="absolute top-3 right-3 font-mono-tech text-[10px] text-teal-400">
+                ACTIVE
+              </div>
+              <div className="absolute bottom-3 left-3 font-mono-tech text-[10px] text-slate-500">
+                VISION ENGINE
+              </div>
+              <div className="absolute bottom-3 right-3 font-mono-tech text-[10px] text-indigo-400">
+                11MS LATENCY
               </div>
 
-              {/* The 3D Three.js Component */}
+              {/* Three.js Canvas */}
               <ThreeHeroEye />
             </div>
-          </motion.div>
+          </div>
+        </div>
+
+        {/* Hero Bottom Bar */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6 hairline-t text-xs font-mono-tech text-slate-400">
+          <div className="flex items-center gap-6">
+            <span>KEYBINDS: [⌘⇧2 TEXT]</span>
+            <span>[⌘⇧3 QR]</span>
+            <span>[⌘⇧4 BARCODE]</span>
+          </div>
+
+          <div className="flex items-center gap-2 text-slate-500">
+            <span>SCROLL TO EXPLORE SPECIFICATIONS</span>
+            <ArrowDown className="w-3.5 h-3.5 animate-bounce text-slate-400" />
+          </div>
         </div>
       </section>
 
-      {/* INTERACTIVE LIVE SCAN SIMULATION SECTION */}
-      <section id="demo" className="py-20 px-6 max-w-6xl mx-auto scroll-mt-20">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-indigo-400 mb-2">
-            <Terminal className="w-3.5 h-3.5" />
-            <span>Interactive Neural Sandbox</span>
+      {/* ======================================================== */}
+      {/* 2. INFINITE TICKER MARQUEE (Halcyon "Into The Light" Motif) */}
+      {/* ======================================================== */}
+      <div className="w-full bg-[#030408] hairline-b py-4 overflow-hidden select-none">
+        <div className="animate-ticker flex items-center gap-8 text-xs font-mono-tech tracking-[0.25em] uppercase text-slate-400">
+          <span>// ALL-SEEING VISION</span>
+          <span className="text-indigo-400">◆</span>
+          <span>APPLE NEURAL ENGINE</span>
+          <span className="text-teal-400">◆</span>
+          <span>ZERO CLOUD TELEMETRY</span>
+          <span className="text-indigo-400">◆</span>
+          <span>13+ INDUSTRIAL BARCODES</span>
+          <span className="text-teal-400">◆</span>
+          <span>SUB-SECOND REGION OCR</span>
+          <span className="text-indigo-400">◆</span>
+          <span>SEAMLESS MENUBAR COMPANION</span>
+          <span className="text-teal-400">◆</span>
+          <span>// ALL-SEEING VISION</span>
+          <span className="text-indigo-400">◆</span>
+          <span>APPLE NEURAL ENGINE</span>
+          <span className="text-teal-400">◆</span>
+          <span>ZERO CLOUD TELEMETRY</span>
+          <span className="text-indigo-400">◆</span>
+          <span>13+ INDUSTRIAL BARCODES</span>
+          <span className="text-teal-400">◆</span>
+          <span>SUB-SECOND REGION OCR</span>
+          <span className="text-indigo-400">◆</span>
+          <span>SEAMLESS MENUBAR COMPANION</span>
+          <span className="text-teal-400">◆</span>
+        </div>
+      </div>
+
+      {/* ======================================================== */}
+      {/* 3. EDITORIAL PROOF & PHILOSOPHY (Halcyon "About" Section) */}
+      {/* ======================================================== */}
+      <section id="editorial-proof" className="py-24 px-6 max-w-7xl mx-auto hairline-b">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Section Marker */}
+          <div className="lg:col-span-3">
+            <span className="text-xs font-mono-tech tracking-widest text-indigo-400 uppercase block mb-2">
+              01 // PHILOSOPHY
+            </span>
+            <h2 className="font-editorial-display text-4xl sm:text-5xl font-black uppercase text-white leading-none">
+              THE VISION IMPERATIVE
+            </h2>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
-            Experience Byakugan In Action
+
+          {/* Editorial Content */}
+          <div className="lg:col-span-9 space-y-8">
+            <p className="text-2xl sm:text-3xl font-light text-slate-200 leading-snug">
+              Every day, engineers, designers, and researchers waste minutes retyping text locked inside video streams, remote desks, scanned blueprints, and stubborn web apps.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 hairline-t text-sm leading-relaxed text-slate-400">
+              <div>
+                <strong className="text-white block font-medium mb-2 text-base">
+                  100% On-Device Neural Processing
+                </strong>
+                Unlike browser-based or SaaS utilities that ship your sensitive screen buffer over public webs, Byakugan Scan compiles Apple’s Vision model directly against your Mac’s local Unified Memory. No packets leave your device.
+              </div>
+
+              <div>
+                <strong className="text-white block font-medium mb-2 text-base">
+                  Instantaneous Crosshair Flow
+                </strong>
+                Activated by macOS global hotkeys, the screen selection tool activates with zero latency. Drag your reticle over any script, QR matrix, or barcode, and the structured result is waiting in your clipboard before your fingers lift.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ======================================================== */}
+      {/* 4. PRODUCT MATRIX: CAPABILITIES (Halcyon "Collections" Grid) */}
+      {/* ======================================================== */}
+      <section id="features" className="py-24 px-6 max-w-7xl mx-auto hairline-b">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div>
+            <span className="text-xs font-mono-tech tracking-widest text-indigo-400 uppercase block mb-2">
+              02 // PRODUCT MATRIX
+            </span>
+            <h2 className="font-editorial-display text-4xl sm:text-6xl font-black uppercase text-white leading-none">
+              BUILT FOR INDUSTRIAL SPECIFICATION
+            </h2>
+          </div>
+
+          <p className="text-slate-400 text-sm max-w-md font-mono-tech">
+            Engineered to replace fragmented capture tools with a single, dedicated macOS menu bar utility.
+          </p>
+        </div>
+
+        {/* 3 Large Showcase Editorial Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Card 1: OCR */}
+          <div className="shimmer-card rounded-xl p-8 flex flex-col justify-between group">
+            <div>
+              <div className="flex items-center justify-between text-xs font-mono-tech text-slate-500 mb-6 hairline-b pb-4">
+                <span>MODULE: OCR-01</span>
+                <span className="text-indigo-400">VNRecognizeText</span>
+              </div>
+              <h3 className="font-editorial-display text-3xl font-bold uppercase text-white mb-3">
+                Sub-Second Text Extraction
+              </h3>
+              <p className="text-sm text-slate-400 leading-relaxed mb-6">
+                Accurate multi-script recognition across Latin, CJK, Cyrillic, and Arabic languages. Automatic line joining, paragraph synthesis, and whitespace trimming.
+              </p>
+            </div>
+
+            <div className="pt-6 hairline-t flex items-center justify-between text-xs font-mono-tech">
+              <span className="text-slate-500">DEFAULT KEYBIND</span>
+              <span className="text-white font-bold bg-white/10 px-2 py-1 rounded">⌘ + ⇧ + 2</span>
+            </div>
+          </div>
+
+          {/* Card 2: QR */}
+          <div className="shimmer-card rounded-xl p-8 flex flex-col justify-between group">
+            <div>
+              <div className="flex items-center justify-between text-xs font-mono-tech text-slate-500 mb-6 hairline-b pb-4">
+                <span>MODULE: QR-02</span>
+                <span className="text-teal-400">VNBarcodeSymbology.qr</span>
+              </div>
+              <h3 className="font-editorial-display text-3xl font-bold uppercase text-white mb-3">
+                Display QR Matrix Decoder
+              </h3>
+              <p className="text-sm text-slate-400 leading-relaxed mb-6">
+                Never pick up your phone to read an authentication or Wi-Fi QR code shown on your Mac. Decodes links, vCards, and OTP secrets directly to your clipboard.
+              </p>
+            </div>
+
+            <div className="pt-6 hairline-t flex items-center justify-between text-xs font-mono-tech">
+              <span className="text-slate-500">DEFAULT KEYBIND</span>
+              <span className="text-white font-bold bg-white/10 px-2 py-1 rounded">⌘ + ⇧ + 3</span>
+            </div>
+          </div>
+
+          {/* Card 3: Barcode */}
+          <div className="shimmer-card rounded-xl p-8 flex flex-col justify-between group">
+            <div>
+              <div className="flex items-center justify-between text-xs font-mono-tech text-slate-500 mb-6 hairline-b pb-4">
+                <span>MODULE: BARCODE-03</span>
+                <span className="text-orange-400">13 SYMBOLOGIES</span>
+              </div>
+              <h3 className="font-editorial-display text-3xl font-bold uppercase text-white mb-3">
+                Commercial Logistics Barcodes
+              </h3>
+              <p className="text-sm text-slate-400 leading-relaxed mb-6">
+                Decodes EAN-13, UPC-E, Code 128, Code 39, Data Matrix, Aztec, and PDF417 format standards for inventory and hardware engineers.
+              </p>
+            </div>
+
+            <div className="pt-6 hairline-t flex items-center justify-between text-xs font-mono-tech">
+              <span className="text-slate-500">DEFAULT KEYBIND</span>
+              <span className="text-white font-bold bg-white/10 px-2 py-1 rounded">⌘ + ⇧ + 4</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ======================================================== */}
+      {/* 5. INTERACTIVE LIVE HUD SIMULATOR (Hands-on Product Proof) */}
+      {/* ======================================================== */}
+      <section id="interactive-hud" className="py-24 px-6 max-w-7xl mx-auto hairline-b">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <span className="text-xs font-mono-tech tracking-widest text-teal-400 uppercase block mb-2">
+            04 // INTERACTIVE PROOF
+          </span>
+          <h2 className="font-editorial-display text-4xl sm:text-6xl font-black uppercase text-white leading-none mb-4">
+            SIMULATE THE SCANNER
           </h2>
-          <p className="text-slate-400 text-sm sm:text-base max-w-xl mx-auto mt-2">
-            Switch between scan modes and test how instantaneous region capture transforms pixels into structured clipboard text.
+          <p className="text-slate-400 text-sm sm:text-base font-normal">
+            Interact with the neural bounding box simulation below to inspect how screen coordinates convert into structured text output.
           </p>
         </div>
 
         <InteractiveScanDemo />
       </section>
 
-      {/* ARCHITECTURAL ADVANTAGES / CAPABILITIES */}
-      <section id="features" className="py-24 px-6 max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <div className="text-xs font-mono uppercase tracking-widest text-indigo-400 mb-2">
-            Architecture // Capabilities
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
-            Engineered For Frictionless Capture
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="glass-card rounded-2xl p-8 hover:-translate-y-1 transition-all border border-indigo-900/40">
-            <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-5">
-              <Eye className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Multi-Script Neural OCR</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Recognizes Latin, CJK (Chinese, Japanese, Korean), Cyrillic, and Arabic text with punctuation restoration and line break intelligence.
+      {/* ======================================================== */}
+      {/* 6. TECHNICAL SPECIFICATIONS & FAQ TABLE (Halcyon Spec Style) */}
+      {/* ======================================================== */}
+      <section id="shortcuts" className="py-24 px-6 max-w-7xl mx-auto hairline-b">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <div className="lg:col-span-4">
+            <span className="text-xs font-mono-tech tracking-widest text-indigo-400 uppercase block mb-2">
+              05 // TECHNICAL SPECIFICATIONS
+            </span>
+            <h2 className="font-editorial-display text-4xl sm:text-5xl font-black uppercase text-white leading-none mb-6">
+              SYSTEM PROFILE
+            </h2>
+            <p className="text-slate-400 text-sm leading-relaxed mb-6">
+              Built in accordance with Apple Human Interface Guidelines and Mac App Store Sandboxing standards.
             </p>
+            <div className="p-4 rounded bg-[#090b14] border border-white/10 font-mono-tech text-xs text-slate-300 space-y-2">
+              <div className="flex justify-between">
+                <span className="text-slate-500">TARGET OS</span>
+                <span className="text-white">macOS 14.0+</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">ARCHITECTURE</span>
+                <span className="text-white">Universal 2 (ARM64 & x86_64)</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">FRAMEWORK</span>
+                <span className="text-white">Apple Vision, SwiftUI 6</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">APP FOOTPRINT</span>
+                <span className="text-teal-400">&lt; 14 MB RAM</span>
+              </div>
+            </div>
           </div>
 
-          <div className="glass-card rounded-2xl p-8 hover:-translate-y-1 transition-all border border-indigo-900/40">
-            <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400 mb-5">
-              <QrCode className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Instant QR Matrix Decoder</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Never pull out your smartphone to read a screen code. Snaps QR codes directly into URLs, contact cards, and Wi-Fi tokens.
-            </p>
-          </div>
+          <div className="lg:col-span-8">
+            <div className="space-y-6">
+              <div className="p-6 rounded-lg bg-[#0a0c16] border border-white/10">
+                <h4 className="text-base font-bold text-white mb-2">
+                  Why does Byakugan Scan require Screen Recording permission?
+                </h4>
+                <p className="text-sm text-slate-400 leading-relaxed">
+                  macOS requires explicit authorization for any utility that reads display coordinates. Byakugan Scan only captures the exact rectangular frame you drag your crosshair over, processes the pixels in memory using Apple Vision, and discards them immediately. No background recordings are ever made.
+                </p>
+              </div>
 
-          <div className="glass-card rounded-2xl p-8 hover:-translate-y-1 transition-all border border-indigo-900/40">
-            <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 mb-5">
-              <Barcode className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">13 Industrial Barcodes</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Decodes retail EAN-13, logistics Code 128, Code 39, Data Matrix, Aztec, PDF417, and UPC formats with full checksum verification.
-            </p>
-          </div>
+              <div className="p-6 rounded-lg bg-[#0a0c16] border border-white/10">
+                <h4 className="text-base font-bold text-white mb-2">
+                  Is there any internet requirement or background telemetry?
+                </h4>
+                <p className="text-sm text-slate-400 leading-relaxed">
+                  None. The app sandbox completely excludes network client entitlements. It cannot communicate with any remote server. Your screen data is 100% private and offline.
+                </p>
+              </div>
 
-          <div className="glass-card rounded-2xl p-8 hover:-translate-y-1 transition-all border border-indigo-900/40">
-            <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 mb-5">
-              <Clipboard className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Smart Clipboard Pipeline</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Auto-copies extracted content instantly with audio feedback. Options to join wrapped lines with spaces or preserve exact breaks.
-            </p>
-          </div>
-
-          <div className="glass-card rounded-2xl p-8 hover:-translate-y-1 transition-all border border-indigo-900/40">
-            <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 mb-5">
-              <Clock className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Local History & Vault</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Stores recent extractions safely in local JSON. Re-copy, favorite, or clear past entries at any time right from the menu bar.
-            </p>
-          </div>
-
-          <div className="glass-card rounded-2xl p-8 hover:-translate-y-1 transition-all border border-indigo-900/40">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-5">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Zero Network Permissions</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Guaranteed by Apple Sandbox. No outbound sockets, no telemetry, no analytics. Pixels reside strictly in volatile RAM.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* SHORTCUTS / WORKFLOW SHOWCASE */}
-      <section id="shortcuts" className="py-20 px-6 border-y border-indigo-950/70 bg-[#070912]">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="text-xs font-mono uppercase tracking-widest text-indigo-400 mb-2">
-              Hotkeys // Flow
-            </div>
-            <h2 className="text-3xl font-extrabold text-white">Default Global Hotkeys</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div className="p-6 rounded-2xl bg-[#0b0e1b] border border-indigo-900/50 text-center">
-              <div className="font-mono text-2xl font-extrabold text-indigo-400 mb-3">⌘ ⇧ 2</div>
-              <div className="font-bold text-white text-base mb-1">Capture Text (OCR)</div>
-              <div className="text-xs text-slate-400">Snaps unselectable text from any dragged region</div>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-[#0b0e1b] border border-teal-900/50 text-center">
-              <div className="font-mono text-2xl font-extrabold text-teal-400 mb-3">⌘ ⇧ 3</div>
-              <div className="font-bold text-white text-base mb-1">Scan QR Code</div>
-              <div className="text-xs text-slate-400">Decodes QR payloads directly from your screen</div>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-[#0b0e1b] border border-orange-900/50 text-center">
-              <div className="font-mono text-2xl font-extrabold text-orange-400 mb-3">⌘ ⇧ 4</div>
-              <div className="font-bold text-white text-base mb-1">Scan Barcode</div>
-              <div className="text-xs text-slate-400">Reads 1D and 2D industrial barcode types</div>
+              <div className="p-6 rounded-lg bg-[#0a0c16] border border-white/10">
+                <h4 className="text-base font-bold text-white mb-2">
+                  Can I remap the keyboard shortcuts?
+                </h4>
+                <p className="text-sm text-slate-400 leading-relaxed">
+                  Yes. Open Settings from the menu bar popover to remap any scan action to your preferred key combinations.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FAQ SECTION */}
-      <section id="faq" className="py-24 px-6 max-w-4xl mx-auto">
-        <div className="text-center mb-14">
-          <div className="text-xs font-mono uppercase tracking-widest text-indigo-400 mb-2">FAQ</div>
-          <h2 className="text-3xl font-extrabold text-white">Frequently Asked Questions</h2>
-        </div>
+      {/* ======================================================== */}
+      {/* 7. CALL TO ACTION FINALE (Halcyon Minimalist Callout) */}
+      {/* ======================================================== */}
+      <section className="py-28 px-6 max-w-5xl mx-auto text-center">
+        <span className="text-xs font-mono-tech tracking-widest text-slate-500 uppercase block mb-3">
+          STANDALONE UTILITY // OPEN SOURCE
+        </span>
+        <h2 className="font-editorial-display text-5xl sm:text-7xl font-black uppercase text-white tracking-tight leading-none mb-6">
+          AWAKEN YOUR WORKFLOW.
+        </h2>
+        <p className="text-slate-400 text-base max-w-lg mx-auto mb-10 leading-relaxed font-normal">
+          Available free for macOS. Tested on Apple Silicon M1 through M4 and modern Intel Macs.
+        </p>
 
-        <div className="space-y-6">
-          <div className="glass-card rounded-xl p-6">
-            <h4 className="text-base font-bold text-white mb-2">
-              Why does macOS ask for Screen Recording permission?
-            </h4>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              macOS requires explicit authorization for any utility that samples screen coordinates. Byakugan Scan only reads the exact rectangular box you drag your crosshair over, processes the pixels in memory using Apple Vision, and discards them immediately.
-            </p>
-          </div>
-
-          <div className="glass-card rounded-xl p-6">
-            <h4 className="text-base font-bold text-white mb-2">
-              Does Byakugan Scan work offline?
-            </h4>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Yes, 100% offline. The application has zero outbound network capabilities. All OCR, QR, and barcode recognition models run locally on your Mac&apos;s Neural Engine.
-            </p>
-          </div>
-
-          <div className="glass-card rounded-xl p-6">
-            <h4 className="text-base font-bold text-white mb-2">
-              Can I customize the keyboard shortcuts?
-            </h4>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Yes. Open the Settings window from the menu bar popover to remap any scan action to your preferred key combinations.
-            </p>
-          </div>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <a
+            href="https://github.com/halcyon-past/byakugan-scan"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-8 py-4 bg-white text-black text-xs font-bold font-mono-tech uppercase tracking-wider rounded hover:bg-slate-200 transition-all flex items-center gap-2 shadow-2xl"
+          >
+            <span>Download Byakugan Scan</span>
+            <ArrowUpRight className="w-4 h-4" />
+          </a>
         </div>
       </section>
     </div>
