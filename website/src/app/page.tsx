@@ -235,18 +235,18 @@ export default function AnimeMasterpieceHome() {
       </section>
 
       {/* ======================================================== */}
-      {/* 5. LIVE INTERACTIVE NEURAL HUD SIMULATOR */}
+      {/* 5. INTERACTIVE LIVE PRODUCT DEMO */}
       {/* ======================================================== */}
       <section id="interactive-hud" className="py-28 px-6 max-w-7xl mx-auto hairline-b z-20 relative">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-mono tracking-widest text-teal-400 uppercase block mb-2">
-            03 // LIVE EXPERIMENTATION
+          <span className="text-xs font-mono tracking-widest text-indigo-400 uppercase block mb-2">
+            03 // HOW IT WORKS
           </span>
           <h2 className="font-manga text-3xl sm:text-5xl font-black uppercase text-white leading-none mb-4">
-            TEST THE RETICLE
+            FROM SCREEN TO CLIPBOARD
           </h2>
           <p className="text-slate-400 text-sm sm:text-base font-light">
-            Test the live bounding-box laser simulator below to observe real-time OCR extraction and clipboard copying.
+            Select a scan mode below and click &quot;Test Capture&quot; to see how raw screen content transforms into clean, formatted clipboard data.
           </p>
         </div>
 

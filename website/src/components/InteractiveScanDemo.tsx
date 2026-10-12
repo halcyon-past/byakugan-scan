@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Check, Scan, Eye, QrCode, Barcode, Terminal } from "lucide-react";
+import { Copy, Check, Eye, QrCode, Barcode, Play, Layers } from "lucide-react";
 import confetti from "canvas-confetti";
 
 interface ScanTab {
   id: "ocr" | "qr" | "barcode";
   title: string;
   icon: typeof Eye;
-  previewTitle: string;
-  previewSubtitle: string;
+  previewHeading: string;
+  previewDescription: string;
+  sampleInput: string;
   output: string;
   shortcut: string;
 }
@@ -18,35 +19,40 @@ interface ScanTab {
 const TABS: ScanTab[] = [
   {
     id: "ocr",
-    title: "Screen Text (OCR)",
+    title: "Text Extraction",
     icon: Eye,
-    previewTitle: "PDF Specification / Video Frame",
-    previewSubtitle: "Targeting uncopyable technical copy",
-    output: `// Extracted via Byakugan Scan (Vision OCR)
-struct Jutsu {
-  let name = "Gentle Fist: Eight Trigrams Sixty-Four Palms"
+    previewHeading: "Sample Document / Presentation Slide",
+    previewDescription: "Non-selectable text inside an image, video, or remote window",
+    sampleInput: `struct Jutsu {
+  let name = "Gentle Fist: Sixty-Four Palms"
   let accuracy = 0.9998
-  let latencyMs = 12
+  let latencyMs = 11
+}`,
+    output: `struct Jutsu {
+  let name = "Gentle Fist: Sixty-Four Palms"
+  let accuracy = 0.9998
+  let latencyMs = 11
 }`,
     shortcut: "⌘⇧2",
   },
   {
     id: "qr",
-    title: "QR Scanner",
+    title: "QR Code Reader",
     icon: QrCode,
-    previewTitle: "Display QR Matrix",
-    previewSubtitle: "WiFi Network & Auth Payload",
-    output: `WIFI:S:Konoha_Chakra_5G;T:WPA;P:byakugan-secure-2026;;`,
+    previewHeading: "On-Screen QR Code",
+    previewDescription: "Wi-Fi setup, 2FA secret, or URL displayed on monitor",
+    sampleInput: "WIFI:S:Konoha_Chakra_5G;T:WPA;P:byakugan-secure-2026;;",
+    output: "WIFI:S:Konoha_Chakra_5G;T:WPA;P:byakugan-secure-2026;;",
     shortcut: "⌘⇧3",
   },
   {
     id: "barcode",
-    title: "1D/2D Barcodes",
+    title: "Barcode Scanner",
     icon: Barcode,
-    previewTitle: "Logistics EAN-13 / Code 128",
-    previewSubtitle: "Hardware Serial & Inventory Tag",
-    output: `[EAN-13] 8901030829145
-[SERIAL] BYK-ARM64-2026-X09`,
+    previewHeading: "Retail & Hardware Packaging",
+    previewDescription: "EAN-13, Code 128, or UPC displayed on screen",
+    sampleInput: "[EAN-13] 8901030829145\n[SERIAL] BYK-ARM64-2026-X09",
+    output: "[EAN-13] 8901030829145\n[SERIAL] BYK-ARM64-2026-X09",
     shortcut: "⌘⇧4",
   },
 ];
@@ -63,12 +69,12 @@ export default function InteractiveScanDemo() {
     setTimeout(() => {
       setIsScanning(false);
       confetti({
-        particleCount: 35,
-        spread: 60,
-        origin: { y: 0.75 },
+        particleCount: 25,
+        spread: 50,
+        origin: { y: 0.8 },
         colors: ["#6366f1", "#a5b4fc", "#38bdf8"],
       });
-    }, 700);
+    }, 550);
   };
 
   const handleCopy = () => {
@@ -78,129 +84,119 @@ export default function InteractiveScanDemo() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto rounded-2xl bg-[#0b0e1a]/90 chakra-border p-6 sm:p-8 backdrop-blur-xl relative overflow-hidden shadow-2xl">
-      {/* Decorative HUD header */}
-      <div className="flex items-center justify-between border-b border-indigo-900/40 pb-4 mb-6">
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse" />
-          <span className="font-mono text-xs text-indigo-300 font-semibold uppercase tracking-wider">
-            Live Simulation // Interactive Neural HUD
-          </span>
+    <div className="w-full max-w-4xl mx-auto rounded-2xl bg-[#080a14] border border-white/10 p-6 sm:p-8 backdrop-blur-2xl relative overflow-hidden shadow-2xl">
+      {/* Tab Selector Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-5 hairline-b">
+        <div className="flex flex-wrap gap-2">
+          {TABS.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  setCopied(false);
+                }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+                  isActive
+                    ? "bg-white text-black shadow-md"
+                    : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{tab.title}</span>
+                <span className="font-mono text-[10px] opacity-60 ml-1">{tab.shortcut}</span>
+              </button>
+            );
+          })}
         </div>
-        <div className="flex items-center gap-2 font-mono text-xs text-slate-400">
-          <span>Vision Framework</span>
-          <span className="text-emerald-400 font-semibold">● ACTIVE</span>
-        </div>
+
+        <button
+          onClick={triggerMockScan}
+          disabled={isScanning}
+          className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold font-mono tracking-wider transition-all flex items-center gap-1.5 shadow-lg shadow-indigo-600/20 active:scale-95"
+        >
+          <Play className="w-3.5 h-3.5 fill-current" />
+          <span>{isScanning ? "Scanning..." : "Test Capture"}</span>
+        </button>
       </div>
 
-      {/* Mode Selectors */}
-      <div className="flex flex-wrap gap-2.5 mb-6">
-        {TABS.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => {
-                setActiveTab(tab.id);
-                setCopied(false);
-              }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-                isActive
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 border border-indigo-400/30"
-                  : "bg-slate-900/80 text-slate-400 hover:text-slate-200 border border-slate-800"
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              <span>{tab.title}</span>
-              <kbd className="hidden sm:inline font-mono text-[10px] bg-black/30 px-1.5 py-0.5 rounded text-indigo-200">
-                {tab.shortcut}
-              </kbd>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Interactive Scan Canvas & Output Grid */}
+      {/* Two-Pane Before / After Split */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-        {/* Left: Simulated Screen Capture Viewport */}
-        <div className="relative rounded-xl bg-[#05060c] border border-indigo-950 p-5 flex flex-col justify-between overflow-hidden min-h-[220px]">
-          {/* Subtle Grid Lines */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e1b4b15_1px,transparent_1px),linear-gradient(to_bottom,#1e1b4b15_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
-
-          {/* Interactive Crosshair Reticle Selection */}
-          <div className="relative z-10 border border-dashed border-indigo-400/80 rounded-lg p-4 bg-indigo-950/20 backdrop-blur-sm">
-            <div className="flex items-center justify-between text-[11px] font-mono text-indigo-300 mb-2">
-              <span className="flex items-center gap-1">
-                <Scan className="w-3.5 h-3.5 animate-spin text-teal-400" />
-                <span>B-BOX: [840, 220, 420, 180]</span>
-              </span>
-              <span className="text-teal-300 font-bold">100% CONFIDENCE</span>
+        {/* Left: What is on screen */}
+        <div className="rounded-xl bg-[#04050a] border border-white/10 p-5 flex flex-col justify-between relative overflow-hidden min-h-[220px]">
+          <div>
+            <div className="text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-2">
+              Step 1: Drag over target
             </div>
-            <div className="text-sm font-medium text-slate-200">{currentTab.previewTitle}</div>
-            <div className="text-xs text-slate-400">{currentTab.previewSubtitle}</div>
+            <div className="text-sm font-semibold text-white mb-1">
+              {currentTab.previewHeading}
+            </div>
+            <div className="text-xs text-slate-400 mb-4">
+              {currentTab.previewDescription}
+            </div>
 
-            {/* Laser scanning beam animation */}
-            <motion.div
-              className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-teal-400 to-transparent shadow-[0_0_8px_#2dd4bf]"
-              animate={{
-                top: ["5%", "95%", "5%"],
-              }}
-              transition={{
-                duration: 2.2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
+            {/* Simulated selected region */}
+            <div className="p-3.5 rounded-lg bg-indigo-950/30 border border-indigo-500/40 font-mono text-xs text-slate-300 relative overflow-hidden">
+              <pre className="whitespace-pre-wrap">{currentTab.sampleInput}</pre>
+
+              {/* Animated scanning laser line */}
+              <motion.div
+                className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-indigo-400 to-transparent shadow-[0_0_8px_#818cf8]"
+                animate={{
+                  top: ["0%", "100%", "0%"],
+                }}
+                transition={{
+                  duration: 2.4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+            </div>
           </div>
 
-          <div className="relative z-10 mt-4 flex items-center justify-between pt-3 border-t border-slate-900">
-            <button
-              onClick={triggerMockScan}
-              disabled={isScanning}
-              className="px-3.5 py-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-xs font-semibold text-indigo-200 transition-all flex items-center gap-1.5"
-            >
-              <Scan className="w-3.5 h-3.5" />
-              <span>{isScanning ? "Scanning Target..." : "Simulate Capture"}</span>
-            </button>
-            <span className="text-[11px] font-mono text-slate-500">Latency: 11ms on M-Series</span>
+          <div className="pt-3 hairline-t text-[11px] font-mono text-slate-500 flex justify-between">
+            <span>Selection Box</span>
+            <span className="text-teal-400">Ready</span>
           </div>
         </div>
 
-        {/* Right: Extracted Result (Ready for Clipboard) */}
-        <div className="rounded-xl bg-[#070913] border border-indigo-900/60 p-5 flex flex-col justify-between relative">
+        {/* Right: What gets copied to clipboard */}
+        <div className="rounded-xl bg-[#04050a] border border-white/10 p-5 flex flex-col justify-between relative">
           <div>
-            <div className="flex items-center justify-between mb-3 text-xs font-mono text-slate-400">
-              <span className="flex items-center gap-1.5 text-indigo-300 font-semibold">
-                <Terminal className="w-3.5 h-3.5" />
-                <span>NSPasteboard Output</span>
-              </span>
+            <div className="flex items-center justify-between text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-2">
+              <span>Step 2: Instant Clipboard</span>
               <button
                 onClick={handleCopy}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/60 text-xs font-semibold text-indigo-200 transition-all"
+                className="flex items-center gap-1 px-2.5 py-1 rounded bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-all"
               >
                 {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                <span>{copied ? "Copied!" : "Copy"}</span>
+                <span>{copied ? "Copied" : "Copy"}</span>
               </button>
+            </div>
+
+            <div className="text-sm font-semibold text-white mb-3">
+              Ready to paste (⌘ + V)
             </div>
 
             <AnimatePresence mode="wait">
               <motion.pre
                 key={activeTab}
-                initial={{ opacity: 0, y: 6 }}
+                initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
+                exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.15 }}
-                className="font-mono text-xs text-slate-200 bg-black/40 p-3.5 rounded-lg border border-indigo-950 overflow-x-auto whitespace-pre-wrap leading-relaxed"
+                className="p-3.5 rounded-lg bg-black/60 border border-white/5 font-mono text-xs text-indigo-200 overflow-x-auto whitespace-pre-wrap leading-relaxed"
               >
                 {currentTab.output}
               </motion.pre>
             </AnimatePresence>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-900/80 flex items-center justify-between text-[11px] text-slate-400 font-mono">
-            <span>Sound Effect: Glass.aiff</span>
-            <span className="text-emerald-400 font-semibold">✓ Auto-Copied</span>
+          <div className="pt-3 hairline-t text-[11px] font-mono text-slate-500 flex justify-between">
+            <span>Audio Chime: Glass.aiff</span>
+            <span className="text-emerald-400">✓ Auto-Copied</span>
           </div>
         </div>
       </div>
