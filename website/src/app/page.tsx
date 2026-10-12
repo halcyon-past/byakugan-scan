@@ -171,11 +171,11 @@ export default function AnimeMasterpieceHome() {
                     <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-slate-400 pt-0.5">
                       <div className="flex items-center gap-1.5">
                         <span className="text-slate-400">SHA-256:</span>
-                        <span className="text-slate-300 select-all">7eeabfc8...71ca6</span>
+                        <span className="text-slate-300 select-all">ce6ef58a...52a07</span>
                         <button
                           type="button"
                           onClick={() => {
-                            navigator.clipboard.writeText("7eeabfc81370094234bbecc87ca98edaea6e3569922b7d16aae2c572a1871ca6");
+                            navigator.clipboard.writeText("ce6ef58a267f25adf60d96315a9491dc0c750bb2464e6ffd9e3f2ae9ba452a07");
                             setCopiedSha(true);
                             setTimeout(() => setCopiedSha(false), 2000);
                           }}
