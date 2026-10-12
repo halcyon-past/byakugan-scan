@@ -26,26 +26,37 @@ jobs:
       - name: Check Branch Name
         shell: bash
         run: |
-          # In PRs, GITHUB_HEAD_REF holds the source branch name
-          # In pushes, GITHUB_REF_NAME holds the branch name
+          IS_FORK="${{ github.event.pull_request.head.repo.fork }}"
+          HEAD_REPO="${{ github.event.pull_request.head.repo.full_name }}"
+          BASE_REPO="${{ github.repository }}"
           BRANCH="${{ github.head_ref || github.ref_name }}"
-          echo "🔍 Checking branch name: '$BRANCH'"
           
-          # Allowed formats:
-          # 1. Protected branches: main, dev, uat
-          # 2. Feature branches: feature/<branch>/<feature-name> or feature/<feature-name>
+          echo "🔍 Branch under evaluation: '$BRANCH'"
+          echo "📦 Base repo: '$BASE_REPO'"
+          
+          # Check if this PR originates from a forked repository
+          if [ "$IS_FORK" = "true" ] || [ -n "$HEAD_REPO" -a "$HEAD_REPO" != "$BASE_REPO" ]; then
+            echo "🍴 Fork Pull Request detected from '$HEAD_REPO'!"
+            echo "✅ Fork branch '$BRANCH' is permitted. Contributors from forks are exempt from strict internal hierarchy, though descriptive names (feature/*, fix/*) remain recommended."
+            exit 0
+          fi
+          
+          # Internal repository branch naming pattern
+          # Strict format:
+          # 1. Protected core branches: main, dev, uat
+          # 2. Feature branches: feature/<base-branch>/<feature-name> (or feature/<feature-name>)
           # 3. Hotfix branches: hotfix/<feature-name>
           PATTERN="^(main|dev|uat|hotfix\/[a-zA-Z0-9._-]+|feature\/[a-zA-Z0-9._-]+\/[a-zA-Z0-9._-]+|feature\/[a-zA-Z0-9._-]+)$"
           
           if [[ "$BRANCH" =~ $PATTERN ]]; then
-            echo "✅ Branch name '$BRANCH' conforms to naming conventions."
+            echo "✅ Branch name '$BRANCH' conforms to internal repository naming conventions."
           else
             echo "❌ ERROR: Invalid branch name '$BRANCH'!"
             echo ""
-            echo "Branch names must strictly match one of the following formats:"
+            echo "Internal branch names must strictly match one of the following formats:"
             echo "  • feature/<base-branch>/<feature-name>  (e.g., feature/dev/fast-ocr)"
             echo "  • hotfix/<feature-name>                 (e.g., hotfix/permission-fix)"
-            echo "  • Protected branches: main, dev, uat"
+            echo "  • Protected core branches: main, dev, uat"
             echo ""
             echo "Please rename your branch using:"
             echo "  git branch -m <old-name> <new-conforming-name>"

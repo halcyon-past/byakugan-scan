@@ -1,6 +1,6 @@
 # Contributing to Byakugan Scan 🤝
 
-Thank you for your interest in contributing to **Byakugan Scan**! As an open-source project, we welcome contributions from developers, designers, and testers of all skill levels.
+Thank you for your interest in contributing to **Byakugan Scan**! As an open-source macOS utility, we welcome contributions from developers, designers, and testers of all skill levels.
 
 ---
 
@@ -10,97 +10,128 @@ This project is governed by our [Code of Conduct](CODE_OF_CONDUCT.md). By partic
 
 ---
 
-## Ways to Contribute
+## 🌿 Branching Strategy & Workflow
 
-1. **Bug Reports:** Found something broken? File a detailed bug report using our issue template.
-2. **Feature Suggestions:** Have an idea to make Byakugan Scan even better? Open a feature request.
-3. **Code Contributions:** Fix open bugs, optimize performance, improve accessibility, or implement requested features.
-4. **Documentation:** Improve guides, README details, website copy, or code doc comments.
-5. **Localization:** Add or verify OCR language configurations and UI strings.
+We maintain a strict multi-tier branch model to keep the codebase stable and reliable:
+
+| Branch | Purpose | Protection Policy | Target For |
+| :--- | :--- | :--- | :--- |
+| **`main`** | Production releases | Protected: PR required, passing CI, code owner review | Merges from `uat` or critical hotfixes |
+| **`uat`** | User Acceptance Testing & Pre-release staging | Protected: PR required, passing CI, code owner review | Release stabilization before production |
+| **`dev`** | Active development & feature integration | Protected: PR required, passing CI, code owner review | All general feature PRs & bugfixes |
 
 ---
 
-## Getting Started with Local Development
+## 🏷️ Branch Naming Conventions
 
-### Prerequisites
-- macOS 14.0 (Sonoma) or newer
-- Swift 6.0+ toolchain
-- [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`)
-- (Optional) Xcode 15+
+All branches must adhere to our standardized naming rules:
 
-### Fork and Clone
+### 1. Internal Repository Branches
+If you have write access to the main repository, new branches **must** follow one of these patterns:
+- **Feature Branches:** `feature/<base-branch>/<feature-name>`
+  - Example targeting `dev`: `feature/dev/shortcut-recorder`
+  - Example targeting `uat`: `feature/uat/release-fixes`
+- **Hotfix Branches:** `hotfix/<feature-name>`
+  - Example: `hotfix/permissions-hang`
+- **Protected Core Branches:** `main`, `dev`, `uat`
+
+### 2. Forked Repository Contributions
+If you are contributing from a personal fork:
+- You are free to name your branch `feature/<base-branch>/<feature-name>`, `feature/<name>`, or `fix/<name>`.
+- Our GitHub Actions CI automatically recognizes fork PRs and permits their branch names while validating code quality and test execution.
+
+---
+
+## 🔒 Code Ownership & Review Policy
+
+- **Code Ownership:** Managed via [`.github/CODEOWNERS`](.github/CODEOWNERS) assigned to **`@halcyon-past`**.
+- **Pull Request Review:** All pull requests targeting `main`, `dev`, or `uat` require an approving review from the code owner before they can be merged.
+- **Automated Status Checks:** The CI test suite must pass 100% on Apple Silicon runners (`macos-14`) before a PR can be merged.
+
+---
+
+## 🧪 Local Automated Testing
+
+Before submitting a pull request, run the local automated test runner:
 ```bash
-# 1. Fork the repository on GitHub
+./scripts/run_tests.sh
+```
+
+This verifies:
+1. **Swift Core Unit Tests (14/14):**
+   - String formatting, URL, email, and phone detection
+   - Data models (`ScanResult`, `ScanType` Codable serialization)
+   - `AppSettings` defaults and persistent mutations
+   - `HotkeyService` global shortcut parser
+   - `NSImage` resizing and raster data conversion
+   - `HistoryService` local file operations
+2. **Next.js Production Website Build:**
+   - Typechecking, linting, and Next.js static asset optimization
+
+---
+
+## 🛠️ Step-by-Step Contribution Guide
+
+### 1. Fork and Clone
+```bash
+# 1. Fork on GitHub: https://github.com/halcyon-past/byakugan-scan
 # 2. Clone your fork locally
 git clone https://github.com/<your-username>/byakugan-scan.git
 cd byakugan-scan
 
 # 3. Add upstream remote
 git remote add upstream https://github.com/halcyon-past/byakugan-scan.git
+git fetch upstream
 ```
 
-### Generating the Xcode Project
-We use `project.yml` with XcodeGen to ensure clean version control without merge conflicts on `.pbxproj` files:
+### 2. Enable Local Git Hooks (Recommended)
+We provide a pre-push hook in `.githooks/` that catches branch naming violations before they reach remote:
+```bash
+git config core.hooksPath .githooks
+```
+
+### 3. Create Your Branch
+Branch from **`upstream/dev`** for all new features:
+```bash
+git checkout -b feature/dev/your-feature-name upstream/dev
+```
+
+### 4. Build & Test Locally
+Generate the Xcode project and build:
 ```bash
 xcodegen generate
-```
-
-### Building & Running
-You can compile and run via Xcode:
-```bash
-open ByakuganScan.xcodeproj
-# Press Cmd + R in Xcode
-```
-
-Or build the standalone `.app` bundle from terminal:
-```bash
 ./scripts/build_app.sh
 open "build/Byakugan Scan.app"
 ```
+
+Verify tests:
+```bash
+./scripts/run_tests.sh
+```
+
+### 5. Commit & Push
+Adhere to [Conventional Commits](https://www.conventionalcommits.org/):
+```bash
+git commit -m "feat(ocr): improve barcode detection accuracy"
+git push origin feature/dev/your-feature-name
+```
+
+### 6. Open a Pull Request
+1. Navigate to GitHub and open a Pull Request targeting the **`dev`** branch (or `uat`/`main` if a hotfix).
+2. Complete the Pull Request template.
+3. Wait for the automated CI suite to pass and for review feedback.
 
 ---
 
 ## Architectural Guidelines
 
-- **Architecture:** Lightweight MVVM with dedicated Service Singletons (`OCRService`, `BarcodeService`, `HotkeyService`, `HistoryService`).
-- **Orchestration:** `ScanCoordinator` is the `@MainActor` hub that connects user triggers to screen capture and Vision processing.
-- **Privacy First:** Never introduce external network calls or cloud dependencies. All OCR and barcode recognition must remain 100% on-device.
-- **Swift Concurrency:** Follow Swift 6 strict concurrency rules. Annotate UI-facing methods with `@MainActor` and keep background Vision processing off the main thread.
-- **Menu Bar UX:** Keep memory footprint minimal. Clean up resources immediately after scan completion.
-
----
-
-## Development Workflow & Git Standards
-
-### 1. Create a Topic Branch
-Branch names should follow these conventions:
-```bash
-git checkout -b feat/your-feature-name
-git checkout -b fix/issue-description
-git checkout -b docs/documentation-improvement
-```
-
-### 2. Commit Guidelines
-Write clear, concise commit messages adhering to [Conventional Commits](https://www.conventionalcommits.org/):
-- `feat: add sound effect customization`
-- `fix: prevent duplicate shortcut registrations`
-- `docs: update troubleshooting guide for Screen Recording`
-- `refactor: clean up barcode symbology mapping`
-
-### 3. Submitting a Pull Request
-1. Ensure your code compiles cleanly without warnings:
-   ```bash
-   ./scripts/build_app.sh
-   ```
-2. Push your branch to your fork:
-   ```bash
-   git push origin feat/your-feature-name
-   ```
-3. Open a Pull Request on GitHub against `main`.
-4. Fill in the provided Pull Request template completely.
+- **Architecture:** Lightweight MVVM with dedicated Service Singletons (`OCRService`, `ScreenCaptureService`, `HotkeyService`, `HistoryService`).
+- **Orchestration:** `ScanCoordinator` is the `@MainActor` central controller.
+- **Privacy First:** 100% on-device offline processing. Never introduce external network tracking or cloud OCR dependencies.
+- **Memory Footprint:** Keep memory allocations transient. Releasing captured buffers immediately after recognition is essential.
 
 ---
 
 ## Need Help?
 
-If you have questions about the codebase or architecture, feel free to open a Discussion on GitHub or reach out directly at **[aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)**.
+If you have questions about architecture or testing, open an issue or discussion on GitHub or contact **[aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)**.

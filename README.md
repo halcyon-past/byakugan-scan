@@ -146,6 +146,22 @@ Tests cover:
 
 ---
 
+## 🌿 Branching & Contributing
+
+We maintain three primary protected branches:
+- **`main`**: Production releases.
+- **`uat`**: Pre-release user acceptance testing.
+- **`dev`**: Active development integration branch (default target for PRs).
+
+### Branch Naming Conventions:
+- **Feature branches:** `feature/<base-branch>/<feature-name>` (e.g., `feature/dev/ocr-speedup`)
+- **Hotfix branches:** `hotfix/<feature-name>` (e.g., `hotfix/permissions-patch`)
+- **Fork contributions:** Pull requests from forks are automatically recognized by CI and permitted.
+
+All pull requests require code owner review and passing automated tests before merge. See our complete [Contributing Guide](CONTRIBUTING.md) for details.
+
+---
+
 ## 📄 Privacy & Permissions
 
 - **Screen Recording Permission:** Required by macOS to capture screen content. Byakugan Scan only captures the exact rectangular frame selected by your cursor. Pixels are processed in volatile memory and never saved to disk or network.
