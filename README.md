@@ -115,12 +115,34 @@ byakugan-scan/
    xcodegen generate
    ```
 
-3. Open the project in Xcode:
+3. Build the macOS .app bundle directly:
+   ```bash
+   ./scripts/build_app.sh
+   open "build/Byakugan Scan.app"
+   ```
+
+4. Or open in Xcode:
    ```bash
    open ByakuganScan.xcodeproj
    ```
 
-4. Select your development team under **Signing & Capabilities** and hit `Cmd + R` to run!
+---
+
+## 🧪 Automated Testing
+
+Run the full automated test suite (Swift unit tests + Next.js build verification):
+```bash
+./scripts/run_tests.sh
+```
+
+Tests cover:
+- String extensions (URL, email, phone number, and whitespace formatting)
+- Model serialization (Codable `ScanResult`, `ScanType` symbols)
+- `AppSettings` preferences mutations and defaults
+- `HotkeyService` global shortcut parser
+- `NSImage` resizing and PNG data generation
+- `HistoryService` insertion, removal, favorite toggling, and persistence
+- Next.js website production build validation
 
 ---
 
