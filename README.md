@@ -1,5 +1,6 @@
 # Byakugan Scan 👁️
 
+[![Version](https://img.shields.io/badge/Version-v1.0.3-fuchsia.svg?style=flat-square)](https://github.com/halcyon-past/byakugan-scan/releases/latest)
 [![Platform](https://img.shields.io/badge/Platform-macOS%2014.0%2B-blue.svg?style=flat-square&logo=apple)](https://apple.com)
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg?style=flat-square&logo=swift)](https://swift.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
@@ -23,11 +24,15 @@
 - 🔍 **Accurate Screen OCR:** Snatch text from non-selectable PDFs, protected web pages, YouTube videos, screenshots, images, presentations, and Zoom screen shares.
 - 📱 **Instant QR Code Scanner:** Decode any QR code on screen directly into URLs, passwords, or text without pulling out your phone.
 - 🏷️ **Industrial Barcode Scanning:** Recognize 13+ barcode symbologies: EAN-8/13, UPC-E, Code 128, Code 39, Code 93, Data Matrix, Aztec, PDF417, ITF-14, and Micro QR.
-- 📋 **Clipboard Automation:** Auto-copies results directly to your clipboard with sound effects and banner notifications.
+- ✨ **Floating HUD Toast Feedback:** Non-intrusive frosted-glass pill displaying word/character counts and context-aware one-click actions (`Open` for URLs, `Email` for addresses).
+- 🔊 **Configurable Sound Variations:** Choose from *Classic Glass*, *Subtle Click*, *Camera Shutter*, *Haptic Pop*, or *Mute* with live audio preview in Settings.
+- 👁️ **Live Menu Bar Activity State:** Menu bar reticle dynamically animates during active capture/OCR and flashes a confirmation checkmark upon completion.
+- 🎨 **Curated Theme Accents:** Customize selection box tints and UI highlights (*Byakugan Chakra Pink*, *Neon Cyan*, *Electric Purple*, *Terminal Emerald*, or *System Accent*).
+- 🔗 **Deep Links & macOS Shortcuts (`byakugan://`):** Trigger scans from Raycast, Alfred, Stream Deck, BetterTouchTool, or native macOS Shortcuts.app (`byakugan://scan?mode=text|qr|barcode|last`).
+- 📋 **Clipboard Automation:** Auto-copies results directly to your clipboard (with optional additive multi-clip mode).
 - ⌨️ **Global Keyboard Shortcuts:** Trigger actions from any application via customizable global hotkeys.
-- 📜 **Scan History:** Revisit, search, and recopy recent extractions locally.
+- 📜 **Scan History:** Revisit, search, favorite, and recopy recent extractions locally.
 - ⚙️ **Customizable Formatting:** Control line breaks, join sentences with spaces, or trim extra whitespace.
-- 🌓 **Menu Bar Companion:** Low CPU and memory footprint with dedicated Light & Dark mode taskbar icons (`AS` reticle monogram).
 
 ---
 

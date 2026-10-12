@@ -6,6 +6,28 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [1.0.3] — 2026-10-13
+
+### Added
+- **Transient Minimal HUD / Floating Toast (`FloatingHUDController`) (#3):**
+  - Non-intrusive, frosted-glass floating pill (`NSPanel` with `.borderless, .nonactivatingPanel` across all virtual desktops and full-screen spaces).
+  - Displays word and character counts for text captures, barcode previews, and context-aware one-click action buttons (`Open` for URLs, `Email` for email addresses).
+  - Configurable `FeedbackStyle` preference (`Floating HUD Pill`, `System Notification`, `Both HUD & Notification`, or `Silent / Off`).
+- **Selection Sound Variations & Configurable Audio Effects (`SoundEffect`) (#4):**
+  - Added selectable audio profiles in Settings > General: `Classic Glass`, `Subtle Click`, `Camera Shutter`, `Haptic Pop`, and `Mute / Silent`.
+  - Added an interactive preview speaker button inside Settings to test sound effects live.
+- **Menu Bar Icon Activity State & Live Scanning Animation (#5):**
+  - Reactive Combine observer in `AppDelegate` bound to `ScanCoordinator.shared.$isScanning`.
+  - Dynamically transitions the menu bar icon to an active scanning reticle (`viewfinder.circle.fill`) during capture/OCR, flashes a completion reticle (`checkmark.circle.fill`) for 450ms upon success, and restores the default eye icon with zero disk I/O.
+- **Customizable Selection Box Tint & Theme Accents (`ThemeAccent`) (#6):**
+  - Added a dedicated **Appearance** tab in Settings featuring curated color swatches: `Byakugan Chakra (Lotus Pink)`, `Neon Cyan`, `Electric Purple`, `Terminal Emerald`, and `System Accent`, alongside an adjustable capture overlay dimming opacity slider.
+- **Cinematic 60 FPS Demo Video Generator:**
+  - Added `scripts/generate_cinematic_demo.swift` producing a 1080p @ 60 FPS native macOS demo video with procedural lo-fi audio and synchronized Foley sound effects.
+- **Automated Test Suite Expansion:**
+  - Added unit test suites covering `SoundEffect`, `FeedbackStyle`, `ThemeAccent`, and `FloatingHUDItem` word/character formatting.
+
+---
+
 ## [1.0.2] — 2026-10-12
 
 ### Added

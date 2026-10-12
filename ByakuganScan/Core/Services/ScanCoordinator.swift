@@ -97,13 +97,17 @@ final class ScanCoordinator: ObservableObject {
                 ClipboardService.shared.copy(content, additive: settings.additiveClipboard)
             }
             
-            // Audio Feedback
-            if settings.playSoundOnCapture {
-                NSSound(named: "Glass")?.play()
+            // Audio Feedback (Issue #4)
+            if settings.playSoundOnCapture && settings.captureSoundEffect != .none {
+                settings.captureSoundEffect.play()
             }
             
-            // Notification Feedback
-            if settings.showNotificationOnCapture {
+            // Visual Feedback: Floating HUD and/or System Notification (Issue #3)
+            if settings.feedbackStyle.showsHUD {
+                FloatingHUDController.shared.show(result: result)
+            }
+            
+            if settings.feedbackStyle.showsSystemNotification && settings.showNotificationOnCapture {
                 sendNotification(for: result)
             }
             
