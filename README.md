@@ -33,18 +33,48 @@
 
 ## 📦 Installation
 
-### Option 1: Homebrew Cask (Recommended)
+### Option 1: Homebrew Cask (Recommended for Power Users)
+
+Install Byakugan Scan natively with [Homebrew](https://brew.sh) via our official tap repository ([`halcyon-past/homebrew-tap`](https://github.com/halcyon-past/homebrew-tap)):
+
 ```bash
+# Direct one-line installation (auto-taps repository)
 brew install --cask halcyon-past/tap/byakugan-scan
 ```
-*Or tap first, then install:*
+
+Alternatively, tap the repository first and install:
 ```bash
 brew tap halcyon-past/tap
 brew install --cask byakugan-scan
 ```
 
-### Option 2: Direct DMG Download
-Download the latest universal DMG directly from [GitHub Releases](https://github.com/halcyon-past/byakugan-scan/releases/latest) or the [Official Website](https://byakugan-scan.aritro.cloud).
+#### Keeping Updated via Homebrew:
+```bash
+brew update && brew upgrade --cask byakugan-scan
+```
+
+#### Declarative Brewfile:
+Include Byakugan Scan in your dotfiles `Brewfile`:
+```ruby
+tap "halcyon-past/tap"
+cask "byakugan-scan"
+```
+
+#### Clean Uninstall:
+```bash
+# Removes the app and purges local caches and preferences
+brew uninstall --zap --cask byakugan-scan
+```
+
+---
+
+### Option 2: Direct Universal DMG Download
+
+Prefer a manual installer? Download the signed universal DMG bundle compatible with both Apple Silicon (M1/M2/M3/M4) and Intel Macs:
+
+1. Download [`ByakuganScan.dmg`](https://github.com/halcyon-past/byakugan-scan/releases/latest/download/ByakuganScan.dmg) from [GitHub Releases](https://github.com/halcyon-past/byakugan-scan/releases/latest) or our [Official Website](https://byakugan-scan.aritro.cloud).
+2. Open the downloaded `.dmg` and drag **Byakugan Scan** into your `/Applications` folder.
+3. Launch the app and grant **Screen Recording** permission when prompted in **System Settings > Privacy & Security > Screen Recording** (used strictly for silent on-device Vision screen analysis).
 
 ---
 

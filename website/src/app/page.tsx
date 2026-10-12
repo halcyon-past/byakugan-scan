@@ -13,12 +13,15 @@ import {
   Sparkles,
   Copy,
   Check,
+  Download,
 } from "lucide-react";
 import MangaScrollSection from "@/components/MangaScrollSection";
 import { APP_DOWNLOAD_URL } from "@/constants/links";
 
 export default function AnimeMasterpieceHome() {
+  const [installMethod, setInstallMethod] = useState<"brew" | "dmg">("brew");
   const [copiedBrew, setCopiedBrew] = useState(false);
+  const [copiedSha, setCopiedSha] = useState(false);
   return (
     <div className="relative w-full overflow-hidden">
       {/* Soothing Atmospheric Radial Glow & Soft Ambient Grid */}
@@ -54,52 +57,166 @@ export default function AnimeMasterpieceHome() {
               A bespoke macOS menu bar utility built for developers, designers, and researchers. Snatch unselectable text from video streams, protected portals, and images in 11 milliseconds. Decode QR codes and commercial barcodes with zero latency and complete privacy.
             </p>
 
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-4">
-              <a
-                href={APP_DOWNLOAD_URL}
-                className="px-7 py-3.5 bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 text-white text-sm font-semibold rounded-lg transition-all flex items-center gap-2 shadow-lg shadow-pink-600/20 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <span>Download Free (macOS)</span>
-                <ArrowUpRight className="w-4 h-4" />
-              </a>
+            {/* Professional Tabbed Installation Card */}
+            <div className="w-full max-w-xl rounded-xl bg-slate-950/75 border border-white/10 backdrop-blur-xl overflow-hidden shadow-2xl shadow-black/50 mb-6">
+              {/* Tab Header */}
+              <div className="flex items-center justify-between px-3 pt-2.5 bg-white/[0.02] border-b border-white/[0.08]">
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setInstallMethod("brew")}
+                    className={`flex items-center gap-2 px-3.5 py-2 rounded-t-lg text-xs font-mono transition-all border-b-2 ${
+                      installMethod === "brew"
+                        ? "bg-white/[0.08] text-white border-pink-400 font-semibold shadow-sm"
+                        : "text-slate-400 hover:text-slate-200 border-transparent hover:bg-white/[0.03]"
+                    }`}
+                  >
+                    <Terminal className="w-3.5 h-3.5 text-pink-400" />
+                    <span>Homebrew Cask</span>
+                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-pink-500/20 text-pink-300 font-medium font-sans">
+                      Popular
+                    </span>
+                  </button>
 
-              <a
-                href="#capabilities"
-                className="px-6 py-3.5 bg-white/[0.04] border border-white/10 hover:border-pink-500/30 hover:bg-white/[0.07] text-slate-200 hover:text-white text-sm font-medium rounded-lg transition-all flex items-center gap-2"
-              >
-                <span>Explore Capabilities</span>
-              </a>
+                  <button
+                    type="button"
+                    onClick={() => setInstallMethod("dmg")}
+                    className={`flex items-center gap-2 px-3.5 py-2 rounded-t-lg text-xs font-mono transition-all border-b-2 ${
+                      installMethod === "dmg"
+                        ? "bg-white/[0.08] text-white border-pink-400 font-semibold shadow-sm"
+                        : "text-slate-400 hover:text-slate-200 border-transparent hover:bg-white/[0.03]"
+                    }`}
+                  >
+                    <Download className="w-3.5 h-3.5 text-pink-400" />
+                    <span>Direct DMG</span>
+                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 font-sans">
+                      v1.0.1
+                    </span>
+                  </button>
+                </div>
+
+                <div className="hidden sm:flex items-center gap-1.5 pr-2 text-[11px] font-mono text-slate-400">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Universal Binary</span>
+                </div>
+              </div>
+
+              {/* Tab Content */}
+              <div className="p-4 sm:p-5">
+                {installMethod === "brew" ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between gap-3 p-3 rounded-lg bg-black/60 border border-white/[0.08] font-mono text-xs text-slate-200 shadow-inner">
+                      <div className="flex items-center gap-2.5 overflow-x-auto select-all">
+                        <span className="text-pink-400 font-bold select-none">$</span>
+                        <span className="text-slate-200 whitespace-nowrap">brew install --cask halcyon-past/tap/byakugan-scan</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText("brew install --cask halcyon-past/tap/byakugan-scan");
+                          setCopiedBrew(true);
+                          setTimeout(() => setCopiedBrew(false), 2000);
+                        }}
+                        className="flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-xs text-slate-300 hover:text-white transition-all active:scale-95"
+                        title="Copy command"
+                      >
+                        {copiedBrew ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-400" />
+                            <span className="text-[11px] text-emerald-400 font-sans font-medium">Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5 text-slate-400" />
+                            <span className="text-[11px] font-sans font-medium">Copy</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400 pt-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-emerald-400 font-semibold">✓</span>
+                        <span>Official Tap: <code className="text-slate-300">halcyon-past/homebrew-tap</code></span>
+                      </div>
+                      <span className="text-[11px] font-mono text-slate-400">
+                        Updates via <code className="text-pink-300">brew upgrade</code>
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-lg bg-black/60 border border-white/[0.08]">
+                      <div>
+                        <div className="text-sm font-semibold text-white flex items-center gap-2">
+                          <span>ByakuganScan-v1.0.1.dmg</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                            3.2 MB
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          Drag-and-drop installer for macOS 14.0 Sonoma or later.
+                        </p>
+                      </div>
+
+                      <a
+                        href={APP_DOWNLOAD_URL}
+                        className="flex-shrink-0 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 text-white text-xs font-bold rounded-lg shadow-md transition-all active:scale-95"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Download DMG</span>
+                      </a>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-slate-400 pt-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-slate-400">SHA-256:</span>
+                        <span className="text-slate-300 select-all">7eeabfc8...71ca6</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard.writeText("7eeabfc81370094234bbecc87ca98edaea6e3569922b7d16aae2c572a1871ca6");
+                            setCopiedSha(true);
+                            setTimeout(() => setCopiedSha(false), 2000);
+                          }}
+                          className="ml-1 p-1 text-slate-400 hover:text-pink-300 transition-colors rounded hover:bg-white/5"
+                          title="Copy full SHA-256 checksum"
+                        >
+                          {copiedSha ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                        </button>
+                      </div>
+
+                      <a
+                        href="https://github.com/halcyon-past/byakugan-scan/releases/latest"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-pink-400 hover:underline inline-flex items-center gap-1"
+                      >
+                        <span>Release Assets</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Homebrew Terminal One-Liner */}
-            <div className="mt-5 flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg bg-black/40 border border-white/10 font-mono text-xs text-slate-300 max-w-fit shadow-inner">
-              <span className="text-pink-400 select-none font-bold">$</span>
-              <span className="text-slate-200 select-all">brew install --cask halcyon-past/tap/byakugan-scan</span>
-              <button
-                type="button"
-                onClick={() => {
-                  navigator.clipboard.writeText("brew install --cask halcyon-past/tap/byakugan-scan");
-                  setCopiedBrew(true);
-                  setTimeout(() => setCopiedBrew(false), 2000);
-                }}
-                className="ml-2 p-1 text-slate-400 hover:text-pink-300 transition-colors rounded hover:bg-white/5"
-                title="Copy Homebrew command"
-                aria-label="Copy Homebrew command"
+            {/* Quick Explore Link */}
+            <div className="flex items-center gap-4">
+              <a
+                href="#capabilities"
+                className="px-5 py-2.5 bg-white/[0.04] border border-white/10 hover:border-pink-500/30 hover:bg-white/[0.07] text-slate-300 hover:text-white text-xs font-medium rounded-lg transition-all flex items-center gap-2"
               >
-                {copiedBrew ? (
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
-                ) : (
-                  <Copy className="w-3.5 h-3.5" />
-                )}
-              </button>
+                <span>Explore Technical Capabilities</span>
+                <ArrowDown className="w-3.5 h-3.5 text-pink-400" />
+              </a>
             </div>
           </div>
 
           {/* Right Column: Visual Stage for 3D Follower Eye */}
-          <div className="lg:col-span-5 hidden lg:flex items-center justify-center relative min-h-[420px] pointer-events-none">
+          <div className="lg:col-span-5 hidden lg:flex items-center justify-center relative min-h-[460px] pointer-events-none">
             {/* Ambient soft glow behind the 3D eye */}
-            <div className="w-[320px] h-[320px] rounded-full bg-gradient-to-tr from-fuchsia-600/20 via-pink-600/10 to-transparent blur-3xl" />
+            <div className="w-[340px] h-[340px] rounded-full bg-gradient-to-tr from-fuchsia-600/20 via-pink-600/10 to-transparent blur-3xl" />
           </div>
         </div>
 

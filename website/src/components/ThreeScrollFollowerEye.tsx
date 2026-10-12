@@ -30,7 +30,7 @@ export default function ThreeScrollFollowerEye() {
     // Master System Group (coordinates scroll movement)
     const eyeSystem = new THREE.Group();
     scene.add(eyeSystem);
-    eyeSystem.position.set(2.2, 0, 0);
+    eyeSystem.position.set(2.4, 0.0, 0);
 
     // Eye Orbit Group (handles lookAt mouse gaze and saccadic eye jitter)
     const eyeOrbitGroup = new THREE.Group();
@@ -216,8 +216,8 @@ export default function ThreeScrollFollowerEye() {
     // 4. Specs: Hovers at upper-left depth
     // 5. Finale CTA: Smoothly descends into the top center above "ACTIVATE YOUR VISION"
     const WAYPOINTS_DESKTOP = [
-      { t: 0.00, x: 2.2,  y: 0.05, z: 0.0,  scale: 1.05 },
-      { t: 0.30, x: -2.2, y: 0.0,  z: 0.1,  scale: 1.05 },
+      { t: 0.00, x: 2.4,  y: 0.00, z: 0.0,  scale: 1.08 },
+      { t: 0.30, x: -2.2, y: 0.00, z: 0.1,  scale: 1.05 },
       { t: 0.65, x: 2.2,  y: 0.25, z: -1.2, scale: 0.82 },
       { t: 0.85, x: -2.0, y: 0.15, z: -1.0, scale: 0.85 },
       { t: 1.00, x: 0.0,  y: 0.95, z: -0.3, scale: 1.15 },
@@ -229,9 +229,9 @@ export default function ThreeScrollFollowerEye() {
       if (isMobile) {
         return {
           x: 0,
-          y: THREE.MathUtils.lerp(0.7, -0.1, clampedP),
-          z: -1.8,
-          scale: 0.65,
+          y: THREE.MathUtils.lerp(0.85, -0.2, clampedP),
+          z: -2.0,
+          scale: 0.60,
         };
       }
 
@@ -258,10 +258,10 @@ export default function ThreeScrollFollowerEye() {
       return { x: last.x, y: last.y, z: last.z, scale: last.scale };
     };
 
-    let targetX = 2.2;
-    let targetY = 0.05;
+    let targetX = 2.4;
+    let targetY = 0.00;
     let targetZ = 0.0;
-    let targetScale = 1.05;
+    let targetScale = 1.08;
 
     const handleScroll = () => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
