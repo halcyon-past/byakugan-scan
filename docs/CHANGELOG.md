@@ -6,6 +6,25 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [Unreleased]
+
+### Added
+- **Official Homebrew Cask Distribution:** Added official Homebrew Cask formula (`Casks/byakugan-scan.rb`) and official tap support (`halcyon-past/tap/byakugan-scan`), enabling seamless installation and upgrades via `brew install --cask halcyon-past/tap/byakugan-scan`.
+- **Interactive Web Installer Tabs:** Added a dual-tab installation card to the marketing website hero section featuring one-click copyable Homebrew commands, direct DMG downloads, SHA-256 checksum copying, and file size badges.
+
+### Changed
+- **Conflict-Free Default Shortcuts:** Changed default QR code scan shortcut to `⌘⇧6` and barcode scan shortcut to `⌘⇧7` to eliminate hotkey collisions with native macOS system screenshot shortcuts (`⌘⇧3`, `⌘⇧4`, `⌘⇧5`).
+- **3D Follower Eyeball Trajectory:** Recalibrated 3D Three.js Byakugan eyeball follower coordinates and ambient lighting stages for improved visual hierarchy across desktop and mobile devices.
+
+### Fixed
+- **Xcode Target Compilation:** Regenerated `ByakuganScan.xcodeproj` via `xcodegen` to ensure `UpdateService.swift` and related components are properly included in the build target.
+
+### Security
+- **Hardened GitHub Actions Token Permissions:** Added explicit least-privilege `permissions` blocks (`contents: read` / `contents: write`) across all CI/CD workflow manifests.
+- **Dependency Vulnerability Remediation:** Upgraded Next.js to 15.2.3 and refreshed website packages to eliminate all reported Dependabot security vulnerabilities.
+
+---
+
 ## [1.0.1] — 2026-10-12
 
 ### Added
