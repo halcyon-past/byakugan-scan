@@ -34,19 +34,19 @@ export default function EditorialHeader() {
   return (
     <>
       {/* Top Editorial Ticker Bar (Halcyon Announcement Style) */}
-      <div className="w-full bg-[#05060b] hairline-b text-[11px] font-mono-tech tracking-wider text-slate-400 py-1.5 px-4 overflow-hidden z-50 relative select-none">
+      <div className="w-full bg-[#060814] hairline-b text-[11px] font-mono-tech tracking-wider text-slate-300 py-1.5 px-4 overflow-hidden z-50 relative select-none">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-teal-400 animate-ping" />
-            <span className="text-slate-300 font-medium">NEO-VISION PROTOCOL 1.0</span>
+            <span className="text-white font-bold">NEO-VISION PROTOCOL 1.0</span>
             <span className="hidden sm:inline text-slate-600">/</span>
-            <span className="hidden sm:inline text-slate-400">ON-DEVICE OCR & BARCODE ENGINE</span>
+            <span className="hidden sm:inline text-slate-300 font-medium">ON-DEVICE OCR & BARCODE ENGINE</span>
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-slate-400 hidden md:inline">{currentTime}</span>
+            <span className="text-slate-300 hidden md:inline font-mono">{currentTime}</span>
             <span className="text-slate-600 hidden md:inline">/</span>
-            <span className="text-teal-400 font-semibold">100% PRIVATE & OFFLINE</span>
+            <span className="text-teal-300 font-bold">100% PRIVATE & OFFLINE</span>
           </div>
         </div>
       </div>
@@ -55,14 +55,14 @@ export default function EditorialHeader() {
       <header
         className={`sticky top-0 z-40 w-full transition-all duration-300 ${
           scrolled
-            ? "bg-[#07080d]/95 backdrop-blur-md hairline-b py-3.5 shadow-2xl"
+            ? "bg-[#080a18]/95 backdrop-blur-md hairline-b py-3.5 shadow-2xl"
             : "bg-transparent hairline-b py-5"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           {/* Logo Lockup */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/10 group-hover:border-indigo-400/50 transition-colors bg-black flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/20 group-hover:border-indigo-400/80 transition-colors bg-black flex items-center justify-center">
               <Image
                 src="/as-icon-dark.png"
                 alt="Byakugan Scan Monogram"
@@ -75,14 +75,14 @@ export default function EditorialHeader() {
               <span className="font-editorial-display text-2xl font-bold uppercase tracking-tight text-white leading-none">
                 Byakugan Scan
               </span>
-              <span className="text-[9px] font-mono-tech uppercase tracking-widest text-slate-400 -mt-0.5">
+              <span className="text-[9px] font-mono-tech uppercase tracking-widest text-slate-300 font-semibold -mt-0.5">
                 白眼 // All-Seeing Eye
               </span>
             </div>
           </Link>
 
           {/* Desktop Editorial Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-10 text-[13px] font-medium tracking-wide text-slate-300">
+          <nav className="hidden lg:flex items-center gap-10 text-[13px] font-medium tracking-wide text-slate-200">
             <Link
               href="/#editorial-proof"
               className="hover:text-white transition-colors relative py-1"
@@ -109,13 +109,13 @@ export default function EditorialHeader() {
             </Link>
             <Link
               href="/privacy"
-              className="hover:text-white transition-colors relative py-1 text-slate-400"
+              className="hover:text-white transition-colors relative py-1 text-slate-300"
             >
               Privacy
             </Link>
             <Link
               href="/terms"
-              className="hover:text-white transition-colors relative py-1 text-slate-400"
+              className="hover:text-white transition-colors relative py-1 text-slate-300"
             >
               Terms
             </Link>
@@ -127,7 +127,7 @@ export default function EditorialHeader() {
               href="https://github.com/halcyon-past/byakugan-scan"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-mono-tech text-slate-400 hover:text-white transition-colors flex items-center gap-1"
+              className="text-xs font-mono-tech text-slate-300 hover:text-white transition-colors flex items-center gap-1"
             >
               <span>GitHub</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
@@ -137,7 +137,7 @@ export default function EditorialHeader() {
               href="https://github.com/halcyon-past/byakugan-scan"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-black bg-white hover:bg-slate-200 rounded transition-all active:scale-95 shadow-md font-mono-tech"
+              className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-black bg-white hover:bg-slate-100 rounded transition-all active:scale-95 shadow-md font-mono-tech"
             >
               Get For Mac
             </a>

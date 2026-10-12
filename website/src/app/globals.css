@@ -5,8 +5,8 @@
 @tailwind utilities;
 
 :root {
-  --bg-deep: #020307;
-  --chakra-glow: rgba(129, 140, 248, 0.45);
+  --bg-deep: #060812;
+  --chakra-glow: rgba(129, 140, 248, 0.5);
   --chakra-cyan: #38bdf8;
   --gold-accent: #f59e0b;
 }
@@ -46,10 +46,23 @@ body {
   selection-color: #ffffff;
 }
 
+/* Hairline dividers with high-visibility contrast */
+.hairline-b {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.hairline-t {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.hairline-r {
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
 /* Anime Japanese Manga Display Font */
 .font-manga {
   font-family: 'Cinzel', serif;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
 }
 
 .font-kanji {
@@ -65,13 +78,13 @@ body {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Glassmorphism with Cyberpunk / Anime Edge */
+/* Glassmorphism with Cyberpunk / Anime Edge - High Readability */
 .anime-glass {
-  background: rgba(8, 10, 20, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(129, 140, 248, 0.16);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  background: rgba(12, 16, 32, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(147, 197, 253, 0.22);
+  box-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.55);
 }
 
 .anime-card-hover {
@@ -80,13 +93,13 @@ body {
 
 .anime-card-hover:hover {
   transform: translateY(-4px);
-  border-color: rgba(147, 197, 253, 0.45);
-  box-shadow: 0 16px 40px -10px rgba(99, 102, 241, 0.25);
+  border-color: rgba(147, 197, 253, 0.55);
+  box-shadow: 0 16px 40px -10px rgba(99, 102, 241, 0.35);
 }
 
 /* Manga Speed Lines / Halftone Overlay */
 .manga-grid {
-  background-image: radial-gradient(rgba(129, 140, 248, 0.12) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(129, 140, 248, 0.16) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -128,17 +141,17 @@ body {
   animation: laserSweep 2.2s ease-in-out infinite;
 }
 
-/* Custom Thin Scrollbar */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #020307;
+  background: #060812;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e1b4b;
-  border-radius: 2px;
+  background: #252354;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3730a3;
+  background: #4338ca;
 }

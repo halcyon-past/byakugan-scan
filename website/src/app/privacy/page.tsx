@@ -9,9 +9,9 @@ export default function PrivacyPage() {
   return (
     <div className="py-20 px-6 max-w-4xl mx-auto">
       <h1 className="text-4xl font-extrabold text-white mb-2">Privacy Policy</h1>
-      <div className="text-sm text-slate-500 mb-10">Effective Date: October 1, 2026 | Last Updated: October 1, 2026</div>
+      <div className="text-sm text-slate-300 mb-10 font-mono">Effective Date: October 1, 2026 | Last Updated: October 1, 2026</div>
 
-      <div className="space-y-8 text-slate-300 text-sm sm:text-base leading-relaxed">
+      <div className="space-y-8 text-slate-200 text-sm sm:text-base leading-relaxed font-normal">
         <section>
           <h2 className="text-xl font-bold text-white mb-3">1. Overview</h2>
           <p>
@@ -22,18 +22,18 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-xl font-bold text-white mb-3">2. Information We Do NOT Collect</h2>
           <p className="mb-2">We do not collect, transmit, log, or sell any personal data. Specifically:</p>
-          <ul className="list-disc pl-6 space-y-1.5 text-slate-400">
-            <li><strong>No Captured Content:</strong> Extracted text, QR codes, and barcodes never leave your computer.</li>
-            <li><strong>No Screenshots:</strong> Pixels are processed in volatile RAM and immediately discarded.</li>
-            <li><strong>No Analytics or Crash Logs:</strong> We track zero usage metrics, IP addresses, or device identifiers.</li>
-            <li><strong>No Network Entitlements:</strong> The app does not possess network client permissions.</li>
+          <ul className="list-disc pl-6 space-y-2 text-slate-200">
+            <li><strong className="text-white">No Captured Content:</strong> Extracted text, QR codes, and barcodes never leave your computer.</li>
+            <li><strong className="text-white">No Screenshots:</strong> Pixels are processed in volatile RAM and immediately discarded.</li>
+            <li><strong className="text-white">No Analytics or Crash Logs:</strong> We track zero usage metrics, IP addresses, or device identifiers.</li>
+            <li><strong className="text-white">No Network Entitlements:</strong> The app does not possess network client permissions.</li>
           </ul>
         </section>
 
         <section>
           <h2 className="text-xl font-bold text-white mb-3">3. Local Storage</h2>
           <p>
-            The optional scan history is stored strictly on your local disk at <code className="text-indigo-300">~/Library/Application Support/ByakuganScan/</code>. This file is under your full control and can be cleared at any time from Settings.
+            The optional scan history is stored strictly on your local disk at <code className="text-indigo-200 bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-700/40 font-mono">~/Library/Application Support/ByakuganScan/</code>. This file is under your full control and can be cleared at any time from Settings.
           </p>
         </section>
 
@@ -48,9 +48,9 @@ export default function PrivacyPage() {
           <h2 className="text-xl font-bold text-white mb-3">5. Contact Information</h2>
           <p>
             For any privacy inquiries or questions, contact:<br />
-            <strong>Aritro Saha</strong><br />
-            Email: <a href="mailto:aritrosaha2025@gmail.com" className="text-indigo-400 underline">aritrosaha2025@gmail.com</a><br />
-            Website: <a href="https://byakugan-scan.aritro.cloud" className="text-indigo-400 underline">https://byakugan-scan.aritro.cloud</a>
+            <strong className="text-white">Aritro Saha</strong><br />
+            Email: <a href="mailto:aritrosaha2025@gmail.com" className="text-indigo-300 underline font-semibold">aritrosaha2025@gmail.com</a><br />
+            Website: <a href="https://byakugan-scan.aritro.cloud" className="text-indigo-300 underline font-semibold">https://byakugan-scan.aritro.cloud</a>
           </p>
         </section>
       </div>

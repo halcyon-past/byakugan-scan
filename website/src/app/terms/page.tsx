@@ -9,9 +9,9 @@ export default function TermsPage() {
   return (
     <div className="py-20 px-6 max-w-4xl mx-auto">
       <h1 className="text-4xl font-extrabold text-white mb-2">Terms of Service</h1>
-      <div className="text-sm text-slate-500 mb-10">Effective Date: October 1, 2026 | Last Updated: October 1, 2026</div>
+      <div className="text-sm text-slate-300 mb-10 font-mono">Effective Date: October 1, 2026 | Last Updated: October 1, 2026</div>
 
-      <div className="space-y-8 text-slate-300 text-sm sm:text-base leading-relaxed">
+      <div className="space-y-8 text-slate-200 text-sm sm:text-base leading-relaxed font-normal">
         <section>
           <h2 className="text-xl font-bold text-white mb-3">1. Acceptance of Terms</h2>
           <p>
@@ -51,9 +51,9 @@ export default function TermsPage() {
           <h2 className="text-xl font-bold text-white mb-3">6. Contact Information</h2>
           <p>
             For questions regarding these Terms, contact:<br />
-            <strong>Aritro Saha</strong><br />
-            Email: <a href="mailto:aritrosaha2025@gmail.com" className="text-indigo-400 underline">aritrosaha2025@gmail.com</a><br />
-            Website: <a href="https://byakugan-scan.aritro.cloud" className="text-indigo-400 underline">https://byakugan-scan.aritro.cloud</a>
+            <strong className="text-white">Aritro Saha</strong><br />
+            Email: <a href="mailto:aritrosaha2025@gmail.com" className="text-indigo-300 underline font-semibold">aritrosaha2025@gmail.com</a><br />
+            Website: <a href="https://byakugan-scan.aritro.cloud" className="text-indigo-300 underline font-semibold">https://byakugan-scan.aritro.cloud</a>
           </p>
         </section>
       </div>
