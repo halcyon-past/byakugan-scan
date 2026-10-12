@@ -60,8 +60,8 @@ Lives discretely in your macOS menu bar with zero dock clutter. Click to inspect
 
 ### Feature 5: Customizable Global Shortcuts
 - **Capture Text:** `⌘⇧2` (Command + Shift + 2)
-- **Scan QR Code:** `⌘⇧3` (Command + Shift + 3)
-- **Scan Barcode:** `⌘⇧4` (Command + Shift + 4)
+- **Scan QR Code:** `⌘⇧6` (Command + Shift + 6)
+- **Scan Barcode:** `⌘⇧7` (Command + Shift + 7)
 Fully remappable to whatever keystrokes fit your workflow.
 
 ### Feature 6: Zero Telemetry & 100% Offline

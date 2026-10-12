@@ -83,8 +83,8 @@ Prefer a manual installer? Download the signed universal DMG bundle compatible w
 | Action | Shortcut | Description |
 |---|---|---|
 | **Capture Text** | `⌘ ⇧ 2` | Interactive crosshair selection for OCR text extraction |
-| **Scan QR Code** | `⌘ ⇧ 3` | Select any region containing a QR code to decode its payload |
-| **Scan Barcode** | `⌘ ⇧ 4` | Decode 1D and 2D commercial/logistics barcodes |
+| **Scan QR Code** | `⌘ ⇧ 6` | Select any region containing a QR code to decode its payload |
+| **Scan Barcode** | `⌘ ⇧ 7` | Decode 1D and 2D commercial/logistics barcodes |
 
 *All shortcuts can be customized in **Settings > Shortcuts**.*
 

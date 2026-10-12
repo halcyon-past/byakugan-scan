@@ -120,8 +120,8 @@ final class AppSettings: ObservableObject {
         let ud = UserDefaults.standard
         
         self.textScanShortcut = ud.string(forKey: Keys.textScanShortcut) ?? "⌘⇧2"
-        self.qrScanShortcut = ud.string(forKey: Keys.qrScanShortcut) ?? "⌘⇧3"
-        self.barcodeScanShortcut = ud.string(forKey: Keys.barcodeScanShortcut) ?? "⌘⇧4"
+        self.qrScanShortcut = ud.string(forKey: Keys.qrScanShortcut) ?? "⌘⇧6"
+        self.barcodeScanShortcut = ud.string(forKey: Keys.barcodeScanShortcut) ?? "⌘⇧7"
         self.captureLastSelectionShortcut = ud.string(forKey: Keys.captureLastSelectionShortcut) ?? ""
         self.captureWithoutLineBreaksShortcut = ud.string(forKey: Keys.captureWithoutLineBreaksShortcut) ?? ""
         self.captureWithLineBreaksShortcut = ud.string(forKey: Keys.captureWithLineBreaksShortcut) ?? ""
@@ -205,8 +205,8 @@ final class AppSettings: ObservableObject {
     /// Resets all settings to factory defaults.
     func resetToDefaults() {
         textScanShortcut = "⌘⇧2"
-        qrScanShortcut = "⌘⇧3"
-        barcodeScanShortcut = "⌘⇧4"
+        qrScanShortcut = "⌘⇧6"
+        barcodeScanShortcut = "⌘⇧7"
         captureLastSelectionShortcut = ""
         captureWithoutLineBreaksShortcut = ""
         captureWithLineBreaksShortcut = ""

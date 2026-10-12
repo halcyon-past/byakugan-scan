@@ -225,8 +225,8 @@ export default function AnimeMasterpieceHome() {
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-slate-400 font-medium">Quick Shortcuts:</span>
             <span className="bg-white/[0.04] border border-white/10 px-2.5 py-1 rounded text-slate-200 font-mono text-xs">⌘⇧2 Text</span>
-            <span className="bg-white/[0.04] border border-white/10 px-2.5 py-1 rounded text-slate-200 font-mono text-xs">⌘⇧3 QR</span>
-            <span className="bg-white/[0.04] border border-white/10 px-2.5 py-1 rounded text-slate-200 font-mono text-xs">⌘⇧4 Barcode</span>
+            <span className="bg-white/[0.04] border border-white/10 px-2.5 py-1 rounded text-slate-200 font-mono text-xs">⌘⇧6 QR</span>
+            <span className="bg-white/[0.04] border border-white/10 px-2.5 py-1 rounded text-slate-200 font-mono text-xs">⌘⇧7 Barcode</span>
           </div>
 
           <div className="flex items-center gap-2 text-slate-400 font-medium">

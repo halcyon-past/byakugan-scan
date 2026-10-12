@@ -141,8 +141,11 @@ struct ShortcutsSettingsView: View {
                 LabeledContent("Capture With Text to Speech") {
                     ShortcutField(shortcut: $settings.captureWithTTSShortcut, placeholder: "Record Shortcut")
                 }
-                LabeledContent("Read QR / Bar Code") {
-                    ShortcutField(shortcut: $settings.qrScanShortcut, placeholder: "⌘⇧3")
+                LabeledContent("Read QR Code") {
+                    ShortcutField(shortcut: $settings.qrScanShortcut, placeholder: "⌘⇧6")
+                }
+                LabeledContent("Scan Barcode") {
+                    ShortcutField(shortcut: $settings.barcodeScanShortcut, placeholder: "⌘⇧7")
                 }
                 LabeledContent("Stop Speaking") {
                     ShortcutField(shortcut: $settings.stopSpeakingShortcut, placeholder: "Record Shortcut")

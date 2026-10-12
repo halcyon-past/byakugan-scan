@@ -43,7 +43,7 @@ const TABS: ScanTab[] = [
     previewDescription: "Wi-Fi setup, 2FA secret, or URL displayed on monitor",
     sampleInput: "WIFI:S:Konoha_Chakra_5G;T:WPA;P:byakugan-secure-2026;;",
     output: "WIFI:S:Konoha_Chakra_5G;T:WPA;P:byakugan-secure-2026;;",
-    shortcut: "⌘⇧3",
+    shortcut: "⌘⇧6",
   },
   {
     id: "barcode",
@@ -53,7 +53,7 @@ const TABS: ScanTab[] = [
     previewDescription: "EAN-13, Code 128, or UPC displayed on screen",
     sampleInput: "[EAN-13] 8901030829145\n[SERIAL] BYK-ARM64-2026-X09",
     output: "[EAN-13] 8901030829145\n[SERIAL] BYK-ARM64-2026-X09",
-    shortcut: "⌘⇧4",
+    shortcut: "⌘⇧7",
   },
 ];
 

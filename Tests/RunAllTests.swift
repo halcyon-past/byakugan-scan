@@ -110,8 +110,8 @@ struct TestRunner {
             let settings = AppSettings.shared
             settings.resetToDefaults()
             try assertEqual(settings.textScanShortcut, "⌘⇧2")
-            try assertEqual(settings.qrScanShortcut, "⌘⇧3")
-            try assertEqual(settings.barcodeScanShortcut, "⌘⇧4")
+            try assertEqual(settings.qrScanShortcut, "⌘⇧6")
+            try assertEqual(settings.barcodeScanShortcut, "⌘⇧7")
             try assertTrue(settings.autoCopyToClipboard)
             try assertTrue(settings.playSoundOnCapture)
             try assertTrue(settings.showNotificationOnCapture)
@@ -133,11 +133,11 @@ struct TestRunner {
             let parsedText = HotkeyService.parseShortcut("⌘⇧2")
             try assertTrue(parsedText != nil, "Expected parsed shortcut for ⌘⇧2")
             
-            let parsedQR = HotkeyService.parseShortcut("⌘⇧3")
-            try assertTrue(parsedQR != nil, "Expected parsed shortcut for ⌘⇧3")
+            let parsedQR = HotkeyService.parseShortcut("⌘⇧6")
+            try assertTrue(parsedQR != nil, "Expected parsed shortcut for ⌘⇧6")
             
-            let parsedBarcode = HotkeyService.parseShortcut("⌘⇧4")
-            try assertTrue(parsedBarcode != nil, "Expected parsed shortcut for ⌘⇧4")
+            let parsedBarcode = HotkeyService.parseShortcut("⌘⇧7")
+            try assertTrue(parsedBarcode != nil, "Expected parsed shortcut for ⌘⇧7")
         }
 
         test("Parse invalid shortcuts returns nil") {
