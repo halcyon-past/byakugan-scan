@@ -6,6 +6,26 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [1.0.4] — 2026-10-13
+
+### Added
+- **Custom-Tinted Interactive Screen Selection Overlay (`SelectionOverlayController`) (#6):**
+  - Replaced macOS's uncustomizable grey system selection rectangle with a native 60/120Hz AppKit fullscreen overlay across all displays (`SelectionOverlayWindow` & `SelectionOverlayView`).
+  - Live-renders the user's selected `ThemeAccent` color (glowing 2px border, 4 corner Byakugan reticle brackets, subtle 14% inner tint fill, dashed crosshair guides, and live `W × H` pixel dimension pill) and respects the user's `overlayOpacity` screen dimming setting.
+  - Captures selected regions directly into RAM pasteboard via `/usr/sbin/screencapture -c -x -R<x,y,w,h>` with zero disk I/O.
+- **Interactive Selection Box Preview in Settings:**
+  - Added a live visual preview canvas and a one-click **Test Capture Overlay** button inside `Settings > Appearance`.
+
+### Fixed
+- **Settings Window Layout & Appearance Swatch Overflow:**
+  - Fixed horizontal clipping of the sidebar and right edge in `Settings > Appearance` by redesigning the theme swatches to use a responsive 5-column flexible layout with compact labels, removing redundant outer padding on grouped forms, and expanding default Settings window dimensions to `680 × 540`.
+- **Theme Accent Propagation Across UI:**
+  - Connected `AppSettings.shared.themeAccent` live to `FloatingHUDView`, `MenuBarPopoverView`, and `SettingsView` tinting.
+- **CI Concurrency & Check Completion:**
+  - Updated GitHub Actions `ci.yml` concurrency grouping so `push` and `pull_request` test checks never cancel each other mid-run during branch promotions.
+
+---
+
 ## [1.0.3] — 2026-10-13
 
 ### Added

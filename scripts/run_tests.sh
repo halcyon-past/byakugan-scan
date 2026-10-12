@@ -18,11 +18,13 @@ SWIFT_FILES=(
   "$PROJECT_DIR/ByakuganScan/Core/Models/AppSettings.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Services/HotkeyService.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Services/HistoryService.swift"
+  "$PROJECT_DIR/ByakuganScan/Core/Services/ScreenCaptureService.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Services/UpdateService.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Services/URLRouteService.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Extensions/NSImage+Extensions.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Extensions/String+Extensions.swift"
   "$PROJECT_DIR/ByakuganScan/Shared/Components/FloatingHUDController.swift"
+  "$PROJECT_DIR/ByakuganScan/Shared/Components/SelectionOverlayController.swift"
   "$PROJECT_DIR/ByakuganScan/Shared/Constants/AppConstants.swift"
   "$PROJECT_DIR/Tests/RunAllTests.swift"
 )

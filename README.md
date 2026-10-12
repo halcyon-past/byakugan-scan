@@ -1,6 +1,6 @@
 # Byakugan Scan 👁️
 
-[![Version](https://img.shields.io/badge/Version-v1.0.3-fuchsia.svg?style=flat-square)](https://github.com/halcyon-past/byakugan-scan/releases/latest)
+[![Version](https://img.shields.io/badge/Version-v1.0.4-fuchsia.svg?style=flat-square)](https://github.com/halcyon-past/byakugan-scan/releases/latest)
 [![Platform](https://img.shields.io/badge/Platform-macOS%2014.0%2B-blue.svg?style=flat-square&logo=apple)](https://apple.com)
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg?style=flat-square&logo=swift)](https://swift.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
