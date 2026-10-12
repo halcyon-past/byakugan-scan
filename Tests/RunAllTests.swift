@@ -199,7 +199,7 @@ struct TestRunner {
         }
 
         // 7. UpdateService & In-Place Updater Tests
-        print("\n▶️ [Suite 7/7] Native In-Place UpdateService")
+        print("\n▶️ [Suite 7/8] Native In-Place UpdateService")
         test("Semantic version comparison: basic increments") {
             try assertTrue(UpdateService.compareVersions("1.0.1", "1.0.0") == .orderedDescending)
             try assertTrue(UpdateService.compareVersions("1.0.0", "1.0.0") == .orderedSame)
@@ -266,6 +266,63 @@ struct TestRunner {
             try assertFalse(UpdateState.upToDate(version: "1.0.0") == UpdateState.upToDate(version: "1.0.1"))
             try assertTrue(UpdateState.error(message: "Failed") == UpdateState.error(message: "Failed"))
             try assertFalse(UpdateState.error(message: "Failed") == UpdateState.error(message: "Other"))
+        }
+
+        // 8. URLRouteService & Deep Links Tests
+        print("\n▶️ [Suite 8/8] URLRouteService & Deep Links")
+        test("URLRouteService: Parse scan mode endpoints") {
+            let textURL = URL(string: "byakugan://scan?mode=text")!
+            try assertEqual(URLRouteService.parse(url: textURL), .scan(mode: .text))
+
+            let defaultURL = URL(string: "byakugan://scan")!
+            try assertEqual(URLRouteService.parse(url: defaultURL), .scan(mode: .text))
+
+            let qrURL = URL(string: "byakugan://scan?mode=qr")!
+            try assertEqual(URLRouteService.parse(url: qrURL), .scan(mode: .qr))
+
+            let barcodeURL = URL(string: "byakugan://scan?mode=barcode")!
+            try assertEqual(URLRouteService.parse(url: barcodeURL), .scan(mode: .barcode))
+
+            let lastURL = URL(string: "byakugan://scan?mode=last")!
+            try assertEqual(URLRouteService.parse(url: lastURL), .scan(mode: .last))
+        }
+
+        test("URLRouteService: Parse settings and history endpoints") {
+            let settingsURL = URL(string: "byakugan://settings")!
+            try assertEqual(URLRouteService.parse(url: settingsURL), .settings)
+
+            let prefsURL = URL(string: "byakugan://preferences")!
+            try assertEqual(URLRouteService.parse(url: prefsURL), .settings)
+
+            let historyURL = URL(string: "byakugan://history")!
+            try assertEqual(URLRouteService.parse(url: historyURL), .history)
+
+            let recentsURL = URL(string: "byakugan://recents")!
+            try assertEqual(URLRouteService.parse(url: recentsURL), .history)
+        }
+
+        test("URLRouteService: Scheme filtering and invalid routes") {
+            let httpURL = URL(string: "https://byakugan-scan.aritro.cloud/scan")!
+            try assertEqual(URLRouteService.parse(url: httpURL), nil)
+
+            let unknownActionURL = URL(string: "byakugan://unknown_action")!
+            if case .unknown? = URLRouteService.parse(url: unknownActionURL) {
+                // pass
+            } else {
+                try assertTrue(false, "Expected .unknown for unknown action")
+            }
+
+            let invalidModeURL = URL(string: "byakugan://scan?mode=invalid_mode")!
+            if case .unknown? = URLRouteService.parse(url: invalidModeURL) {
+                // pass
+            } else {
+                try assertTrue(false, "Expected .unknown for invalid scan mode")
+            }
+        }
+
+        test("AppConstants: Version 1.0.2 verification") {
+            try assertEqual(AppConstants.App.version, "1.0.2")
+            try assertEqual(AppConstants.App.build, "3")
         }
 
         // Summary Report

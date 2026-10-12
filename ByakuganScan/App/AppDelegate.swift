@@ -52,10 +52,50 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             name: NSNotification.Name(AppConstants.Notifications.settingsChanged),
             object: nil
         )
+        // Setup URL Scheme route handlers
+        setupURLRouting()
     }
     
     func applicationWillTerminate(_ notification: Notification) {
         HotkeyService.shared.unregisterAll()
+    }
+    
+    // MARK: - URL Scheme & Deep Links
+    
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls {
+            _ = URLRouteService.shared.handle(url: url)
+        }
+    }
+    
+    private func setupURLRouting() {
+        URLRouteService.shared.onScan = { [weak self] mode in
+            Task { @MainActor in
+                self?.closePopover()
+                switch mode {
+                case .text:
+                    ScanCoordinator.shared.startTextScan()
+                case .qr:
+                    ScanCoordinator.shared.startQRScan()
+                case .barcode:
+                    ScanCoordinator.shared.startBarcodeScan()
+                case .last:
+                    ScanCoordinator.shared.startLastSelectionScan()
+                }
+            }
+        }
+        
+        URLRouteService.shared.onSettings = { [weak self] in
+            Task { @MainActor in
+                self?.openSettings()
+            }
+        }
+        
+        URLRouteService.shared.onHistory = { [weak self] in
+            Task { @MainActor in
+                self?.openHistory()
+            }
+        }
     }
     
     // MARK: - Menu Bar
@@ -143,6 +183,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func triggerBarcodeScan() {
         closePopover()
         ScanCoordinator.shared.startBarcodeScan()
+    }
+    
+    @objc func openHistory() {
+        closePopover()
+        if let button = statusItem?.button {
+            togglePopover(button)
+        }
+        NotificationCenter.default.post(name: NSNotification.Name("SwitchToHistoryTab"), object: nil)
     }
     
     @objc func openSettings() {
