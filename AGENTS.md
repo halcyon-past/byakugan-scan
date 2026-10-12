@@ -130,9 +130,9 @@ Follow the Conventional Commits specification:
 When releases or updates are finalized:
 ```mermaid
 flowchart LR
-    F["feature/dev/*"] -->|PR & Merge| D["dev"]
-    D -->|PR & Merge (Staging)| U["uat"]
-    U -->|PR & Merge (Release)| M["main"]
+    F["feature/dev/*"] -->|PR and Merge| D["dev"]
+    D -->|Staging PR and Merge| U["uat"]
+    U -->|Release PR and Merge| M["main"]
     H["hotfix/*"] -->|Critical Hotfix PR| M
     M -.->|Sync back| D
     M -.->|Sync back| U
