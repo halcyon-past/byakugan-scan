@@ -45,6 +45,7 @@ final class ScreenCaptureService {
     /// Uses `-i -x` for instant crosshairs interaction and silent capture.
     func captureInteractiveRegion() async throws -> NSImage {
         let fileURL = latestCaptureURL
+        try? FileManager.default.removeItem(at: fileURL)
         
         return try await withCheckedThrowingContinuation { continuation in
             let process = Process()

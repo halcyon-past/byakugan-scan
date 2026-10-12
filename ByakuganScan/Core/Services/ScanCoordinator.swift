@@ -128,26 +128,30 @@ final class ScanCoordinator: ObservableObject {
     // MARK: - Notifications
     
     private func sendNotification(for result: ScanResult) {
-        let content = UNMutableNotificationContent()
-        content.title = "\(result.type.displayName) Complete"
-        content.body = result.content.prefix(100).description
-        content.sound = nil
-        
-        let request = UNNotificationRequest(
-            identifier: UUID().uuidString,
-            content: content,
-            trigger: nil
-        )
-        UNUserNotificationCenter.current().add(request)
+        Task.detached(priority: .background) {
+            let content = UNMutableNotificationContent()
+            content.title = "\(result.type.displayName) Complete"
+            content.body = result.content.prefix(100).description
+            content.sound = nil
+            
+            let request = UNNotificationRequest(
+                identifier: UUID().uuidString,
+                content: content,
+                trigger: nil
+            )
+            try? await UNUserNotificationCenter.current().add(request)
+        }
     }
     
     private func sendErrorNotification(_ message: String) {
-        let content = UNMutableNotificationContent()
-        content.title = "Scan Failed"
-        content.body = message
-        content.sound = .default
-        
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
+        Task.detached(priority: .background) {
+            let content = UNMutableNotificationContent()
+            content.title = "Scan Failed"
+            content.body = message
+            content.sound = .default
+            
+            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+            try? await UNUserNotificationCenter.current().add(request)
+        }
     }
 }
