@@ -23,23 +23,9 @@ export default function AnimeMasterpieceHome() {
       {/* ======================================================== */}
       {/* 1. HERO SECTION: SERENE EDITORIAL IMPACT */}
       {/* ======================================================== */}
-      <section className="relative min-h-[90vh] flex flex-col justify-between pt-8 sm:pt-14 pb-14 px-6 max-w-7xl mx-auto hairline-b z-20">
-        {/* Top Low-Noise Status Telemetry */}
-        <div className="flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-400 hairline-b pb-4">
-          <div className="flex items-center gap-2.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-slate-200 font-semibold">Native macOS Utility</span>
-            <span className="text-white/20">•</span>
-            <span className="text-slate-400">Apple Silicon Neural Core</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-slate-400">Vision Engine:</span>
-            <span className="text-pink-300 font-medium">100% On-Device & Offline</span>
-          </div>
-        </div>
-
+      <section className="relative min-h-[85vh] flex flex-col justify-between pt-12 sm:pt-20 pb-12 px-6 max-w-7xl mx-auto hairline-b z-20">
         {/* Hero Central Focus */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center my-auto py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center my-auto py-8">
           {/* Left Column: Refined Typography & High Legibility */}
           <div className="lg:col-span-7 flex flex-col justify-center">
             {/* Japanese Kanji Eyebrow Badge */}
