@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Pre-push hook: ensures branch follows naming conventions before pushing to remote
+
+current_branch=$(git symbolic-ref --short HEAD 2>/dev/null || echo "")
+
+# If detached HEAD, skip
+if [ -z "$current_branch" ]; then
+    exit 0
+fi
+
+PATTERN="^(main|dev|uat|hotfix\/[a-zA-Z0-9._-]+|feature\/[a-zA-Z0-9._-]+\/[a-zA-Z0-9._-]+|feature\/[a-zA-Z0-9._-]+)$"
+
+if [[ "$current_branch" =~ $PATTERN ]]; then
+    exit 0
+else
+    echo "❌ [git pre-push error] Invalid branch name: '$current_branch'"
+    echo "Branch names must strictly match one of the following formats:"
+    echo "  • feature/<base-branch>/<feature-name>  (e.g., feature/dev/fast-ocr)"
+    echo "  • hotfix/<feature-name>                 (e.g., hotfix/permission-fix)"
+    echo "  • Protected branches: main, dev, uat"
+    echo ""
+    echo "Rename your branch with: git branch -m <conforming-name>"
+    exit 1
+fi

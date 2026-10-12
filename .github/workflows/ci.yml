@@ -1,0 +1,78 @@
+name: CI & Quality Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+      - uat
+  push:
+    branches:
+      - main
+      - dev
+      - uat
+      - 'feature/**'
+      - 'hotfix/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  branch-naming:
+    name: Validate Branch Naming Convention
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Branch Name
+        shell: bash
+        run: |
+          # In PRs, GITHUB_HEAD_REF holds the source branch name
+          # In pushes, GITHUB_REF_NAME holds the branch name
+          BRANCH="${{ github.head_ref || github.ref_name }}"
+          echo "🔍 Checking branch name: '$BRANCH'"
+          
+          # Allowed formats:
+          # 1. Protected branches: main, dev, uat
+          # 2. Feature branches: feature/<branch>/<feature-name> or feature/<feature-name>
+          # 3. Hotfix branches: hotfix/<feature-name>
+          PATTERN="^(main|dev|uat|hotfix\/[a-zA-Z0-9._-]+|feature\/[a-zA-Z0-9._-]+\/[a-zA-Z0-9._-]+|feature\/[a-zA-Z0-9._-]+)$"
+          
+          if [[ "$BRANCH" =~ $PATTERN ]]; then
+            echo "✅ Branch name '$BRANCH' conforms to naming conventions."
+          else
+            echo "❌ ERROR: Invalid branch name '$BRANCH'!"
+            echo ""
+            echo "Branch names must strictly match one of the following formats:"
+            echo "  • feature/<base-branch>/<feature-name>  (e.g., feature/dev/fast-ocr)"
+            echo "  • hotfix/<feature-name>                 (e.g., hotfix/permission-fix)"
+            echo "  • Protected branches: main, dev, uat"
+            echo ""
+            echo "Please rename your branch using:"
+            echo "  git branch -m <old-name> <new-conforming-name>"
+            echo "  git push origin :<old-name> <new-conforming-name>"
+            exit 1
+          fi
+
+  automated-tests:
+    name: Run Swift & Web Test Suites
+    runs-on: macos-14
+    needs: branch-naming
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'website/package-lock.json'
+
+      - name: Install Website Dependencies
+        working-directory: ./website
+        run: npm ci
+
+      - name: Execute Full Test Runner
+        run: |
+          chmod +x ./scripts/run_tests.sh
+          ./scripts/run_tests.sh
