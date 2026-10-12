@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Byakugan Scan",
-  description: "Byakugan Scan Privacy Policy. 100% on-device processing, zero telemetry.",
+  title: "Privacy Policy",
+  description:
+    "Byakugan Scan Privacy Policy. 100% on-device OCR, QR code, and barcode processing on macOS with zero network calls and zero telemetry.",
+  alternates: {
+    canonical: "/privacy",
+  },
 };
 
 export default function PrivacyPage() {

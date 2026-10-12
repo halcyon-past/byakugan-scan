@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — Byakugan Scan",
-  description: "Terms of Service for Byakugan Scan macOS app and website.",
+  title: "Terms of Service",
+  description:
+    "Terms of Service and open-source MIT license details for the Byakugan Scan macOS screen OCR, QR code, and barcode utility.",
+  alternates: {
+    canonical: "/terms",
+  },
 };
 
 export default function TermsPage() {

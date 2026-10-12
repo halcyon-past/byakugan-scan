@@ -20,9 +20,18 @@ import {
 import { APP_DOWNLOAD_URL, GITHUB_REPO_URL } from "@/constants/links";
 
 export const metadata: Metadata = {
-  title: "Support & FAQ — Byakugan Scan",
+  title: "Support, Documentation & FAQ — Screen OCR, QR & Barcode Setup",
   description:
-    "Documentation, troubleshooting guides, keyboard shortcuts, permissions setup, and frequently asked questions for Byakugan Scan on macOS.",
+    "Documentation, troubleshooting guides, keyboard shortcuts, Screen Recording permission setup, and frequently asked questions for Byakugan Scan on macOS.",
+  alternates: {
+    canonical: "/support",
+  },
+  openGraph: {
+    title: "Support & FAQ — Byakugan Scan for macOS",
+    description:
+      "Learn how to install via Homebrew, grant Screen Recording permissions, customize global shortcuts, and scan text, QR codes, and barcodes on macOS.",
+    url: "https://byakugan-scan.aritro.cloud/support",
+  },
 };
 
 const QUICK_SHORTCUTS = [
@@ -126,9 +135,26 @@ const FAQ_ITEMS = [
   },
 ];
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ_ITEMS.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
+};
+
 export default function SupportPage() {
   return (
     <div className="py-16 sm:py-24 px-6 max-w-6xl mx-auto">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       {/* Hero Header */}
       <div className="max-w-3xl mb-14">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-300 text-xs font-mono mb-4">
@@ -462,7 +488,70 @@ export default function SupportPage() {
         </div>
       </section>
 
-      {/* Section 7: Contact & Bug Reports */}
+      {/* Section 7: Comparison Matrix (macOS Screen OCR Alternatives) */}
+      <section id="comparison" className="mb-16 scroll-mt-24">
+        <div className="flex items-center gap-2.5 mb-6">
+          <Sparkles className="w-5 h-5 text-pink-400" />
+          <h2 className="text-2xl font-bold text-white">
+            7. How Byakugan Scan Compares to Other macOS OCR Tools
+          </h2>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 overflow-hidden bg-white/[0.02]">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr className="border-b border-white/10 bg-white/[0.04] font-mono text-[11px] uppercase text-slate-400">
+                  <th className="py-3.5 px-5">Feature</th>
+                  <th className="py-3.5 px-5 text-pink-300">Byakugan Scan</th>
+                  <th className="py-3.5 px-5">TextSniper</th>
+                  <th className="py-3.5 px-5">macOS Live Text</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/[0.06] text-slate-300">
+                <tr>
+                  <td className="py-3 px-5 font-semibold text-white">Price &amp; License</td>
+                  <td className="py-3 px-5 text-emerald-300 font-semibold">100% Free &amp; Open Source (MIT)</td>
+                  <td className="py-3 px-5">Paid (Proprietary)</td>
+                  <td className="py-3 px-5">Built-in to macOS</td>
+                </tr>
+                <tr>
+                  <td className="py-3 px-5 font-semibold text-white">Capture Architecture</td>
+                  <td className="py-3 px-5 text-white">In-RAM Pasteboard Buffer (Zero Disk I/O)</td>
+                  <td className="py-3 px-5">In-Memory</td>
+                  <td className="py-3 px-5">Requires Screenshot / Preview file</td>
+                </tr>
+                <tr>
+                  <td className="py-3 px-5 font-semibold text-white">QR &amp; 13+ Industrial Barcodes</td>
+                  <td className="py-3 px-5 text-emerald-300 font-semibold">Yes (QR, Aztec, PDF417, Data Matrix, EAN, Code 128)</td>
+                  <td className="py-3 px-5">QR &amp; standard barcodes</td>
+                  <td className="py-3 px-5">QR in Safari/Preview only</td>
+                </tr>
+                <tr>
+                  <td className="py-3 px-5 font-semibold text-white">Custom Reticle Colors &amp; Opacity</td>
+                  <td className="py-3 px-5 text-emerald-300 font-semibold">5 Theme Accents + Opacity Slider</td>
+                  <td className="py-3 px-5">Default macOS Grey Box</td>
+                  <td className="py-3 px-5">Default macOS Grey Box</td>
+                </tr>
+                <tr>
+                  <td className="py-3 px-5 font-semibold text-white">Searchable Scan History &amp; Pinning</td>
+                  <td className="py-3 px-5 text-emerald-300 font-semibold">Built-in (Local JSON + Category Filters)</td>
+                  <td className="py-3 px-5">Additive clipboard only</td>
+                  <td className="py-3 px-5">None</td>
+                </tr>
+                <tr>
+                  <td className="py-3 px-5 font-semibold text-white">Network Calls / Telemetry</td>
+                  <td className="py-3 px-5 text-emerald-300 font-semibold">Zero (100% Offline)</td>
+                  <td className="py-3 px-5">License verification</td>
+                  <td className="py-3 px-5">System level</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 8: Contact & Bug Reports */}
       <section id="contact" className="scroll-mt-24">
         <div className="p-8 rounded-2xl bg-gradient-to-r from-fuchsia-950/40 via-[#0d0818] to-indigo-950/40 border border-pink-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="max-w-xl">

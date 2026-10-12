@@ -99,6 +99,14 @@ export default function Footer() {
                   <span>GitHub Repository</span>
                 </a>
               </li>
+              <li>
+                <a
+                  href="/llms.txt"
+                  className="text-slate-400 hover:text-pink-300 transition-colors font-mono text-xs"
+                >
+                  llms.txt (AI / LLM Index)
+                </a>
+              </li>
             </ul>
           </div>
         </div>
