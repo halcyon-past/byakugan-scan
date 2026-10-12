@@ -3,28 +3,67 @@
 @tailwind utilities;
 
 :root {
-  --background: #0a0b12;
-  --foreground: #f8fafc;
+  --bg-deep: #05060b;
+  --bg-surface: #0a0c16;
+  --bg-card: rgba(14, 17, 32, 0.72);
+  --chakra-glow: rgba(129, 140, 248, 0.4);
+  --byakugan-white: #f5f3ff;
+  --vein-blue: #38bdf8;
+  --accent-gold: #fbbf24;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  background-color: var(--bg-deep);
+  color: #f1f5f9;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
+  selection-background-color: #4f46e5;
+  selection-color: #ffffff;
 }
 
-/* Glassmorphism helpers */
-.glass-card {
-  background: rgba(22, 25, 43, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(129, 140, 248, 0.15);
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #05060b;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e1b4b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #312e81;
 }
 
-.glass-nav {
-  background: rgba(10, 11, 18, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(129, 140, 248, 0.12);
+/* Anime scanline & grid effects */
+.scanline-overlay {
+  background: linear-gradient(
+    rgba(18, 16, 38, 0) 50%,
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+.radar-sweep {
+  animation: radar 6s linear infinite;
+}
+
+@keyframes radar {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.glow-text {
+  text-shadow: 0 0 20px rgba(165, 180, 252, 0.6), 0 0 40px rgba(99, 102, 241, 0.4);
+}
+
+.chakra-border {
+  border: 1px solid rgba(129, 140, 248, 0.22);
+  box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.15), inset 0 0 15px -3px rgba(129, 140, 248, 0.08);
 }
