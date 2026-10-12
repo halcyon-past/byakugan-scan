@@ -19,8 +19,10 @@
 		7B2CB57241F75B2B7943079C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C51CC7E7F690FA265B1A68BF /* HomeView.swift */; };
 		818AD544D7E66E048BF4258A /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE31EC1AF63B3EFC35E0DFB3 /* PrivacyPolicyView.swift */; };
 		89133898343EBAB54B3F4E73 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD419CB91D0B1F3EFB42E2E /* String+Extensions.swift */; };
+		9AC11985574377A5180C2EC2 /* URLRouteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC06D4A247DEE3B59A0EEB9 /* URLRouteService.swift */; };
 		A77BE2E9670521BF30230E78 /* UpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615022B2E1E222BCA2DDFB8C /* UpdateService.swift */; };
 		AD42233FDCC9F74357DF70DE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6B03DDFFC0A9DD6FCFDF6E /* SettingsView.swift */; };
+		C9EC1FF5937DDB75CA3C79CF /* AppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5294704DB8890C7F45DA08B3 /* AppIntents.swift */; };
 		D8BC803D340FA3115DE883A1 /* MenuBarPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4771ABCF001B07D1651911BB /* MenuBarPopoverView.swift */; };
 		E0BCADE7600F3135BA32CB63 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB9E8299C744402B574CEEFC /* AppConstants.swift */; };
 		E3196639EB2848B277B3A53C /* TermsOfServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0EBD25F1444919258A72D9 /* TermsOfServiceView.swift */; };
@@ -33,11 +35,13 @@
 
 /* Begin PBXFileReference section */
 		051FB20863B62DED869DDABD /* HotkeyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyService.swift; sourceTree = "<group>"; };
+		0EC06D4A247DEE3B59A0EEB9 /* URLRouteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRouteService.swift; sourceTree = "<group>"; };
 		2044B547D07259E923B32BBC /* ByakuganScan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ByakuganScan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30AF252BA1980EFF65F61B3D /* SpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechService.swift; sourceTree = "<group>"; };
 		3B698FC443560C38874A36C1 /* ByakuganScanApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByakuganScanApp.swift; sourceTree = "<group>"; };
 		4095E04052EE68CA6798727F /* BarcodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeService.swift; sourceTree = "<group>"; };
 		4771ABCF001B07D1651911BB /* MenuBarPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPopoverView.swift; sourceTree = "<group>"; };
+		5294704DB8890C7F45DA08B3 /* AppIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntents.swift; sourceTree = "<group>"; };
 		5A6B03DDFFC0A9DD6FCFDF6E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		611C89CFFF3F8859AC9AC3B0 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		615022B2E1E222BCA2DDFB8C /* UpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateService.swift; sourceTree = "<group>"; };
@@ -95,6 +99,7 @@
 				71752EDA4704D428F939D279 /* ScreenCaptureService.swift */,
 				30AF252BA1980EFF65F61B3D /* SpeechService.swift */,
 				615022B2E1E222BCA2DDFB8C /* UpdateService.swift */,
+				0EC06D4A247DEE3B59A0EEB9 /* URLRouteService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -116,6 +121,14 @@
 				CCEBDEA2C38290A4D83385BE /* ScanResult.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		57EEEFF4949D6E2E5E1C26F1 /* Shortcuts */ = {
+			isa = PBXGroup;
+			children = (
+				5294704DB8890C7F45DA08B3 /* AppIntents.swift */,
+			);
+			path = Shortcuts;
 			sourceTree = "<group>";
 		};
 		709FD66BD5B181B5E92CE2F7 /* Settings */ = {
@@ -198,6 +211,7 @@
 				92A0719EDF3FF8EFA856442B /* Extensions */,
 				4E154B7FEE352BCD58F801C4 /* Models */,
 				416534AEA5989F146DD9A23C /* Services */,
+				57EEEFF4949D6E2E5E1C26F1 /* Shortcuts */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -283,6 +297,7 @@
 			files = (
 				E0BCADE7600F3135BA32CB63 /* AppConstants.swift in Sources */,
 				1877D1B5525770AC4172115F /* AppDelegate.swift in Sources */,
+				C9EC1FF5937DDB75CA3C79CF /* AppIntents.swift in Sources */,
 				E77C3C2CB1D9C7C8C8796CFB /* AppSettings.swift in Sources */,
 				706C614E2F422E585C63D6E5 /* BarcodeService.swift in Sources */,
 				3DF543117D891E8C0C02E4B8 /* ByakuganScanApp.swift in Sources */,
@@ -301,6 +316,7 @@
 				4921188AFF0609C11D993EC3 /* SpeechService.swift in Sources */,
 				89133898343EBAB54B3F4E73 /* String+Extensions.swift in Sources */,
 				E3196639EB2848B277B3A53C /* TermsOfServiceView.swift in Sources */,
+				9AC11985574377A5180C2EC2 /* URLRouteService.swift in Sources */,
 				A77BE2E9670521BF30230E78 /* UpdateService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -343,7 +359,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -358,7 +374,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "cloud.aritro.byakugan-scan";
@@ -406,7 +422,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -427,7 +443,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
