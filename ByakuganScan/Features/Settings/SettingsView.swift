@@ -309,6 +309,7 @@ struct OCRSettingsView: View {
                 if settings.preserveLineBreaks {
                     Toggle("Join Lines with Space (instead of newline)", isOn: $settings.joinLineBreaksWithSpace)
                 }
+                Toggle("Smart De-Hyphenation (Rejoin split words across line breaks)", isOn: $settings.smartDehyphenation)
             }
         }
         .formStyle(.grouped)
