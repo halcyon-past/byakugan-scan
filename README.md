@@ -90,6 +90,8 @@ open "byakugan://history"             # Opens the menu bar popover to History
 - **Custom Reticle & Theme Accents** — Customize the interactive selection box and UI tint (`Byakugan Violet`, `Tenseigan Cyan`, `Sharingan Crimson`, `Sage Emerald`, or `Nine-Tails Amber`) and backdrop dimming opacity (`10%–80%`), with a live preview in Settings.
 - **Floating HUD Pill** — Frosted-glass toast notification showing word/character counts and contextual actions (`Open URL`, `Send Email`, `Call Number`) without cluttering Notification Center.
 - **Configurable Audio Feedback** — Choose from *Glass*, *Tink*, *Pop*, *Purr*, *Funk*, or *Submarine* with instant preview in Settings.
+- **Table & Grid OCR Detection (Markdown & CSV)** — Automatically clusters columnar layout in captured tables, spreadsheets, or dashboard grids (AWS, Stripe, terminal outputs) and formats them cleanly into aligned GitHub-Flavored Markdown tables (`| Col 1 | Col 2 |`) or RFC 4180 CSV for instant pasting into spreadsheet apps.
+- **Smart De-Hyphenation** — Automatically rejoins split words across line boundaries in justified text, PDFs, and academic journals (`super-\ncomputer` → `supercomputer`) while preserving intentional compound words, dashes, subtraction operators, and markdown lists.
 - **Multi-Language OCR & Formatting** — Automatic language detection across 13+ primary languages, with toggles to preserve line breaks, join multi-line paragraphs with spaces, or append scans additively to the clipboard.
 - **Local Scan History** — Searchable local history stored in `~/Library/Application Support/ByakuganScan/history.json` with category filters (`Text`, `QR`, `Barcode`, `Starred`) and pinning.
 
@@ -120,8 +122,8 @@ open "build/Byakugan Scan.app"
 ByakuganScan/
 ├── App/                  # App entry point, menu bar NSStatusItem, hotkey lifecycle
 ├── Core/
-│   ├── Models/           # ScanResult, AppSettings, ThemeAccent, SoundEffect, FeedbackStyle
-│   ├── Services/         # OCRService, BarcodeService, ScreenCaptureService, HotkeyService,
+│   ├── Models/           # ScanResult, AppSettings, ThemeAccent, SoundEffect, FeedbackStyle, TableFormat
+│   ├── Services/         # OCRService, TableFormatter, BarcodeService, ScreenCaptureService, HotkeyService,
 │   │                     # ClipboardService, HistoryService, UpdateService, URLRouteService
 │   └── Extensions/       # String formatting/regex helpers & NSImage utilities
 ├── Features/

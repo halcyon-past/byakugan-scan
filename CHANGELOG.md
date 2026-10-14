@@ -6,6 +6,21 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [1.0.5] — 2026-10-14
+
+### Added
+- **Table & Grid OCR Detection to Markdown & CSV (`TableDetector`, `TableFormatter`) (#2):**
+  - High-performance, sub-millisecond geometric bounding box clustering engine that groups multi-column text observations into structured rows and column lanes.
+  - Formats detected tables directly into GitHub-Flavored Markdown tables (`| Col 1 | Col 2 |`) with vertical alignment padding and pipe escaping (`\|`), or RFC 4180 compliant CSV with quotation escaping.
+  - Robust handling of missing or empty cells across uneven column lanes with zero disk I/O and zero false positives on prose, code, and bullet lists.
+  - Added user toggle in `Settings > Recognition > Table & Grid Recognition` with format selector (`Markdown Table` vs `Comma-Separated Values (CSV)`).
+- **Smart De-Hyphenation for Multi-Line Scans (`String.formatted`) (#1):**
+  - Automatically identifies trailing hyphens at line breaks from justified columns, PDF readers, and eBooks (`super-\ncomputer` → `supercomputer`), rejoining split syllables without manual editing.
+  - Preserves intentional dashes, compound words, subtraction math symbols, code decrement operators, and markdown lists.
+  - Configurable toggle in `Settings > Recognition > Text Formatting` (`smartDehyphenation`, defaults to enabled).
+
+---
+
 ## [1.0.4] — 2026-10-13
 
 ### Added

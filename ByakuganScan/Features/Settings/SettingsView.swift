@@ -309,6 +309,21 @@ struct OCRSettingsView: View {
                 if settings.preserveLineBreaks {
                     Toggle("Join Lines with Space (instead of newline)", isOn: $settings.joinLineBreaksWithSpace)
                 }
+                Toggle("Smart De-Hyphenation (Rejoin split words across line breaks)", isOn: $settings.smartDehyphenation)
+            }
+            
+            Section("Table & Grid Recognition") {
+                Toggle("Detect Tables and Grids", isOn: $settings.detectTables)
+                if settings.detectTables {
+                    Picker("Table Format", selection: $settings.tableOutputFormat) {
+                        ForEach(TableFormat.allCases) { format in
+                            Text(format.displayName).tag(format)
+                        }
+                    }
+                    Text("Automatically formats multi-column grids and spreadsheet tables into aligned Markdown or CSV.")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
         .formStyle(.grouped)
