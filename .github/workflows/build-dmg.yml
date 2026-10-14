@@ -1,0 +1,133 @@
+name: Build On-Demand DMG Installer
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch or Git ref to build DMG from'
+        required: true
+        default: 'dev'
+        type: string
+
+concurrency:
+  group: build-dmg-${{ github.event.inputs.branch }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build:
+    name: Build & Package DMG (${{ github.event.inputs.branch }})
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout Code from Target Branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+
+      - name: Extract Build Metadata
+        id: meta
+        shell: bash
+        run: |
+          VERSION=$(grep 'static let version' ByakuganScan/Shared/Constants/AppConstants.swift | sed -E 's/.*"([^"]+)".*/\1/')
+          if [ -z "$VERSION" ]; then VERSION="1.0.0"; fi
+          BUILD_NUM=$(grep 'static let build' ByakuganScan/Shared/Constants/AppConstants.swift | sed -E 's/.*"([^"]+)".*/\1/')
+          SAFE_BRANCH=$(echo "${{ github.event.inputs.branch }}" | tr '/' '-')
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "build_num=$BUILD_NUM" >> $GITHUB_OUTPUT
+          echo "safe_branch=$SAFE_BRANCH" >> $GITHUB_OUTPUT
+          echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
+          
+          echo "🔨 Target Branch: ${{ github.event.inputs.branch }}"
+          echo "🏷️ App Version:  $VERSION (Build $BUILD_NUM)"
+          echo "🔖 Commit:       $COMMIT_SHA"
+
+      - name: Build Signed App & Package Installer DMG
+        shell: bash
+        run: |
+          chmod +x ./scripts/build_app.sh
+          chmod +x ./scripts/package_dmg.sh
+          ./scripts/package_dmg.sh
+
+      - name: Verify Generated Artifacts & Compute Checksums
+        id: checksum
+        shell: bash
+        run: |
+          VERSION="${{ steps.meta.outputs.version }}"
+          for file in "build/ByakuganScan.dmg" "build/ByakuganScan-v$VERSION.dmg"; do
+            if [ ! -f "$file" ]; then
+              echo "::error::$file was not generated!"
+              exit 1
+            fi
+          done
+          
+          DMG_SHA256=$(shasum -a 256 "build/ByakuganScan-v$VERSION.dmg" | awk '{print $1}')
+          echo "dmg_sha256=$DMG_SHA256" >> $GITHUB_OUTPUT
+          echo "🔐 DMG SHA-256: $DMG_SHA256"
+          ls -lh build/*.dmg
+
+      - name: Upload DMG to GitHub Actions Artifacts
+        id: upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ByakuganScan-${{ steps.meta.outputs.safe_branch }}-v${{ steps.meta.outputs.version }}
+          path: |
+            build/ByakuganScan-v${{ steps.meta.outputs.version }}.dmg
+            build/ByakuganScan.dmg
+            build/ByakuganScan-v${{ steps.meta.outputs.version }}.zip
+            build/ByakuganScan.zip
+          retention-days: 14
+
+      - name: Generate Temporary Download Link
+        id: temp-link
+        shell: bash
+        run: |
+          VERSION="${{ steps.meta.outputs.version }}"
+          DMG_FILE="build/ByakuganScan-v$VERSION.dmg"
+          
+          # Attempt upload to bashupload.com
+          TEMP_LINK=""
+          UPLOAD_OUT=$(curl -s -m 30 https://bashupload.com/ -T "$DMG_FILE" 2>/dev/null || true)
+          if echo "$UPLOAD_OUT" | grep -q "https://bashupload.com/"; then
+            TEMP_LINK=$(echo "$UPLOAD_OUT" | grep -Eo 'https://bashupload.com/[^ ]+' | head -n 1)
+          fi
+          
+          # Fallback to file.io if bashupload is unavailable
+          if [ -z "$TEMP_LINK" ]; then
+            FILE_IO_OUT=$(curl -s -m 30 -F "file=@$DMG_FILE" https://file.io 2>/dev/null || true)
+            TEMP_LINK=$(echo "$FILE_IO_OUT" | grep -Eo 'https://file.io/[a-zA-Z0-9]+' | head -n 1 || true)
+          fi
+          
+          # Fallback to workflow run page if external upload is blocked
+          if [ -z "$TEMP_LINK" ]; then
+            TEMP_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          fi
+          
+          echo "temp_link=$TEMP_LINK" >> $GITHUB_OUTPUT
+          echo "🌐 Temporary Download Link: $TEMP_LINK"
+
+      - name: Publish Workflow Step Summary
+        shell: bash
+        run: |
+          cat << 'EOF' >> $GITHUB_STEP_SUMMARY
+          ## 📦 Byakugan Scan On-Demand DMG Build Complete!
+          
+          | Metric | Value |
+          | :--- | :--- |
+          | **Branch** | `${{ github.event.inputs.branch }}` |
+          | **Version** | `v${{ steps.meta.outputs.version }}` (Build `${{ steps.meta.outputs.build_num }}`) |
+          | **Commit** | `${{ steps.meta.outputs.commit_sha }}` |
+          | **DMG SHA-256** | `${{ steps.checksum.outputs.dmg_sha256 }}` |
+          
+          ### ⬇️ Download Links
+          - 🔗 **Direct Temporary Link:** [Download ByakuganScan DMG](${{ steps.temp-link.outputs.temp_link }})
+          - 📦 **GitHub Actions Artifact:** [Download from Run Artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) *(Available for 14 days)*
+          
+          *Built on macOS 14 Sonoma with stable designated requirement code signing.*
+          EOF

@@ -135,14 +135,24 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "🚀 Creating GitHub Release $TAG_NAME and attaching DMG and ZIP installers..."
-          gh release create "$TAG_NAME" \
-            "build/ByakuganScan.dmg#ByakuganScan.dmg (Latest Direct Download)" \
-            "build/ByakuganScan-v$CURRENT_VERSION.dmg#ByakuganScan-v$CURRENT_VERSION.dmg" \
-            "build/ByakuganScan.zip#ByakuganScan.zip (In-Place Auto-Updater)" \
-            "build/ByakuganScan-v$CURRENT_VERSION.zip#ByakuganScan-v$CURRENT_VERSION.zip" \
-            --title "Byakugan Scan v$CURRENT_VERSION" \
-            --notes-file "RELEASE_NOTES.md"
+          echo "🚀 Publishing GitHub Release $TAG_NAME and attaching DMG and ZIP installers..."
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            echo "ℹ️ Release $TAG_NAME already exists, updating assets with --clobber..."
+            gh release upload "$TAG_NAME" \
+              "build/ByakuganScan.dmg#ByakuganScan.dmg (Latest Direct Download)" \
+              "build/ByakuganScan-v$CURRENT_VERSION.dmg#ByakuganScan-v$CURRENT_VERSION.dmg" \
+              "build/ByakuganScan.zip#ByakuganScan.zip (In-Place Auto-Updater)" \
+              "build/ByakuganScan-v$CURRENT_VERSION.zip#ByakuganScan-v$CURRENT_VERSION.zip" \
+              --clobber
+          else
+            gh release create "$TAG_NAME" \
+              "build/ByakuganScan.dmg#ByakuganScan.dmg (Latest Direct Download)" \
+              "build/ByakuganScan-v$CURRENT_VERSION.dmg#ByakuganScan-v$CURRENT_VERSION.dmg" \
+              "build/ByakuganScan.zip#ByakuganScan.zip (In-Place Auto-Updater)" \
+              "build/ByakuganScan-v$CURRENT_VERSION.zip#ByakuganScan-v$CURRENT_VERSION.zip" \
+              --title "Byakugan Scan v$CURRENT_VERSION" \
+              --notes-file "RELEASE_NOTES.md"
+          fi
 
       - name: Fetch Existing Release DMG SHA-256 (If Release Already Exists)
         if: steps.check-version.outputs.is_new_release == 'false'

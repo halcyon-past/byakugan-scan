@@ -96,67 +96,111 @@ final class TableDetector {
         // Fast pre-filter: tables require multiple cells
         guard cells.count >= 4 else { return nil }
         
-        // 1. Group cells into rows based on vertical proximity.
-        // In Vision coordinates, y=0 is bottom and y=1 is top. Sort descending (top to bottom).
         let sortedByY = cells.sorted { $0.rect.midY > $1.rect.midY }
+        let avgHeight = cells.map { $0.rect.height }.reduce(0, +) / CGFloat(cells.count)
         
-        var rawRows: [[TextCell]] = []
+        // 1. Group cells into Row Bands based on vertical proximity.
+        // Dilation accounts for intra-cell line spacing so multi-line text cells stay within their row band.
+        var yIntervals: [(minY: CGFloat, maxY: CGFloat, cells: [TextCell])] = []
         for cell in sortedByY {
-            var placed = false
-            for i in 0..<rawRows.count {
-                let row = rawRows[i]
-                let rowMidY = row.map { $0.rect.midY }.reduce(0, +) / CGFloat(row.count)
-                let avgH = row.map { $0.rect.height }.reduce(0, +) / CGFloat(row.count)
-                
-                let tolerance = max(avgH * 0.65, 0.015)
-                if abs(cell.rect.midY - rowMidY) <= tolerance {
-                    rawRows[i].append(cell)
-                    placed = true
+            let dilation = min(avgHeight * 0.15, 0.008)
+            let cellMinY = cell.rect.minY - dilation
+            let cellMaxY = cell.rect.maxY + dilation
+            
+            var merged = false
+            for i in 0..<yIntervals.count {
+                let inv = yIntervals[i]
+                if max(cellMinY, inv.minY) <= min(cellMaxY, inv.maxY) {
+                    yIntervals[i].minY = min(inv.minY, cellMinY)
+                    yIntervals[i].maxY = max(inv.maxY, cellMaxY)
+                    yIntervals[i].cells.append(cell)
+                    merged = true
                     break
                 }
             }
-            if !placed {
-                rawRows.append([cell])
+            if !merged {
+                yIntervals.append((minY: cellMinY, maxY: cellMaxY, cells: [cell]))
             }
         }
         
-        // Sort each row left-to-right (minX ascending)
-        for i in 0..<rawRows.count {
-            rawRows[i].sort { $0.rect.minX < $1.rect.minX }
+        guard yIntervals.count >= 2 else { return nil }
+        
+        // 2. Within each row band, consolidate multi-line cell fragments belonging to the same column
+        var consolidatedRows: [[TextCell]] = []
+        for band in yIntervals {
+            var cellGroups: [[TextCell]] = []
+            let lrCells = band.cells.sorted { $0.rect.minX < $1.rect.minX }
+            
+            for cell in lrCells {
+                var placed = false
+                for gIdx in 0..<cellGroups.count {
+                    let group = cellGroups[gIdx]
+                    let groupMinX = group.map { $0.rect.minX }.min() ?? 0
+                    let groupMaxX = group.map { $0.rect.maxX }.max() ?? 0
+                    
+                    let overlap = max(0, min(cell.rect.maxX, groupMaxX) - max(cell.rect.minX, groupMinX))
+                    let minW = min(cell.rect.width, groupMaxX - groupMinX)
+                    
+                    // Cells in the same column have significant horizontal overlap or matching left alignment
+                    if (minW > 0 && overlap / minW >= 0.25) || (abs(cell.rect.minX - groupMinX) < 0.04) {
+                        cellGroups[gIdx].append(cell)
+                        placed = true
+                        break
+                    }
+                }
+                if !placed {
+                    cellGroups.append([cell])
+                }
+            }
+            
+            var rowCells: [TextCell] = []
+            for group in cellGroups {
+                let topToBottom = group.sorted { $0.rect.midY > $1.rect.midY }
+                let joinedText = topToBottom.map { $0.text }.joined(separator: " ")
+                let minX = group.map { $0.rect.minX }.min() ?? 0
+                let maxX = group.map { $0.rect.maxX }.max() ?? 0
+                let minY = group.map { $0.rect.minY }.min() ?? 0
+                let maxY = group.map { $0.rect.maxY }.max() ?? 0
+                let unionRect = CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY)
+                rowCells.append(TextCell(text: joinedText, rect: unionRect))
+            }
+            
+            rowCells.sort { $0.rect.minX < $1.rect.minX }
+            consolidatedRows.append(rowCells)
         }
         
         // A table must have at least 2 rows
-        guard rawRows.count >= 2 else { return nil }
+        guard consolidatedRows.count >= 2 else { return nil }
         
         // Multi-cell rows check: at least 2 rows must have 2 or more distinct cells
-        let multiCellRows = rawRows.filter { $0.count >= 2 }
+        let multiCellRows = consolidatedRows.filter { $0.count >= 2 }
         guard multiCellRows.count >= 2 else { return nil }
         
         // Majority of rows in a table must have multiple columns, or >=2 rows for 2-3 row tables
-        let multiCellRatio = Double(multiCellRows.count) / Double(rawRows.count)
-        guard multiCellRatio >= 0.5 || (multiCellRows.count >= 2 && rawRows.count <= 3) else { return nil }
+        let multiCellRatio = Double(multiCellRows.count) / Double(consolidatedRows.count)
+        guard multiCellRatio >= 0.5 || (multiCellRows.count >= 2 && consolidatedRows.count <= 3) else { return nil }
         
-        // 2. Discover Column Lanes
-        let maxCellsInRow = rawRows.map { $0.count }.max() ?? 0
+        // 3. Discover Column Lanes
+        let maxCellsInRow = consolidatedRows.map { $0.count }.max() ?? 0
         guard maxCellsInRow >= 2 else { return nil }
         
         // Seed lanes from the first row that has the maximum number of cells
-        guard let seedRow = rawRows.first(where: { $0.count == maxCellsInRow }) else { return nil }
+        guard let seedRow = consolidatedRows.first(where: { $0.count == maxCellsInRow }) else { return nil }
         var lanes: [ColumnLane] = seedRow.map { ColumnLane(minX: $0.rect.minX, maxX: $0.rect.maxX) }
         
         // Adjust and expand lanes from all other rows
-        for row in rawRows {
+        for row in consolidatedRows {
             for cell in row {
                 var matchedIndex: Int?
-                var bestDistance = CGFloat.infinity
+                var bestOverlap: CGFloat = 0
                 
                 for (idx, lane) in lanes.enumerated() {
                     let overlap = max(0, min(cell.rect.maxX, lane.maxX) - max(cell.rect.minX, lane.minX))
-                    let dist = abs(cell.rect.midX - lane.midX)
+                    let minW = min(cell.rect.width, lane.maxX - lane.minX)
                     
-                    if overlap > 0 || dist < 0.06 {
-                        if dist < bestDistance {
-                            bestDistance = dist
+                    if (minW > 0 && overlap / minW >= 0.25) || abs(cell.rect.minX - lane.minX) < 0.05 {
+                        if overlap > bestOverlap {
+                            bestOverlap = overlap
                             matchedIndex = idx
                         }
                     }
@@ -179,7 +223,7 @@ final class TableDetector {
             if let last = mergedLanes.last {
                 let overlap = max(0, min(last.maxX, lane.maxX) - max(last.minX, lane.minX))
                 let minWidth = min(last.maxX - last.minX, lane.maxX - lane.minX)
-                if minWidth > 0 && (overlap / minWidth > 0.4 || lane.minX < last.maxX) {
+                if minWidth > 0 && (overlap / minWidth > 0.3 || lane.minX < last.maxX) {
                     mergedLanes[mergedLanes.count - 1].maxX = max(last.maxX, lane.maxX)
                     mergedLanes[mergedLanes.count - 1].minX = min(last.minX, lane.minX)
                     continue
@@ -191,25 +235,34 @@ final class TableDetector {
         // Valid table must have at least 2 distinct column lanes
         guard mergedLanes.count >= 2 && mergedLanes.count <= 25 else { return nil }
         
-        // 3. Map cells to grid positions
+        // 4. Map each row's cells to grid positions
         var grid: [[String]] = []
-        for row in rawRows {
+        for row in consolidatedRows {
             var rowValues = Array(repeating: "", count: mergedLanes.count)
             for cell in row {
                 var bestCol = 0
-                var minDiff = CGFloat.infinity
+                var maxOverlap: CGFloat = 0
+                var minGap: CGFloat = .infinity
+                var closestCol = 0
+                
                 for (colIdx, lane) in mergedLanes.enumerated() {
-                    let diff = abs(cell.rect.midX - lane.midX)
-                    if diff < minDiff {
-                        minDiff = diff
+                    let overlap = max(0, min(cell.rect.maxX, lane.maxX) - max(cell.rect.minX, lane.minX))
+                    if overlap > maxOverlap {
+                        maxOverlap = overlap
                         bestCol = colIdx
+                    }
+                    let gap = max(0, max(lane.minX - cell.rect.maxX, cell.rect.minX - lane.maxX))
+                    if gap < minGap {
+                        minGap = gap
+                        closestCol = colIdx
                     }
                 }
                 
-                if rowValues[bestCol].isEmpty {
-                    rowValues[bestCol] = cell.text
+                let targetCol = maxOverlap > 0 ? bestCol : closestCol
+                if rowValues[targetCol].isEmpty {
+                    rowValues[targetCol] = cell.text
                 } else {
-                    rowValues[bestCol] += " " + cell.text
+                    rowValues[targetCol] += " " + cell.text
                 }
             }
             grid.append(rowValues)
