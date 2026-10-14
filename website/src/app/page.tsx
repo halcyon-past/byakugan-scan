@@ -90,7 +90,7 @@ export default function AnimeMasterpieceHome() {
                     <Download className="w-3.5 h-3.5 text-pink-400" />
                     <span>Direct DMG</span>
                     <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 font-sans">
-                      v1.0.5
+                      v1.0.6
                     </span>
                   </button>
                 </div>
@@ -149,7 +149,7 @@ export default function AnimeMasterpieceHome() {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-lg bg-black/60 border border-white/[0.08]">
                       <div>
                         <div className="text-sm font-semibold text-white flex items-center gap-2">
-                          <span>ByakuganScan-v1.0.5.dmg</span>
+                          <span>ByakuganScan-v1.0.6.dmg</span>
                           <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
                             3.2 MB
                           </span>

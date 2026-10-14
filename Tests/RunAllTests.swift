@@ -86,7 +86,11 @@ struct TestRunner {
 
             let academic = "This is an imple-\nmentation of the system.\nNext paragraph starts here."
             let res = academic.formatted(preserveLineBreaks: true, trimWhitespace: true, joinWithSpace: false, smartDehyphenation: true)
-            try assertEqual(res, "This is an implementation of the system.\nNext paragraph starts here.")
+            try assertEqual(res, "This is an implementation\nof the system.\nNext paragraph starts here.")
+
+            let multiLineContinuation = "This is a super-\ncomputer that processes data."
+            let contRes = multiLineContinuation.formatted(preserveLineBreaks: true, trimWhitespace: true, joinWithSpace: false, smartDehyphenation: true)
+            try assertEqual(contRes, "This is a supercomputer\nthat processes data.")
 
             // Mixed casing
             try assertEqual("Inter-\nnational".formatted(), "International")
@@ -515,9 +519,9 @@ struct TestRunner {
             try assertEqual(barcodeItem.title, "Barcode Scanned")
         }
 
-        test("AppConstants: Version 1.0.5 & Settings window sizing verification") {
-            try assertEqual(AppConstants.App.version, "1.0.5")
-            try assertEqual(AppConstants.App.build, "6")
+        test("AppConstants: Version 1.0.6 & Settings window sizing verification") {
+            try assertEqual(AppConstants.App.version, "1.0.6")
+            try assertEqual(AppConstants.App.build, "7")
             try assertEqual(Int(AppConstants.UI.settingsWindowWidth), 680)
             try assertEqual(Int(AppConstants.UI.settingsWindowHeight), 540)
         }
@@ -549,6 +553,57 @@ struct TestRunner {
             try assertEqual(table?.rows.count, 2)
             try assertEqual(table?.rows[0], ["Oct 14", "Subscription plan", "$49.00", "Succeeded"])
             try assertEqual(table?.rows[1], ["Oct 13", "Add-on usage", "$12.50", "Succeeded"])
+        }
+
+        test("TableDetector: Complex multi-line cells and headers (Byakugan shortcuts table)") {
+            let cells = [
+                // Header (with multi-line "Default\nShortcut" cell)
+                TextCell(text: "Default", rect: CGRect(x: 0.22, y: 0.93, width: 0.08, height: 0.04)),
+                TextCell(text: "Mode", rect: CGRect(x: 0.04, y: 0.89, width: 0.06, height: 0.04)),
+                TextCell(text: "What it does", rect: CGRect(x: 0.38, y: 0.89, width: 0.12, height: 0.04)),
+                TextCell(text: "Shortcut", rect: CGRect(x: 0.22, y: 0.85, width: 0.08, height: 0.04)),
+                
+                // Row 1 (multi-line in Col 1 and Col 3)
+                TextCell(text: "Capture Text", rect: CGRect(x: 0.04, y: 0.74, width: 0.12, height: 0.04)),
+                TextCell(text: "2", rect: CGRect(x: 0.28, y: 0.72, width: 0.02, height: 0.04)),
+                TextCell(text: "Extracts unselectable text from videos, slides, PDFs, or images into", rect: CGRect(x: 0.38, y: 0.74, width: 0.58, height: 0.04)),
+                TextCell(text: "(OCR)", rect: CGRect(x: 0.04, y: 0.69, width: 0.06, height: 0.04)),
+                TextCell(text: "your clipboard", rect: CGRect(x: 0.38, y: 0.69, width: 0.14, height: 0.04)),
+                
+                // Row 2 (missing Col 2 shortcut, multi-line Col 3)
+                TextCell(text: "Scan QR Code", rect: CGRect(x: 0.04, y: 0.54, width: 0.13, height: 0.04)),
+                TextCell(text: "Decodes QR and MicroQR payloads on screen (with one-click Open /", rect: CGRect(x: 0.38, y: 0.56, width: 0.58, height: 0.04)),
+                TextCell(text: "Mail / Call actions)", rect: CGRect(x: 0.38, y: 0.51, width: 0.20, height: 0.04)),
+                
+                // Row 3 (multi-line Col 3)
+                TextCell(text: "Scan Barcode", rect: CGRect(x: 0.04, y: 0.37, width: 0.13, height: 0.04)),
+                TextCell(text: "4", rect: CGRect(x: 0.28, y: 0.37, width: 0.02, height: 0.04)),
+                TextCell(text: "Decodes EAN-8/13, UPC-E, Code 128/39/93, PDF417, Aztec, Data", rect: CGRect(x: 0.38, y: 0.39, width: 0.58, height: 0.04)),
+                TextCell(text: "Matrix, and ITF-14", rect: CGRect(x: 0.38, y: 0.34, width: 0.18, height: 0.04)),
+                
+                // Row 4 (single-line cells)
+                TextCell(text: "Cancel Selection", rect: CGRect(x: 0.04, y: 0.18, width: 0.15, height: 0.04)),
+                TextCell(text: "Esc", rect: CGRect(x: 0.22, y: 0.18, width: 0.04, height: 0.04)),
+                TextCell(text: "Dismisses the selection overlay without touching your clipboard", rect: CGRect(x: 0.38, y: 0.18, width: 0.55, height: 0.04))
+            ]
+
+            let table = TableDetector.detectTable(from: cells)
+            try assertTrue(table != nil, "Expected complex table with multi-line cells to be detected")
+            try assertEqual(table?.columnCount, 3)
+            try assertEqual(table?.headers, ["Mode", "Default Shortcut", "What it does"])
+            try assertEqual(table?.rows.count, 4)
+            try assertEqual(table?.rows[0][0], "Capture Text (OCR)")
+            try assertEqual(table?.rows[0][1], "2")
+            try assertEqual(table?.rows[0][2], "Extracts unselectable text from videos, slides, PDFs, or images into your clipboard")
+            try assertEqual(table?.rows[1][0], "Scan QR Code")
+            try assertEqual(table?.rows[1][1], "") // Col 2 missing
+            try assertEqual(table?.rows[1][2], "Decodes QR and MicroQR payloads on screen (with one-click Open / Mail / Call actions)")
+            try assertEqual(table?.rows[2][0], "Scan Barcode")
+            try assertEqual(table?.rows[2][1], "4")
+            try assertEqual(table?.rows[2][2], "Decodes EAN-8/13, UPC-E, Code 128/39/93, PDF417, Aztec, Data Matrix, and ITF-14")
+            try assertEqual(table?.rows[3][0], "Cancel Selection")
+            try assertEqual(table?.rows[3][1], "Esc")
+            try assertEqual(table?.rows[3][2], "Dismisses the selection overlay without touching your clipboard")
         }
 
         test("TableDetector: Handling missing and empty cells in columns") {

@@ -4,6 +4,23 @@ All notable changes to **Byakugan Scan** will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
+## [1.0.6] — 2026-10-14
+
+### Fixed
+- **Table & Grid OCR Detection Multi-Line Row-Band Clustering (`TableDetector`):**
+  - Upgraded table clustering to connected component row banding with intra-cell multi-line consolidation.
+  - Correctly captures multi-line cell labels (e.g., column headers and wrapped cell text) into single cohesive table rows rather than splitting into disjoint lines.
+  - Replaced Euclidean midpoint column assignment with horizontal interval overlap and lane proximity, eliminating wide-to-narrow column displacement errors.
+- **Smart De-Hyphenation Behavior Refinement (`String.dehyphenate`):**
+  - Updated de-hyphenation so that only the split word fragment rejoins the upper line, while subsequent words on the following line remain on their original line.
+
+### Added
+- **On-Demand DMG File Creator Workflow (`.github/workflows/build-dmg.yml`):**
+  - Added a GitHub Actions manual `workflow_dispatch` workflow permitting on-demand DMG generation for any branch.
+  - Generates downloadable DMG artifacts and temporary download links directly in the workflow summary.
+- **Release Workflow Idempotency (`.github/workflows/release.yml`):**
+  - Added release pre-check and `--clobber` asset upload fallback to prevent race conditions during concurrent CI/CD runs.
+
 ---
 
 ## [1.0.5] — 2026-10-14
