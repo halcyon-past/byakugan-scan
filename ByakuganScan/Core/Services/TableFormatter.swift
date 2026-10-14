@@ -83,7 +83,13 @@ final class TableDetector {
             }
             
             let isTabOrMultiSpace = fullText.contains("\t") || fullText.range(of: #"\s{2,}"#, options: .regularExpression) != nil
-            let isSnakeCaseMultiCol = observation.boundingBox.width > 0.30 && fullText.contains("_") && fullText.contains(" ")
+            
+            // Only split on single spaces if the text contains multiple distinct snake_case tokens
+            // (e.g. Table 2 header: '_number date_of_purchase customer_id item_code')
+            // and is not a programming expression (does not contain '(', '=', ':', ';', '{', '->')
+            let snakeTokens = fullText.components(separatedBy: " ").filter { $0.contains("_") }
+            let isCodeOrExpr = fullText.contains("(") || fullText.contains("=") || fullText.contains(":") || fullText.contains(";") || fullText.contains("{") || fullText.contains("->")
+            let isSnakeCaseMultiCol = observation.boundingBox.width > 0.35 && snakeTokens.count >= 2 && !isCodeOrExpr
             
             if (isTabOrMultiSpace || isSnakeCaseMultiCol),
                let regex = (isSnakeCaseMultiCol ? singleWordRegex : multiColumnRegex) {
@@ -198,8 +204,9 @@ final class TableDetector {
         if let first = tableLines.first, first.count == 1 {
             let cell = first[0]
             let maxRest = tableLines.dropFirst().map { $0.count }.max() ?? 0
-            let isWide = cell.rect.width > 0.35
-            let isCentered = abs(cell.rect.midX - tableMidX) < 0.08 && maxRest >= 2
+            let lower = cell.text.lowercased()
+            let isExplicitTitle = lower.hasPrefix("table ") || lower.hasPrefix("table:") || lower.hasPrefix("figure ") || lower.hasPrefix("chart ")
+            let isCenteredBanner = abs(cell.rect.midX - tableMidX) < 0.08 && cell.rect.width < 0.35 && (cell.text == cell.text.uppercased() && cell.text.count >= 3)
             
             var isAlignedWithColumnHeaderBelow = false
             if tableLines.count > 1 {
@@ -214,7 +221,7 @@ final class TableDetector {
                 }
             }
             
-            if (isWide || isCentered) && !isAlignedWithColumnHeaderBelow {
+            if (isExplicitTitle || isCenteredBanner) && maxRest >= 2 && !isAlignedWithColumnHeaderBelow {
                 titleCaption = cell.text
                 tableLines.removeFirst()
             }
@@ -402,16 +409,66 @@ final class TableDetector {
             logicalRows.append(curr.slots)
         }
         
-        // A valid table must have at least 2 logical rows (e.g. 1 header + 1 data row)
-        guard logicalRows.count >= 2 else { return nil }
+        // --- Strict Tabular Validation Gates ---
         
-        // Multi-cell rows check: at least 2 rows must have 2 or more distinct cells
+        // 1. Minimum row count:
+        // A table must have at least 2 rows for >=3 columns, or at least 3 rows for 2 columns.
+        if mergedLanes.count == 2 {
+            guard logicalRows.count >= 3 else { return nil }
+        } else {
+            guard logicalRows.count >= 2 else { return nil }
+        }
+        
+        // 2. Multi-cell row density:
+        // At least 60% of logical rows must contain >=2 populated columns
         let multiCellRows = logicalRows.filter { row in row.filter { !$0.isEmpty }.count >= 2 }
-        guard multiCellRows.count >= 2 else { return nil }
-        
-        // Majority of rows in a table must have multiple columns, or >=2 rows for 2-3 row tables
         let multiCellRatio = Double(multiCellRows.count) / Double(logicalRows.count)
-        guard multiCellRatio >= 0.5 || (multiCellRows.count >= 2 && logicalRows.count <= 3) else { return nil }
+        guard multiCellRatio >= 0.60 else { return nil }
+        
+        // 3. Column Support Verification:
+        // Every valid column must be populated across multiple rows.
+        var colCounts = Array(repeating: 0, count: mergedLanes.count)
+        for row in logicalRows {
+            for c in 0..<mergedLanes.count {
+                if !row[c].trimmingCharacters(in: .whitespaces).isEmpty {
+                    colCounts[c] += 1
+                }
+            }
+        }
+        
+        // In a valid table, at least 70% of the columns must appear in >= 2 distinct rows
+        let wellSupportedCols = colCounts.filter { $0 >= 2 }.count
+        let supportRatio = Double(wellSupportedCols) / Double(mergedLanes.count)
+        guard supportRatio >= 0.70 else { return nil }
+        
+        // For 2-column tables:
+        if mergedLanes.count == 2 {
+            // Both columns must appear in >= 60% of rows
+            guard colCounts[0] >= 2 && colCounts[1] >= 2 else { return nil }
+            let minColPop = min(colCounts[0], colCounts[1])
+            guard Double(minColPop) / Double(logicalRows.count) >= 0.60 else { return nil }
+            
+            // Header row (row 0) must have both columns populated
+            guard !logicalRows[0][0].isEmpty && !logicalRows[0][1].isEmpty else { return nil }
+            
+            // Reject Application Menus: if header or second column contains keyboard shortcut symbols
+            let scSymbols = ["⌘", "⌥", "⇧", "Ctrl+", "Cmd+", "Alt+"]
+            let headerHasShortcut = scSymbols.contains(where: { logicalRows[0][1].contains($0) })
+            if headerHasShortcut { return nil }
+            
+            let col1Shortcuts = logicalRows.dropFirst().filter { row in
+                scSymbols.contains(where: { row[1].contains($0) })
+            }.count
+            if Double(col1Shortcuts) / Double(logicalRows.count - 1) >= 0.40 {
+                return nil // It's an application menu with shortcuts, not a data table
+            }
+            
+            // Reject Key-Value forms (e.g. "Name:", "Email:")
+            let col0Colons = logicalRows.filter { $0[0].hasSuffix(":") }.count
+            if Double(col0Colons) / Double(logicalRows.count) >= 0.50 {
+                return nil
+            }
+        }
         
         let headers = logicalRows[0]
         let dataRows = Array(logicalRows.dropFirst())

@@ -519,9 +519,9 @@ struct TestRunner {
             try assertEqual(barcodeItem.title, "Barcode Scanned")
         }
 
-        test("AppConstants: Version 1.0.9 & Settings window sizing verification") {
-            try assertEqual(AppConstants.App.version, "1.0.9")
-            try assertEqual(AppConstants.App.build, "10")
+        test("AppConstants: Version 1.0.10 & Settings window sizing verification") {
+            try assertEqual(AppConstants.App.version, "1.0.10")
+            try assertEqual(AppConstants.App.build, "11")
             try assertEqual(Int(AppConstants.UI.settingsWindowWidth), 680)
             try assertEqual(Int(AppConstants.UI.settingsWindowHeight), 540)
         }
@@ -875,6 +875,57 @@ struct TestRunner {
                 TextCell(text: "}", rect: CGRect(x: 0.05, y: 0.6, width: 0.05, height: 0.03))
             ]
             try assertTrue(TableDetector.detectTable(from: code) == nil, "Code snippet must NOT be detected as table")
+
+            // Application Menu with Keyboard Shortcuts (Must NOT be detected as table)
+            let menuCells = [
+                TextCell(text: "New Window", rect: CGRect(x: 0.05, y: 0.9, width: 0.25, height: 0.03)),
+                TextCell(text: "Open File...", rect: CGRect(x: 0.05, y: 0.8, width: 0.25, height: 0.03)),
+                TextCell(text: "Save Document", rect: CGRect(x: 0.05, y: 0.7, width: 0.30, height: 0.03)),
+                TextCell(text: "⌘S", rect: CGRect(x: 0.45, y: 0.7, width: 0.08, height: 0.03)),
+                TextCell(text: "Export As...", rect: CGRect(x: 0.05, y: 0.6, width: 0.25, height: 0.03)),
+                TextCell(text: "⇧⌘S", rect: CGRect(x: 0.45, y: 0.6, width: 0.10, height: 0.03)),
+                TextCell(text: "Close Window", rect: CGRect(x: 0.05, y: 0.5, width: 0.28, height: 0.03)),
+                TextCell(text: "⌘W", rect: CGRect(x: 0.45, y: 0.5, width: 0.08, height: 0.03))
+            ]
+            try assertTrue(TableDetector.detectTable(from: menuCells) == nil, "macOS Application Menu must NOT be detected as table")
+
+            // Multi-part paragraph with inline segments and bold links
+            let multiPartProse = [
+                TextCell(text: "Welcome to our documentation portal today.", rect: CGRect(x: 0.05, y: 0.9, width: 0.80, height: 0.03)),
+                TextCell(text: "Click here", rect: CGRect(x: 0.05, y: 0.8, width: 0.18, height: 0.03)),
+                TextCell(text: "to view details and learn more about features.", rect: CGRect(x: 0.25, y: 0.8, width: 0.55, height: 0.03)),
+                TextCell(text: "Contact us", rect: CGRect(x: 0.05, y: 0.7, width: 0.18, height: 0.03)),
+                TextCell(text: "for customer support at any time.", rect: CGRect(x: 0.25, y: 0.7, width: 0.45, height: 0.03))
+            ]
+            try assertTrue(TableDetector.detectTable(from: multiPartProse) == nil, "Multi-part prose paragraph must NOT be detected as table")
+
+            // Python Code with snake_case and indentation
+            let pythonCells = [
+                TextCell(text: "def fetch_user_data(user_id, auth_token):", rect: CGRect(x: 0.05, y: 0.9, width: 0.65, height: 0.03)),
+                TextCell(text: "    api_endpoint = get_api_endpoint()", rect: CGRect(x: 0.05, y: 0.8, width: 0.55, height: 0.03)),
+                TextCell(text: "    response_data = send_http_request(api_endpoint, user_id)", rect: CGRect(x: 0.05, y: 0.7, width: 0.75, height: 0.03)),
+                TextCell(text: "    return parse_json_response(response_data)", rect: CGRect(x: 0.05, y: 0.6, width: 0.60, height: 0.03))
+            ]
+            try assertTrue(TableDetector.detectTable(from: pythonCells) == nil, "Python code block must NOT be detected as table")
+
+            // Key-Value Form with Colons
+            let kvFormCells = [
+                TextCell(text: "Name:", rect: CGRect(x: 0.05, y: 0.9, width: 0.15, height: 0.03)),
+                TextCell(text: "John Doe", rect: CGRect(x: 0.25, y: 0.9, width: 0.30, height: 0.03)),
+                TextCell(text: "Email:", rect: CGRect(x: 0.05, y: 0.8, width: 0.15, height: 0.03)),
+                TextCell(text: "john.doe@example.com", rect: CGRect(x: 0.25, y: 0.8, width: 0.45, height: 0.03)),
+                TextCell(text: "Department:", rect: CGRect(x: 0.05, y: 0.7, width: 0.20, height: 0.03)),
+                TextCell(text: "Core Infrastructure", rect: CGRect(x: 0.25, y: 0.7, width: 0.35, height: 0.03))
+            ]
+            try assertTrue(TableDetector.detectTable(from: kvFormCells) == nil, "Key-Value form with colons must NOT be detected as table")
+
+            // Numbered Instructions
+            let numberedListCells = [
+                TextCell(text: "1. Download ByakuganScan.dmg from GitHub Releases.", rect: CGRect(x: 0.05, y: 0.9, width: 0.70, height: 0.03)),
+                TextCell(text: "2. Drag Byakugan Scan to your Applications folder.", rect: CGRect(x: 0.05, y: 0.8, width: 0.68, height: 0.03)),
+                TextCell(text: "3. Press Option + 2 to capture text anywhere on screen.", rect: CGRect(x: 0.05, y: 0.7, width: 0.72, height: 0.03))
+            ]
+            try assertTrue(TableDetector.detectTable(from: numberedListCells) == nil, "Numbered instructions list must NOT be detected as table")
         }
 
         test("TableFormatter: Markdown table generation with alignment and pipe escaping") {
