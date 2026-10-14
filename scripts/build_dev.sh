@@ -46,7 +46,10 @@ ICONSET_DIR="/tmp/ByakuganAppIconDev.iconset"
 rm -rf "$ICONSET_DIR"
 mkdir -p "$ICONSET_DIR"
 
-SRC_ICON="$PROJECT_DIR/ByakuganScan/Resources/Assets.xcassets/AppIcon.appiconset/icon_1024x1024.png"
+SRC_ICON="$PROJECT_DIR/ByakuganScan/Resources/Assets.xcassets/AppIconDev.appiconset/icon_1024x1024.png"
+if [ ! -f "$SRC_ICON" ]; then
+    SRC_ICON="$PROJECT_DIR/ByakuganScan/Resources/Assets.xcassets/AppIcon.appiconset/icon_1024x1024.png"
+fi
 
 sips -z 16 16     "$SRC_ICON" --out "$ICONSET_DIR/icon_16x16.png" >/dev/null 2>&1
 sips -z 32 32     "$SRC_ICON" --out "$ICONSET_DIR/icon_16x16@2x.png" >/dev/null 2>&1
