@@ -31,25 +31,39 @@ final class ScreenCaptureService {
     
     // MARK: - Public API
     
-    /// Launches Apple's native interactive screen region selector and returns the captured image.
-    /// Uses `-c -s -x` to capture directly into RAM clipboard, bypassing filesystem I/O and Spotlight freezes,
-    /// and guaranteeing 100% pixel-perfect coordinates on Retina and multi-display setups.
+    /// Launches the custom-tinted interactive screen region selector with theme animation and colors,
+    /// then captures the selected area directly into RAM clipboard via screencapture -R.
     func captureInteractiveRegion() async throws -> NSImage {
         guard hasScreenRecordingPermission else {
             requestScreenRecordingPermission()
             throw ScreenCaptureError.permissionDenied
         }
         
-        // Backup existing clipboard items so we can restore them if capture is cancelled
+        // 1. Present custom-tinted selection overlay (respects ThemeAccent, glow, & overlayOpacity)
+        let selectedScreenRect = try await SelectionOverlayController.shared.selectRegion()
+        
+        let primaryHeight = await MainActor.run {
+            NSScreen.screens.first?.frame.height ?? 1080
+        }
+        let qRect = SelectionOverlayController.quartzRect(
+            fromAppKitScreenRect: selectedScreenRect,
+            primaryScreenHeight: primaryHeight
+        )
+        let rectArg = "\(Int(round(qRect.origin.x))),\(Int(round(qRect.origin.y))),\(Int(round(qRect.width))),\(Int(round(qRect.height)))"
+        
+        // 2. Allow 60ms for the WindowServer compositor to fully clear the overlay window from display buffers
+        try? await Task.sleep(nanoseconds: 60_000_000)
+        
+        // 3. Backup existing clipboard items so we can restore them if capture fails
         let previousItems = backupClipboard()
         
         return try await withCheckedThrowingContinuation { continuation in
             let process = Process()
             process.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
             // -c: copy directly to pasteboard in RAM (zero disk I/O, zero mdwrite daemon delay)
-            // -s: interactive mouse selection mode (native macOS crosshair, 100% pixel-accurate)
             // -x: silent (app plays its own configurable SoundEffect)
-            process.arguments = ["-c", "-s", "-x"]
+            // -R: capture the exact screen rectangle selected in SelectionOverlayController
+            process.arguments = ["-c", "-x", "-R\(rectArg)"]
             
             process.terminationHandler = { [weak self] proc in
                 guard proc.terminationStatus == 0 else {

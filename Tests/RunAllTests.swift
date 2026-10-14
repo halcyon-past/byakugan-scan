@@ -4,7 +4,7 @@ import Vision
 
 @main
 struct TestRunner {
-    static func main() {
+    static func main() async {
         var totalTests = 0
         var passedTests = 0
         var failedTests = 0
@@ -13,6 +13,19 @@ struct TestRunner {
             totalTests += 1
             do {
                 try block()
+                passedTests += 1
+                print("  ✅ PASS: \(name)")
+            } catch {
+                failedTests += 1
+                print("  ❌ FAIL: \(name)")
+                print("     Error: \(error.localizedDescription)")
+            }
+        }
+
+        func asyncTest(_ name: String, block: () async throws -> Void) async {
+            totalTests += 1
+            do {
+                try await block()
                 passedTests += 1
                 print("  ✅ PASS: \(name)")
             } catch {
@@ -519,9 +532,9 @@ struct TestRunner {
             try assertEqual(barcodeItem.title, "Barcode Scanned")
         }
 
-        test("AppConstants: Version 1.0.10 & Settings window sizing verification") {
-            try assertEqual(AppConstants.App.version, "1.0.10")
-            try assertEqual(AppConstants.App.build, "11")
+        test("AppConstants: Version 1.0.11 & Settings window sizing verification") {
+            try assertEqual(AppConstants.App.version, "1.0.11")
+            try assertEqual(AppConstants.App.build, "12")
             try assertEqual(Int(AppConstants.UI.settingsWindowWidth), 680)
             try assertEqual(Int(AppConstants.UI.settingsWindowHeight), 540)
             try assertEqual(AppConstants.App.prodBundleID, "cloud.aritro.byakugan-scan")
@@ -1070,6 +1083,74 @@ struct TestRunner {
             try assertEqual(table?.rows.count, 2)
             try assertEqual(table?.rows[0], ["Row 2 Col 1", "Row 2 Col 2"])
             try assertEqual(table?.rows[1], ["Row 3 Col 1", "Row 3 Col 2"])
+        }
+
+        // Suite 15: End-to-End Real Apple Vision OCR Pipeline
+        print("\n▶️ [Suite 15/15] End-to-End Real Apple Vision OCR Pipeline")
+        await asyncTest("OCRService: End-to-end real text extraction via Apple Vision Neural Engine") {
+            let size = NSSize(width: 500, height: 120)
+            let image = NSImage(size: size)
+            image.lockFocus()
+            NSColor.white.setFill()
+            NSRect(origin: .zero, size: size).fill()
+            let attrs: [NSAttributedString.Key: Any] = [
+                .font: NSFont.systemFont(ofSize: 22, weight: .bold),
+                .foregroundColor: NSColor.black
+            ]
+            ("Byakugan Scan High Performance OCR" as NSString).draw(at: NSPoint(x: 20, y: 45), withAttributes: attrs)
+            image.unlockFocus()
+
+            let extracted = try await OCRService.shared.extractText(
+                from: image,
+                language: "en-US",
+                autoDetectLanguage: true,
+                accuracyLevel: .accurate,
+                preserveLineBreaks: true,
+                trimWhitespace: true,
+                joinWithSpace: false,
+                smartDehyphenation: true,
+                detectTables: false,
+                tableFormat: .markdown
+            )
+            try assertTrue(extracted.contains("Byakugan") || extracted.contains("Performance"), "Vision OCR failed to extract text from image: '\(extracted)'")
+        }
+
+        await asyncTest("OCRService: End-to-end real multi-column table OCR recognition") {
+            let tableSize = NSSize(width: 600, height: 200)
+            let tableImage = NSImage(size: tableSize)
+            tableImage.lockFocus()
+            NSColor.white.setFill()
+            NSRect(origin: .zero, size: tableSize).fill()
+            let font = NSFont.systemFont(ofSize: 16, weight: .regular)
+            let headerFont = NSFont.systemFont(ofSize: 16, weight: .bold)
+            // Header
+            ("Item" as NSString).draw(at: NSPoint(x: 50, y: 150), withAttributes: [.font: headerFont, .foregroundColor: NSColor.black])
+            ("Quantity" as NSString).draw(at: NSPoint(x: 250, y: 150), withAttributes: [.font: headerFont, .foregroundColor: NSColor.black])
+            ("Price" as NSString).draw(at: NSPoint(x: 450, y: 150), withAttributes: [.font: headerFont, .foregroundColor: NSColor.black])
+            // Row 1
+            ("Apples" as NSString).draw(at: NSPoint(x: 50, y: 100), withAttributes: [.font: font, .foregroundColor: NSColor.black])
+            ("5" as NSString).draw(at: NSPoint(x: 250, y: 100), withAttributes: [.font: font, .foregroundColor: NSColor.black])
+            ("$3.50" as NSString).draw(at: NSPoint(x: 450, y: 100), withAttributes: [.font: font, .foregroundColor: NSColor.black])
+            // Row 2
+            ("Oranges" as NSString).draw(at: NSPoint(x: 50, y: 50), withAttributes: [.font: font, .foregroundColor: NSColor.black])
+            ("12" as NSString).draw(at: NSPoint(x: 250, y: 50), withAttributes: [.font: font, .foregroundColor: NSColor.black])
+            ("$8.00" as NSString).draw(at: NSPoint(x: 450, y: 50), withAttributes: [.font: font, .foregroundColor: NSColor.black])
+            tableImage.unlockFocus()
+
+            let extracted = try await OCRService.shared.extractText(
+                from: tableImage,
+                language: "en-US",
+                autoDetectLanguage: true,
+                accuracyLevel: .accurate,
+                preserveLineBreaks: true,
+                trimWhitespace: true,
+                joinWithSpace: false,
+                smartDehyphenation: true,
+                detectTables: true,
+                tableFormat: .markdown
+            )
+            try assertTrue(extracted.contains("Item") && extracted.contains("Price"), "Table OCR failed to detect table headers: '\(extracted)'")
+            try assertTrue(extracted.contains("|"), "Table OCR failed to format table with markdown pipes: '\(extracted)'")
         }
 
         // Summary Report

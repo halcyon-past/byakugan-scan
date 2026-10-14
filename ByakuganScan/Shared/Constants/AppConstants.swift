@@ -22,8 +22,8 @@ enum AppConstants {
         
         static let prodBundleID = "cloud.aritro.byakugan-scan"
         static let devBundleID = "cloud.aritro.byakugan-scan.dev"
-        static let version = "1.0.10"
-        static let build = "11"
+        static let version = "1.0.11"
+        static let build = "12"
         static let websiteURL = URL(string: "https://byakugan-scan.aritro.cloud")!
         static let supportURL = URL(string: "https://byakugan-scan.aritro.cloud/support")!
         static let privacyURL = URL(string: "https://byakugan-scan.aritro.cloud/privacy")!
