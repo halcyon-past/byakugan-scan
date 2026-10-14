@@ -5,8 +5,8 @@ enum AppConstants {
     enum App {
         static let name = "Byakugan Scan"
         static let bundleID = "cloud.aritro.byakugan-scan"
-        static let version = "1.0.7"
-        static let build = "8"
+        static let version = "1.0.8"
+        static let build = "9"
         static let websiteURL = URL(string: "https://byakugan-scan.aritro.cloud")!
         static let supportURL = URL(string: "https://byakugan-scan.aritro.cloud/support")!
         static let privacyURL = URL(string: "https://byakugan-scan.aritro.cloud/privacy")!

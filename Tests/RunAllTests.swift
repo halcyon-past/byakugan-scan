@@ -519,9 +519,9 @@ struct TestRunner {
             try assertEqual(barcodeItem.title, "Barcode Scanned")
         }
 
-        test("AppConstants: Version 1.0.7 & Settings window sizing verification") {
-            try assertEqual(AppConstants.App.version, "1.0.7")
-            try assertEqual(AppConstants.App.build, "8")
+        test("AppConstants: Version 1.0.8 & Settings window sizing verification") {
+            try assertEqual(AppConstants.App.version, "1.0.8")
+            try assertEqual(AppConstants.App.build, "9")
             try assertEqual(Int(AppConstants.UI.settingsWindowWidth), 680)
             try assertEqual(Int(AppConstants.UI.settingsWindowHeight), 540)
         }
@@ -647,6 +647,65 @@ struct TestRunner {
             try assertEqual(table?.columnCount, 2)
             try assertEqual(table?.headers, ["Setting", "Value"])
             try assertEqual(table?.rows[0], ["Resolution", "1080p"])
+        }
+
+        test("TableDetector: 9-column scientific table with super-headers and title caption (Kombucha)") {
+            var kombuchaCells: [TextCell] = [
+                // Title caption
+                TextCell(text: "Table 2: Raw Data Collection of Incubation Time on Sugar Concentration of Kombucha", rect: CGRect(x: 0.05, y: 0.95, width: 0.85, height: 0.03)),
+                // Super header
+                TextCell(text: "Sugar Concentration of Kombucha (± 0.05°Bx)", rect: CGRect(x: 0.40, y: 0.88, width: 0.45, height: 0.03)),
+                // Sub-headers
+                TextCell(text: "Date", rect: CGRect(x: 0.05, y: 0.85, width: 0.08, height: 0.03)),
+                TextCell(text: "Day of Incubation Time (± 0.02 days)", rect: CGRect(x: 0.15, y: 0.85, width: 0.12, height: 0.03)),
+                TextCell(text: "Temperature (±0.5 °C)", rect: CGRect(x: 0.29, y: 0.85, width: 0.09, height: 0.03)),
+                TextCell(text: "Trial 1", rect: CGRect(x: 0.40, y: 0.85, width: 0.05, height: 0.03)),
+                TextCell(text: "Trial 2", rect: CGRect(x: 0.47, y: 0.85, width: 0.05, height: 0.03)),
+                TextCell(text: "Trial 3", rect: CGRect(x: 0.54, y: 0.85, width: 0.05, height: 0.03)),
+                TextCell(text: "Trial 4", rect: CGRect(x: 0.61, y: 0.85, width: 0.05, height: 0.03)),
+                TextCell(text: "Trial 5", rect: CGRect(x: 0.68, y: 0.85, width: 0.05, height: 0.03)),
+                TextCell(text: "Trial 6", rect: CGRect(x: 0.75, y: 0.85, width: 0.05, height: 0.03))
+            ]
+
+            let dates = ["12/19/21", "12/21/21", "12/23/21", "12/25/21", "12/27/21", "12/29/21", "12/31/21", "1/2/22"]
+            let days = ["0.00", "2.00", "4.00", "6.00", "8.00", "10.00", "12.00", "14.00"]
+            let temps = ["18.0", "18.0", "18.0", "18.0", "18.0", "18.0", "17.0", "17.0"]
+            let t1Vals = ["17.00", "16.80", "16.50", "16.40", "16.00", "15.50", "14.20", "12.80"]
+            let t2Vals = ["16.30", "16.10", "15.90", "15.50", "15.10", "14.80", "13.90", "13.00"]
+            let t3Vals = ["17.10", "17.00", "16.80", "16.30", "15.90", "15.40", "14.80", "14.50"]
+            let t4Vals = ["17.10", "17.10", "17.00", "16.90", "16.50", "16.00", "15.80", "17.10"]
+            let t5Vals = ["16.40", "16.20", "16.00", "15.80", "15.40", "15.00", "14.60", "14.00"]
+            let t6Vals = ["17.00", "16.90", "16.70", "16.20", "15.90", "15.50", "14.80", "13.00"]
+
+            for r in 0..<8 {
+                let y = 0.75 - Double(r) * 0.06
+                let rowVals = [dates[r], days[r], temps[r], t1Vals[r], t2Vals[r], t3Vals[r], t4Vals[r], t5Vals[r], t6Vals[r]]
+                let colX = [0.05, 0.15, 0.29, 0.40, 0.47, 0.54, 0.61, 0.68, 0.75]
+                let colW = [0.08, 0.12, 0.09, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
+                for c in 0..<9 {
+                    kombuchaCells.append(TextCell(text: rowVals[c], rect: CGRect(x: colX[c], y: y, width: colW[c], height: 0.03)))
+                }
+            }
+
+            let table = TableDetector.detectTable(from: kombuchaCells)
+            try assertTrue(table != nil, "Expected 9-column scientific table to be detected")
+            try assertEqual(table?.columnCount, 9)
+            try assertEqual(table?.rows.count, 8)
+            try assertEqual(table?.title, "Table 2: Raw Data Collection of Incubation Time on Sugar Concentration of Kombucha")
+            try assertEqual(table?.rows[0][0], "12/19/21")
+            try assertEqual(table?.rows[7][0], "1/2/22")
+            try assertEqual(table?.rows[0][8], "17.00")
+            try assertEqual(table?.rows[7][8], "13.00")
+
+            // Test markdown output includes title caption
+            let md = TableFormatter.toMarkdown(table!)
+            try assertTrue(md.contains("**Table 2: Raw Data Collection"), "Markdown must include bold title caption")
+            try assertTrue(md.contains("| 12/19/21"), "Markdown must include row data")
+
+            // Test CSV output includes title
+            let csv = TableFormatter.toCSV(table!)
+            try assertTrue(csv.contains("Table 2: Raw Data Collection"), "CSV must include title header")
+            try assertTrue(csv.contains("12/19/21,0.00,18.0,17.00,16.30,17.10,17.10,16.40,17.00"), "CSV must contain row data")
         }
 
         test("TableDetector: Non-table rejection (Zero false positives)") {

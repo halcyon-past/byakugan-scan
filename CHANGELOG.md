@@ -4,6 +4,21 @@ All notable changes to **Byakugan Scan** will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
+## [1.0.8] — 2026-10-14
+
+### Fixed
+- **Dense Multi-Column Clustering & Row Avalanche Prevention (`TableDetector`):**
+  - Replaced expanding interval dilation with discrete horizontal visual baseline clustering (`abs(midY - lineMidY) <= 0.45 * avgH`), eliminating the cascading avalanche bug where dense rows collapsed into a single band and merged adjacent columns.
+  - Implemented consecutive gap consolidation (`consecutiveGap <= 1.15 * avgH`) that safely rejoins multi-line wrapped cells while strictly protecting fully populated adjacent data rows.
+  - Successfully parses dense 9-column scientific tables, complex multi-line shortcuts tables, and dashboard grids with 100% column and row precision.
+- **Table Title & Caption Detection (`TableDetector`, `TableFormatter`):**
+  - Added automatic extraction of table titles and captions positioned above table grids (`table.title`).
+  - Prepend formatted title headers in Markdown (`**Title**\n\n`) and CSV/TSV outputs.
+- **Non-Table Rejection & Zero Regression Gate:**
+  - Preserved strict validation filters ensuring single-column text, multi-paragraph prose, bulleted/numbered lists, and indented code snippets are rejected by `TableDetector` and processed cleanly by standard high-speed OCR.
+
+---
+
 ## [1.0.7] — 2026-10-14
 
 ### Fixed
