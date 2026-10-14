@@ -89,6 +89,14 @@ final class AppSettings: ObservableObject {
         didSet { UserDefaults.standard.set(smartDehyphenation, forKey: Keys.smartDehyphenation) }
     }
     
+    // MARK: - Table & Grid Recognition
+    @Published var detectTables: Bool {
+        didSet { UserDefaults.standard.set(detectTables, forKey: Keys.detectTables) }
+    }
+    @Published var tableOutputFormat: TableFormat {
+        didSet { UserDefaults.standard.set(tableOutputFormat.rawValue, forKey: Keys.tableOutputFormat) }
+    }
+    
     // MARK: - Additive Clipboard
     @Published var autoCopyToClipboard: Bool {
         didSet { UserDefaults.standard.set(autoCopyToClipboard, forKey: Keys.autoCopyToClipboard) }
@@ -167,6 +175,10 @@ final class AppSettings: ObservableObject {
         self.joinLineBreaksWithSpace = ud.object(forKey: Keys.joinLineBreaksWithSpace) as? Bool ?? false
         self.smartDehyphenation = ud.object(forKey: Keys.smartDehyphenation) as? Bool ?? true
         
+        self.detectTables = ud.object(forKey: Keys.detectTables) as? Bool ?? true
+        let tableFormatRaw = ud.string(forKey: Keys.tableOutputFormat) ?? TableFormat.markdown.rawValue
+        self.tableOutputFormat = TableFormat(rawValue: tableFormatRaw) ?? .markdown
+        
         self.autoCopyToClipboard = ud.object(forKey: Keys.autoCopyToClipboard) as? Bool ?? true
         self.additiveClipboard = ud.object(forKey: Keys.additiveClipboard) as? Bool ?? false
         self.clearAdditiveClipboardAutomatically = ud.object(forKey: Keys.clearAdditiveClipboardAutomatically) as? Bool ?? false
@@ -214,6 +226,8 @@ final class AppSettings: ObservableObject {
         static let preserveLineBreaks = "preserveLineBreaks"
         static let joinLineBreaksWithSpace = "joinLineBreaksWithSpace"
         static let smartDehyphenation = "smartDehyphenation"
+        static let detectTables = "detectTables"
+        static let tableOutputFormat = "tableOutputFormat"
         
         static let autoCopyToClipboard = "autoCopyToClipboard"
         static let additiveClipboard = "additiveClipboard"
@@ -259,6 +273,8 @@ final class AppSettings: ObservableObject {
         preserveLineBreaks = true
         joinLineBreaksWithSpace = false
         smartDehyphenation = true
+        detectTables = true
+        tableOutputFormat = .markdown
         
         autoCopyToClipboard = true
         additiveClipboard = false
