@@ -67,15 +67,26 @@ final class TableDetector {
     static func extractCells(from observations: [VNRecognizedTextObservation]) -> [TextCell] {
         var cells: [TextCell] = []
         let multiColumnRegex = try? NSRegularExpression(pattern: #"[^\s\t]+(?:\s[^\s\t]+)*"#)
+        let singleWordRegex = try? NSRegularExpression(pattern: #"[^\s\t]+"#)
+        
+        let allHeights = observations.map { $0.boundingBox.height }.sorted()
+        let medianH = allHeights.isEmpty ? 0.05 : allHeights[allHeights.count / 2]
         
         for observation in observations {
             guard let candidate = observation.topCandidates(1).first else { continue }
             let fullText = candidate.string.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !fullText.isEmpty else { continue }
             
-            // Check if observation contains multiple wide columns (separated by tabs or 2+ spaces)
-            if (fullText.contains("\t") || fullText.range(of: #"\s{2,}"#, options: .regularExpression) != nil),
-               let regex = multiColumnRegex {
+            // Skip vertical reading artifacts (e.g. Vision reading vertical columns of single digits like 'HAMHANTIN')
+            if observation.boundingBox.height > medianH * 2.5 && observation.boundingBox.width < 0.12 {
+                continue
+            }
+            
+            let isTabOrMultiSpace = fullText.contains("\t") || fullText.range(of: #"\s{2,}"#, options: .regularExpression) != nil
+            let isSnakeCaseMultiCol = observation.boundingBox.width > 0.30 && fullText.contains("_") && fullText.contains(" ")
+            
+            if (isTabOrMultiSpace || isSnakeCaseMultiCol),
+               let regex = (isSnakeCaseMultiCol ? singleWordRegex : multiColumnRegex) {
                 let nsString = fullText as NSString
                 let matches = regex.matches(in: fullText, range: NSRange(location: 0, length: nsString.length))
                 
@@ -149,14 +160,64 @@ final class TableDetector {
             visualLines[i].sort { $0.rect.minX < $1.rect.minX }
         }
         
+        // Merge horizontally adjacent/touching tokens on the same line (e.g. 'purchase_' + '_number')
+        for i in 0..<visualLines.count {
+            var mergedLine: [TextCell] = []
+            for cell in visualLines[i] {
+                if let last = mergedLine.last {
+                    let gap = cell.rect.minX - last.rect.maxX
+                    let shouldJoinUnderscore = (last.text.hasSuffix("_") && cell.text.hasPrefix("_")) && gap <= 0.02
+                    let shouldJoinTouch = (last.text.hasSuffix("_") || cell.text.hasPrefix("_")) && gap <= 0.005
+                    if shouldJoinUnderscore || shouldJoinTouch {
+                        let newText = (last.text.hasSuffix("_") && cell.text.hasPrefix("_"))
+                            ? last.text + String(cell.text.dropFirst())
+                            : last.text + cell.text
+                        let newMinX = min(last.rect.minX, cell.rect.minX)
+                        let newMaxX = max(last.rect.maxX, cell.rect.maxX)
+                        let newMinY = min(last.rect.minY, cell.rect.minY)
+                        let newMaxY = max(last.rect.maxY, cell.rect.maxY)
+                        mergedLine[mergedLine.count - 1] = TextCell(text: newText, rect: CGRect(x: newMinX, y: newMinY, width: newMaxX - newMinX, height: newMaxY - newMinY))
+                        continue
+                    }
+                }
+                mergedLine.append(cell)
+            }
+            visualLines[i] = mergedLine
+        }
+        
         guard visualLines.count >= 2 else { return nil }
         
         // 2. Extract potential table title / caption above the table
         var titleCaption: String? = nil
         var tableLines = visualLines
-        if let first = tableLines.first, first.count == 1, first[0].rect.width > 0.45 {
-            titleCaption = first[0].text
-            tableLines.removeFirst()
+        
+        let tableMinX = cells.map { $0.rect.minX }.min() ?? 0
+        let tableMaxX = cells.map { $0.rect.maxX }.max() ?? 1
+        let tableMidX = (tableMinX + tableMaxX) / 2.0
+        
+        if let first = tableLines.first, first.count == 1 {
+            let cell = first[0]
+            let maxRest = tableLines.dropFirst().map { $0.count }.max() ?? 0
+            let isWide = cell.rect.width > 0.35
+            let isCentered = abs(cell.rect.midX - tableMidX) < 0.08 && maxRest >= 2
+            
+            var isAlignedWithColumnHeaderBelow = false
+            if tableLines.count > 1 {
+                let nextLine = tableLines[1]
+                for nextCell in nextLine {
+                    let leftDiff = abs(cell.rect.minX - nextCell.rect.minX)
+                    let widthDiff = abs(cell.rect.width - nextCell.rect.width)
+                    if leftDiff < 0.03 && widthDiff < 0.04 {
+                        isAlignedWithColumnHeaderBelow = true
+                        break
+                    }
+                }
+            }
+            
+            if (isWide || isCentered) && !isAlignedWithColumnHeaderBelow {
+                titleCaption = cell.text
+                tableLines.removeFirst()
+            }
         }
         
         guard tableLines.count >= 2 else { return nil }
@@ -164,51 +225,59 @@ final class TableDetector {
         let maxItemsInLine = tableLines.map { $0.count }.max() ?? 0
         guard maxItemsInLine >= 2 else { return nil }
         
-        // 3. Discover Column Lanes using table lines, ignoring wide spanning cells
-        var allColumnCells: [TextCell] = []
+        // 3. Discover Column Lanes using table lines
+        // Seed lanes from the first line that has maxItemsInLine (excluding spanning headers)
+        guard let seedLine = tableLines.first(where: { line in
+            line.count == maxItemsInLine && (maxItemsInLine <= 3 || line.allSatisfy { $0.rect.width < 0.40 })
+        }) ?? tableLines.first(where: { $0.count == maxItemsInLine }) else { return nil }
+
+        var lanes: [ColumnLane] = seedLine.map { ColumnLane(minX: $0.rect.minX, maxX: $0.rect.maxX) }
+
+        // Expand lanes from all other lines
         for line in tableLines {
             for cell in line {
-                // Ignore wide spanning headers across columns when collecting column anchor boundaries
-                if maxItemsInLine <= 3 || cell.rect.width < 0.35 {
-                    allColumnCells.append(cell)
-                }
-            }
-        }
-        guard !allColumnCells.isEmpty else { return nil }
-        
-        var lanes: [ColumnLane] = []
-        let sortedColCells = allColumnCells.sorted { $0.rect.minX < $1.rect.minX }
-        for c in sortedColCells {
-            var matchedIdx: Int?
-            var maxOverlap: CGFloat = 0
-            
-            for (i, lane) in lanes.enumerated() {
-                let overlap = max(0, min(c.rect.maxX, lane.maxX) - max(c.rect.minX, lane.minX))
-                let minW = min(c.rect.width, lane.maxX - lane.minX)
-                if (minW > 0 && overlap / minW >= 0.25) || abs(c.rect.minX - lane.minX) < 0.035 {
-                    if overlap > maxOverlap || matchedIdx == nil {
-                        maxOverlap = overlap
-                        matchedIdx = i
+                if maxItemsInLine > 3 && cell.rect.width > 0.40 { continue } // skip wide spanning headers
+                var matchedIdx: Int?
+                var maxOverlap: CGFloat = 0
+                var minDistance: CGFloat = .infinity
+                var closestIdx: Int?
+
+                for (i, lane) in lanes.enumerated() {
+                    let overlap = max(0, min(cell.rect.maxX, lane.maxX) - max(cell.rect.minX, lane.minX))
+                    let minW = min(cell.rect.width, lane.maxX - lane.minX)
+                    if (minW > 0 && overlap / minW >= 0.20) || abs(cell.rect.minX - lane.minX) < 0.04 || abs(cell.rect.maxX - lane.maxX) < 0.04 {
+                        if overlap > maxOverlap || matchedIdx == nil {
+                            maxOverlap = overlap
+                            matchedIdx = i
+                        }
+                    }
+                    let dist = abs(cell.rect.midX - lane.midX)
+                    if dist < minDistance {
+                        minDistance = dist
+                        closestIdx = i
                     }
                 }
-            }
-            
-            if let idx = matchedIdx {
-                lanes[idx].minX = min(lanes[idx].minX, c.rect.minX)
-                lanes[idx].maxX = max(lanes[idx].maxX, c.rect.maxX)
-            } else {
-                lanes.append(ColumnLane(minX: c.rect.minX, maxX: c.rect.maxX))
+
+                if let idx = matchedIdx {
+                    lanes[idx].minX = min(lanes[idx].minX, cell.rect.minX)
+                    lanes[idx].maxX = max(lanes[idx].maxX, cell.rect.maxX)
+                } else if let cIdx = closestIdx, minDistance < 0.08 {
+                    lanes[cIdx].minX = min(lanes[cIdx].minX, cell.rect.minX)
+                    lanes[cIdx].maxX = max(lanes[cIdx].maxX, cell.rect.maxX)
+                } else {
+                    lanes.append(ColumnLane(minX: cell.rect.minX, maxX: cell.rect.maxX))
+                }
             }
         }
-        
-        // Merge overlapping adjacent lanes
+
+        // Merge overlapping adjacent lanes: REQUIRE meaningful overlap (>= 35%), never merge just because minX < last.maxX
         lanes.sort { $0.minX < $1.minX }
         var mergedLanes: [ColumnLane] = []
         for lane in lanes {
             if let last = mergedLanes.last {
                 let overlap = max(0, min(last.maxX, lane.maxX) - max(last.minX, lane.minX))
                 let minW = min(last.maxX - last.minX, lane.maxX - lane.minX)
-                if minW > 0 && (overlap / minW >= 0.25 || lane.minX < last.maxX) {
+                if minW > 0 && (overlap / minW >= 0.35) {
                     mergedLanes[mergedLanes.count - 1].maxX = max(last.maxX, lane.maxX)
                     mergedLanes[mergedLanes.count - 1].minX = min(last.minX, lane.minX)
                     continue
@@ -298,13 +367,26 @@ final class TableDetector {
             let isBothCompletelyFull = (curr.count == mergedLanes.count && line.count == mergedLanes.count)
             let isIntraRowGap = vertGap <= avgHeight * 1.15
             
-            if isIntraRowGap && !isBothCompletelyFull {
+            // Two lines cannot merge if both have independent record identifiers (e.g. both have col 0 and col 1 populated, or both have numeric indices)
+            let bothHaveIdentifiers = mergedLanes.count >= 2 && !curr.slots[0].isEmpty && !line.slots[0].isEmpty && !curr.slots[1].isEmpty && !line.slots[1].isEmpty
+            let bothHaveNumericIndex = !curr.slots[0].isEmpty && !line.slots[0].isEmpty && Int(curr.slots[0]) != nil && Int(line.slots[0]) != nil
+            
+            let isContinuation = line.count == 1 || curr.count == 1 || (!bothHaveIdentifiers && !bothHaveNumericIndex)
+            let canMerge = isIntraRowGap && !isBothCompletelyFull && isContinuation
+            
+            if canMerge {
                 for c in 0..<mergedLanes.count {
                     if !line.slots[c].isEmpty {
                         if curr.slots[c].isEmpty {
                             curr.slots[c] = line.slots[c]
                         } else {
-                            curr.slots[c] += " " + line.slots[c]
+                            let existing = curr.slots[c]
+                            let addition = line.slots[c]
+                            if addition == "-" || addition == "_" {
+                                curr.slots[c] = existing + addition
+                            } else {
+                                curr.slots[c] += " " + addition
+                            }
                         }
                     }
                 }

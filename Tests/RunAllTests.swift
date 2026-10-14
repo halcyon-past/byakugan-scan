@@ -519,9 +519,9 @@ struct TestRunner {
             try assertEqual(barcodeItem.title, "Barcode Scanned")
         }
 
-        test("AppConstants: Version 1.0.8 & Settings window sizing verification") {
-            try assertEqual(AppConstants.App.version, "1.0.8")
-            try assertEqual(AppConstants.App.build, "9")
+        test("AppConstants: Version 1.0.9 & Settings window sizing verification") {
+            try assertEqual(AppConstants.App.version, "1.0.9")
+            try assertEqual(AppConstants.App.build, "10")
             try assertEqual(Int(AppConstants.UI.settingsWindowWidth), 680)
             try assertEqual(Int(AppConstants.UI.settingsWindowHeight), 540)
         }
@@ -706,6 +706,140 @@ struct TestRunner {
             let csv = TableFormatter.toCSV(table!)
             try assertTrue(csv.contains("Table 2: Raw Data Collection"), "CSV must include title header")
             try assertTrue(csv.contains("12/19/21,0.00,18.0,17.00,16.30,17.10,17.10,16.40,17.00"), "CSV must contain row data")
+        }
+
+        test("TableDetector: Real-world 5-column financial table with right-aligned numbers (Table 1)") {
+            let table1Cells = [
+                // Header row
+                TextCell(text: "Name", rect: CGRect(x: 0.017, y: 0.893, width: 0.133, height: 0.04)),
+                TextCell(text: "FName", rect: CGRect(x: 0.292, y: 0.893, width: 0.165, height: 0.04)),
+                TextCell(text: "City", rect: CGRect(x: 0.526, y: 0.886, width: 0.101, height: 0.04)),
+                TextCell(text: "Age", rect: CGRect(x: 0.683, y: 0.883, width: 0.091, height: 0.04)),
+                TextCell(text: "Salary", rect: CGRect(x: 0.840, y: 0.886, width: 0.143, height: 0.04)),
+                
+                // Row 1
+                TextCell(text: "Smith", rect: CGRect(x: 0.017, y: 0.732, width: 0.129, height: 0.04)),
+                TextCell(text: "John", rect: CGRect(x: 0.293, y: 0.732, width: 0.108, height: 0.04)),
+                TextCell(text: "3", rect: CGRect(x: 0.634, y: 0.725, width: 0.031, height: 0.04)),
+                TextCell(text: "35", rect: CGRect(x: 0.770, y: 0.732, width: 0.073, height: 0.04)),
+                TextCell(text: "$280", rect: CGRect(x: 0.874, y: 0.728, width: 0.122, height: 0.04)),
+                
+                // Row 2 (missing City)
+                TextCell(text: "Doe", rect: CGRect(x: 0.017, y: 0.570, width: 0.098, height: 0.04)),
+                TextCell(text: "Jane", rect: CGRect(x: 0.293, y: 0.570, width: 0.101, height: 0.04)),
+                TextCell(text: "28", rect: CGRect(x: 0.770, y: 0.570, width: 0.073, height: 0.04)),
+                TextCell(text: "$325", rect: CGRect(x: 0.875, y: 0.574, width: 0.118, height: 0.04)),
+                
+                // Row 3
+                TextCell(text: "Brown", rect: CGRect(x: 0.017, y: 0.413, width: 0.151, height: 0.04)),
+                TextCell(text: "Scott", rect: CGRect(x: 0.296, y: 0.409, width: 0.115, height: 0.04)),
+                TextCell(text: "3", rect: CGRect(x: 0.638, y: 0.409, width: 0.028, height: 0.04)),
+                TextCell(text: "41", rect: CGRect(x: 0.770, y: 0.413, width: 0.073, height: 0.04)),
+                TextCell(text: "$265", rect: CGRect(x: 0.875, y: 0.413, width: 0.119, height: 0.04)),
+                
+                // Row 4
+                TextCell(text: "Howard", rect: CGRect(x: 0.017, y: 0.252, width: 0.178, height: 0.04)),
+                TextCell(text: "Shemp", rect: CGRect(x: 0.293, y: 0.242, width: 0.150, height: 0.04)),
+                TextCell(text: "4", rect: CGRect(x: 0.634, y: 0.248, width: 0.038, height: 0.04)),
+                TextCell(text: "48", rect: CGRect(x: 0.770, y: 0.252, width: 0.073, height: 0.04)),
+                TextCell(text: "$359", rect: CGRect(x: 0.875, y: 0.252, width: 0.118, height: 0.04)),
+                
+                // Row 5
+                TextCell(text: "Taylor", rect: CGRect(x: 0.017, y: 0.081, width: 0.147, height: 0.04)),
+                TextCell(text: "Tom", rect: CGRect(x: 0.296, y: 0.091, width: 0.105, height: 0.04)),
+                TextCell(text: "2", rect: CGRect(x: 0.634, y: 0.087, width: 0.035, height: 0.04)),
+                TextCell(text: "22", rect: CGRect(x: 0.770, y: 0.091, width: 0.073, height: 0.04)),
+                TextCell(text: "$250", rect: CGRect(x: 0.875, y: 0.091, width: 0.118, height: 0.04))
+            ]
+
+            let table = TableDetector.detectTable(from: table1Cells)
+            try assertTrue(table != nil, "Expected 5-column financial table to be detected")
+            try assertEqual(table?.columnCount, 5)
+            try assertEqual(table?.headers, ["Name", "FName", "City", "Age", "Salary"])
+            try assertEqual(table?.rows.count, 5)
+            try assertEqual(table?.rows[0], ["Smith", "John", "3", "35", "$280"])
+            try assertEqual(table?.rows[1], ["Doe", "Jane", "", "28", "$325"])
+            try assertEqual(table?.rows[2], ["Brown", "Scott", "3", "41", "$265"])
+            try assertEqual(table?.rows[3], ["Howard", "Shemp", "4", "48", "$359"])
+            try assertEqual(table?.rows[4], ["Taylor", "Tom", "2", "22", "$250"])
+            
+            let md = TableFormatter.toMarkdown(table!)
+            try assertTrue(md.contains("| Name"), "Markdown output must have Name column")
+            try assertTrue(md.contains("| Salary"), "Markdown output must have Salary column")
+            try assertTrue(md.contains("Smith"), "Markdown output must contain Smith")
+        }
+
+        test("TableDetector: Real-world 4-column sales table with centered title header (Table 2)") {
+            let table2Cells = [
+                // Centered banner title
+                TextCell(text: "SALES", rect: CGRect(x: 0.437, y: 0.911, width: 0.105, height: 0.049)),
+                
+                // Header tokens (purchase_ and _number joined, date_of_purchase, customer_id, item_code)
+                TextCell(text: "purchase_", rect: CGRect(x: 0.029, y: 0.832, width: 0.138, height: 0.052)),
+                TextCell(text: "_number", rect: CGRect(x: 0.154, y: 0.826, width: 0.148, height: 0.062)),
+                TextCell(text: "date_of_purchase", rect: CGRect(x: 0.307, y: 0.826, width: 0.278, height: 0.062)),
+                TextCell(text: "customer_id", rect: CGRect(x: 0.590, y: 0.826, width: 0.204, height: 0.062)),
+                TextCell(text: "item_code", rect: CGRect(x: 0.799, y: 0.826, width: 0.162, height: 0.062)),
+                
+                // Data rows
+                TextCell(text: "1", rect: CGRect(x: 0.271, y: 0.756, width: 0.020, height: 0.039)),
+                TextCell(text: "03/09/2016", rect: CGRect(x: 0.404, y: 0.752, width: 0.168, height: 0.055)),
+                TextCell(text: "A_1", rect: CGRect(x: 0.902, y: 0.747, width: 0.059, height: 0.065)),
+                
+                TextCell(text: "2", rect: CGRect(x: 0.271, y: 0.683, width: 0.020, height: 0.042)),
+                TextCell(text: "02/12/2016", rect: CGRect(x: 0.404, y: 0.680, width: 0.166, height: 0.056)),
+                TextCell(text: "C_1", rect: CGRect(x: 0.904, y: 0.674, width: 0.057, height: 0.062)),
+                
+                TextCell(text: "3", rect: CGRect(x: 0.271, y: 0.609, width: 0.018, height: 0.036)),
+                TextCell(text: "15/04/2017", rect: CGRect(x: 0.406, y: 0.607, width: 0.166, height: 0.054)),
+                TextCell(text: "D_1", rect: CGRect(x: 0.902, y: 0.599, width: 0.059, height: 0.062)),
+                
+                TextCell(text: "4", rect: CGRect(x: 0.270, y: 0.537, width: 0.021, height: 0.042)),
+                TextCell(text: "24/05/2017", rect: CGRect(x: 0.404, y: 0.534, width: 0.168, height: 0.055)),
+                TextCell(text: "B_2", rect: CGRect(x: 0.904, y: 0.526, width: 0.057, height: 0.065)),
+                
+                TextCell(text: "5", rect: CGRect(x: 0.271, y: 0.461, width: 0.018, height: 0.039)),
+                TextCell(text: "25/05/2017", rect: CGRect(x: 0.404, y: 0.459, width: 0.168, height: 0.055)),
+                TextCell(text: "B_2", rect: CGRect(x: 0.904, y: 0.453, width: 0.057, height: 0.062)),
+                
+                TextCell(text: "06/06/2017", rect: CGRect(x: 0.404, y: 0.390, width: 0.167, height: 0.064)),
+                TextCell(text: "B_1", rect: CGRect(x: 0.904, y: 0.380, width: 0.057, height: 0.065)),
+                
+                TextCell(text: "7", rect: CGRect(x: 0.271, y: 0.312, width: 0.021, height: 0.045)),
+                TextCell(text: "10/06/2017", rect: CGRect(x: 0.400, y: 0.310, width: 0.171, height: 0.056)),
+                TextCell(text: "A_2", rect: CGRect(x: 0.902, y: 0.302, width: 0.061, height: 0.071)),
+                
+                TextCell(text: "8", rect: CGRect(x: 0.271, y: 0.235, width: 0.021, height: 0.042)),
+                TextCell(text: "13/06/2017", rect: CGRect(x: 0.404, y: 0.234, width: 0.167, height: 0.055)),
+                TextCell(text: "C 1", rect: CGRect(x: 0.904, y: 0.234, width: 0.059, height: 0.045)),
+                TextCell(text: "-", rect: CGRect(x: 0.920, y: 0.208, width: 0.027, height: 0.019)),
+                
+                TextCell(text: "9", rect: CGRect(x: 0.271, y: 0.155, width: 0.021, height: 0.042)),
+                TextCell(text: "20/07/2017", rect: CGRect(x: 0.406, y: 0.156, width: 0.164, height: 0.053)),
+                TextCell(text: "A_1", rect: CGRect(x: 0.904, y: 0.157, width: 0.057, height: 0.045)),
+                
+                TextCell(text: "10", rect: CGRect(x: 0.256, y: 0.086, width: 0.037, height: 0.042)),
+                TextCell(text: "11/08/2017", rect: CGRect(x: 0.404, y: 0.090, width: 0.167, height: 0.055)),
+                TextCell(text: "B 1", rect: CGRect(x: 0.906, y: 0.086, width: 0.054, height: 0.042)),
+                TextCell(text: "-", rect: CGRect(x: 0.924, y: 0.062, width: 0.020, height: 0.026))
+            ]
+
+            let table = TableDetector.detectTable(from: table2Cells)
+            try assertTrue(table != nil, "Expected 4-column sales table to be detected")
+            try assertEqual(table?.title, "SALES")
+            try assertEqual(table?.columnCount, 4)
+            try assertEqual(table?.headers, ["purchase_number", "date_of_purchase", "customer_id", "item_code"])
+            try assertEqual(table?.rows.count, 10)
+            try assertEqual(table?.rows[0][0], "1")
+            try assertEqual(table?.rows[0][1], "03/09/2016")
+            try assertEqual(table?.rows[0][2], "")
+            try assertEqual(table?.rows[0][3], "A_1")
+            try assertEqual(table?.rows[9][0], "10")
+            try assertEqual(table?.rows[9][1], "11/08/2017")
+            
+            let md = TableFormatter.toMarkdown(table!)
+            try assertTrue(md.contains("**SALES**"), "Markdown output must have bold title")
+            try assertTrue(md.contains("| purchase_number | date_of_purchase | customer_id | item_code |"), "Markdown headers must match")
         }
 
         test("TableDetector: Non-table rejection (Zero false positives)") {
