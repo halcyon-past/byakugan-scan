@@ -159,7 +159,7 @@ export default function SupportPage() {
       <div className="max-w-3xl mb-14">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-300 text-xs font-mono mb-4">
           <Sparkles className="w-3.5 h-3.5" />
-          <span>SUPPORT CENTER & DOCUMENTATION // v1.0.4</span>
+          <span>SUPPORT CENTER & DOCUMENTATION // v1.0.5</span>
         </div>
         <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
           Support &amp; Frequently Asked Questions
@@ -230,7 +230,7 @@ export default function SupportPage() {
                 href={APP_DOWNLOAD_URL}
                 className="px-4 py-2 rounded-lg bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 text-white text-xs font-semibold transition-all inline-flex items-center gap-1.5"
               >
-                <span>Download Latest DMG (v1.0.4)</span>
+                <span>Download Latest DMG (v1.0.5)</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
               <a
@@ -562,13 +562,13 @@ export default function SupportPage() {
               Still running into an issue or have a feature request?
             </h2>
             <p className="text-sm text-slate-300 leading-relaxed">
-              Include your macOS version and Byakugan Scan version (<strong className="text-white">v1.0.4</strong>). We respond to all support emails and GitHub issues within 2 business days.
+              Include your macOS version and Byakugan Scan version (<strong className="text-white">v1.0.5</strong>). We respond to all support emails and GitHub issues within 2 business days.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <a
-              href="mailto:aritrosaha2025@gmail.com?subject=Byakugan%20Scan%20Support%20(v1.0.4)"
+              href="mailto:aritrosaha2025@gmail.com?subject=Byakugan%20Scan%20Support%20(v1.0.5)"
               className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 text-white text-xs font-semibold transition-all inline-flex items-center gap-2 shadow-lg shadow-pink-600/20"
             >
               <Mail className="w-4 h-4" />

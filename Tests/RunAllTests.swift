@@ -515,9 +515,9 @@ struct TestRunner {
             try assertEqual(barcodeItem.title, "Barcode Scanned")
         }
 
-        test("AppConstants: Version 1.0.4 & Settings window sizing verification") {
-            try assertEqual(AppConstants.App.version, "1.0.4")
-            try assertEqual(AppConstants.App.build, "5")
+        test("AppConstants: Version 1.0.5 & Settings window sizing verification") {
+            try assertEqual(AppConstants.App.version, "1.0.5")
+            try assertEqual(AppConstants.App.build, "6")
             try assertEqual(Int(AppConstants.UI.settingsWindowWidth), 680)
             try assertEqual(Int(AppConstants.UI.settingsWindowHeight), 540)
         }
