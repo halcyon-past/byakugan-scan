@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-## [Unreleased]
+## [1.0.5] — 2026-10-14
 
 ### Added
 - **Table & Grid OCR Detection to Markdown & CSV (`TableDetector`, `TableFormatter`) (#2):**
