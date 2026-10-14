@@ -79,6 +79,81 @@ struct TestRunner {
             try assertEqual(formatted, "Sentence part one part two.")
         }
 
+        test("Smart dehyphenation: split words across lines") {
+            let input = "super-\ncomputer"
+            let formatted = input.formatted()
+            try assertEqual(formatted, "supercomputer")
+
+            let academic = "This is an imple-\nmentation of the system.\nNext paragraph starts here."
+            let res = academic.formatted(preserveLineBreaks: true, trimWhitespace: true, joinWithSpace: false, smartDehyphenation: true)
+            try assertEqual(res, "This is an implementation of the system.\nNext paragraph starts here.")
+
+            // Mixed casing
+            try assertEqual("Inter-\nnational".formatted(), "International")
+            try assertEqual("SUPER-\nCOMPUTER".formatted(), "SUPERCOMPUTER")
+
+            // Whitespace around line split
+            let spaced = "super-  \n   computer".formatted()
+            try assertEqual(spaced, "supercomputer")
+
+            // Windows CRLF
+            let crlf = "super-\r\ncomputer".formatted()
+            try assertEqual(crlf, "supercomputer")
+        }
+
+        test("Smart dehyphenation: joinWithSpace=true") {
+            let input = "This is a super-\ncomputer system."
+            let formatted = input.formatted(preserveLineBreaks: false, trimWhitespace: true, joinWithSpace: true, smartDehyphenation: true)
+            try assertEqual(formatted, "This is a supercomputer system.")
+        }
+
+        test("Smart dehyphenation: disabled") {
+            let input = "super-\ncomputer"
+            let preserved = input.formatted(preserveLineBreaks: true, trimWhitespace: true, joinWithSpace: false, smartDehyphenation: false)
+            try assertEqual(preserved, "super-\ncomputer")
+
+            let joined = input.formatted(preserveLineBreaks: false, trimWhitespace: true, joinWithSpace: true, smartDehyphenation: false)
+            try assertEqual(joined, "super- computer")
+        }
+
+        test("Smart dehyphenation: non-breaking edge cases and compound words") {
+            // Lists / bullet points
+            let bulletList = "- Item 1\n- Item 2"
+            try assertEqual(bulletList.formatted(), "- Item 1\n- Item 2")
+
+            // List item continuing from previous line
+            let listContinuation = "First section.\n- Second section."
+            try assertEqual(listContinuation.formatted(), "First section.\n- Second section.")
+
+            // Subtraction / math operations
+            let math1 = "total - \ndiscount"
+            try assertEqual(math1.formatted(), "total -\ndiscount")
+
+            let math2 = "10 -\n5"
+            try assertEqual(math2.formatted(), "10 -\n5")
+
+            let math3 = "a - \nb"
+            try assertEqual(math3.formatted(), "a -\nb")
+
+            // Code decrement and arrows
+            let code1 = "counter--\nnextStep()"
+            try assertEqual(code1.formatted(), "counter--\nnextStep()")
+
+            let code2 = "ptr->\nfield"
+            try assertEqual(code2.formatted(), "ptr->\nfield")
+
+            // Intentional double-dash / em-dash / en-dash
+            let doubleDash = "word --\nnext"
+            try assertEqual(doubleDash.formatted(), "word --\nnext")
+
+            let emDash = "word —\nnext"
+            try assertEqual(emDash.formatted(), "word —\nnext")
+
+            // Single line compound words
+            let compound = "state-of-the-art and high-performance"
+            try assertEqual(compound.formatted(), "state-of-the-art and high-performance")
+        }
+
         // 2. ScanResult Model Tests
         print("\n▶️ [Suite 2/6] ScanResult & ScanType Models")
         test("ScanType display names and SF symbols") {
@@ -117,14 +192,26 @@ struct TestRunner {
             try assertTrue(settings.showNotificationOnCapture)
             try assertEqual(settings.ocrLanguage, "en-US")
             try assertEqual(settings.ocrAccuracyLevel, .accurate)
+            try assertTrue(settings.smartDehyphenation)
+            try assertTrue(settings.detectTables)
+            try assertEqual(settings.tableOutputFormat, .markdown)
         }
 
         test("AppSettings persistence mutations") {
             let settings = AppSettings.shared
             settings.textScanShortcut = "⌘⇧9"
             try assertEqual(settings.textScanShortcut, "⌘⇧9")
+            settings.smartDehyphenation = false
+            try assertFalse(settings.smartDehyphenation)
+            settings.detectTables = false
+            try assertFalse(settings.detectTables)
+            settings.tableOutputFormat = .csv
+            try assertEqual(settings.tableOutputFormat, .csv)
             settings.resetToDefaults()
             try assertEqual(settings.textScanShortcut, "⌘⇧2")
+            try assertTrue(settings.smartDehyphenation)
+            try assertTrue(settings.detectTables)
+            try assertEqual(settings.tableOutputFormat, .markdown)
         }
 
         // 4. HotkeyService Parser Tests
@@ -428,11 +515,197 @@ struct TestRunner {
             try assertEqual(barcodeItem.title, "Barcode Scanned")
         }
 
-        test("AppConstants: Version 1.0.4 & Settings window sizing verification") {
-            try assertEqual(AppConstants.App.version, "1.0.4")
-            try assertEqual(AppConstants.App.build, "5")
+        test("AppConstants: Version 1.0.5 & Settings window sizing verification") {
+            try assertEqual(AppConstants.App.version, "1.0.5")
+            try assertEqual(AppConstants.App.build, "6")
             try assertEqual(Int(AppConstants.UI.settingsWindowWidth), 680)
             try assertEqual(Int(AppConstants.UI.settingsWindowHeight), 540)
+        }
+
+        // Suite 13: Table & Grid OCR Detection & Formatting (Issue #2)
+        print("\n▶️ [Suite 13/13] Table & Grid OCR Detection and Formatting")
+        test("TableDetector: Real-world Stripe/AWS multi-column dashboard table") {
+            let stripeCells = [
+                TextCell(text: "Date", rect: CGRect(x: 0.05, y: 0.9, width: 0.15, height: 0.03)),
+                TextCell(text: "Description", rect: CGRect(x: 0.25, y: 0.9, width: 0.3, height: 0.03)),
+                TextCell(text: "Amount", rect: CGRect(x: 0.6, y: 0.9, width: 0.15, height: 0.03)),
+                TextCell(text: "Status", rect: CGRect(x: 0.8, y: 0.9, width: 0.15, height: 0.03)),
+                
+                TextCell(text: "Oct 14", rect: CGRect(x: 0.05, y: 0.8, width: 0.15, height: 0.03)),
+                TextCell(text: "Subscription plan", rect: CGRect(x: 0.25, y: 0.8, width: 0.3, height: 0.03)),
+                TextCell(text: "$49.00", rect: CGRect(x: 0.6, y: 0.8, width: 0.15, height: 0.03)),
+                TextCell(text: "Succeeded", rect: CGRect(x: 0.8, y: 0.8, width: 0.15, height: 0.03)),
+                
+                TextCell(text: "Oct 13", rect: CGRect(x: 0.05, y: 0.7, width: 0.15, height: 0.03)),
+                TextCell(text: "Add-on usage", rect: CGRect(x: 0.25, y: 0.7, width: 0.3, height: 0.03)),
+                TextCell(text: "$12.50", rect: CGRect(x: 0.6, y: 0.7, width: 0.15, height: 0.03)),
+                TextCell(text: "Succeeded", rect: CGRect(x: 0.8, y: 0.7, width: 0.15, height: 0.03))
+            ]
+
+            let table = TableDetector.detectTable(from: stripeCells)
+            try assertTrue(table != nil, "Expected table detection from multi-column grid")
+            try assertEqual(table?.columnCount, 4)
+            try assertEqual(table?.headers, ["Date", "Description", "Amount", "Status"])
+            try assertEqual(table?.rows.count, 2)
+            try assertEqual(table?.rows[0], ["Oct 14", "Subscription plan", "$49.00", "Succeeded"])
+            try assertEqual(table?.rows[1], ["Oct 13", "Add-on usage", "$12.50", "Succeeded"])
+        }
+
+        test("TableDetector: Handling missing and empty cells in columns") {
+            let gapCells = [
+                TextCell(text: "Product", rect: CGRect(x: 0.1, y: 0.9, width: 0.2, height: 0.03)),
+                TextCell(text: "Model", rect: CGRect(x: 0.35, y: 0.9, width: 0.2, height: 0.03)),
+                TextCell(text: "Price", rect: CGRect(x: 0.6, y: 0.9, width: 0.15, height: 0.03)),
+                TextCell(text: "In Stock", rect: CGRect(x: 0.8, y: 0.9, width: 0.15, height: 0.03)),
+                
+                TextCell(text: "MacBook Pro", rect: CGRect(x: 0.1, y: 0.8, width: 0.2, height: 0.03)),
+                TextCell(text: "M3 Max", rect: CGRect(x: 0.35, y: 0.8, width: 0.2, height: 0.03)),
+                TextCell(text: "$3199", rect: CGRect(x: 0.6, y: 0.8, width: 0.15, height: 0.03)),
+                TextCell(text: "Yes", rect: CGRect(x: 0.8, y: 0.8, width: 0.15, height: 0.03)),
+                
+                TextCell(text: "Mac mini", rect: CGRect(x: 0.1, y: 0.7, width: 0.2, height: 0.03)),
+                // Missing Model column
+                TextCell(text: "$599", rect: CGRect(x: 0.6, y: 0.7, width: 0.15, height: 0.03)),
+                TextCell(text: "Yes", rect: CGRect(x: 0.8, y: 0.7, width: 0.15, height: 0.03))
+            ]
+
+            let table = TableDetector.detectTable(from: gapCells)
+            try assertTrue(table != nil, "Expected table with missing cell to be detected")
+            try assertEqual(table?.columnCount, 4)
+            try assertEqual(table?.rows[1][0], "Mac mini")
+            try assertEqual(table?.rows[1][1], "") // Missing cell mapped to empty string
+            try assertEqual(table?.rows[1][2], "$599")
+            try assertEqual(table?.rows[1][3], "Yes")
+        }
+
+        test("TableDetector: 2-column key-value settings table") {
+            let kvCells = [
+                TextCell(text: "Setting", rect: CGRect(x: 0.1, y: 0.9, width: 0.3, height: 0.03)),
+                TextCell(text: "Value", rect: CGRect(x: 0.5, y: 0.9, width: 0.3, height: 0.03)),
+                TextCell(text: "Resolution", rect: CGRect(x: 0.1, y: 0.8, width: 0.3, height: 0.03)),
+                TextCell(text: "1080p", rect: CGRect(x: 0.5, y: 0.8, width: 0.3, height: 0.03)),
+                TextCell(text: "Framerate", rect: CGRect(x: 0.1, y: 0.7, width: 0.3, height: 0.03)),
+                TextCell(text: "60 FPS", rect: CGRect(x: 0.5, y: 0.7, width: 0.3, height: 0.03))
+            ]
+            let table = TableDetector.detectTable(from: kvCells)
+            try assertTrue(table != nil, "Expected 2-column key-value table to be detected")
+            try assertEqual(table?.columnCount, 2)
+            try assertEqual(table?.headers, ["Setting", "Value"])
+            try assertEqual(table?.rows[0], ["Resolution", "1080p"])
+        }
+
+        test("TableDetector: Non-table rejection (Zero false positives)") {
+            // Prose paragraph
+            let proseCells = [
+                TextCell(text: "First long line of paragraph spanning the page.", rect: CGRect(x: 0.05, y: 0.9, width: 0.9, height: 0.03)),
+                TextCell(text: "Second long line of paragraph spanning the page.", rect: CGRect(x: 0.05, y: 0.8, width: 0.85, height: 0.03)),
+                TextCell(text: "Third concluding line.", rect: CGRect(x: 0.05, y: 0.7, width: 0.4, height: 0.03))
+            ]
+            try assertTrue(TableDetector.detectTable(from: proseCells) == nil, "Prose paragraph must NOT be detected as table")
+
+            // Bullet list
+            let bulletCells = [
+                TextCell(text: "- First bullet item", rect: CGRect(x: 0.05, y: 0.9, width: 0.7, height: 0.03)),
+                TextCell(text: "- Second bullet item", rect: CGRect(x: 0.05, y: 0.8, width: 0.7, height: 0.03)),
+                TextCell(text: "- Third bullet item", rect: CGRect(x: 0.05, y: 0.7, width: 0.7, height: 0.03))
+            ]
+            try assertTrue(TableDetector.detectTable(from: bulletCells) == nil, "Bullet list must NOT be detected as table")
+
+            // Single column list
+            let singleCol = [
+                TextCell(text: "Item 1", rect: CGRect(x: 0.1, y: 0.9, width: 0.2, height: 0.03)),
+                TextCell(text: "Item 2", rect: CGRect(x: 0.1, y: 0.8, width: 0.2, height: 0.03)),
+                TextCell(text: "Item 3", rect: CGRect(x: 0.1, y: 0.7, width: 0.2, height: 0.03))
+            ]
+            try assertTrue(TableDetector.detectTable(from: singleCol) == nil, "Single column must NOT be detected as table")
+
+            // Code block
+            let code = [
+                TextCell(text: "func calculate() {", rect: CGRect(x: 0.05, y: 0.9, width: 0.4, height: 0.03)),
+                TextCell(text: "    let x = 10", rect: CGRect(x: 0.05, y: 0.8, width: 0.3, height: 0.03)),
+                TextCell(text: "    return x * 2", rect: CGRect(x: 0.05, y: 0.7, width: 0.35, height: 0.03)),
+                TextCell(text: "}", rect: CGRect(x: 0.05, y: 0.6, width: 0.05, height: 0.03))
+            ]
+            try assertTrue(TableDetector.detectTable(from: code) == nil, "Code snippet must NOT be detected as table")
+        }
+
+        test("TableFormatter: Markdown table generation with alignment and pipe escaping") {
+            let sampleTable = DetectedTable(
+                headers: ["Item", "Qty", "Price, USD"],
+                rows: [
+                    ["Apple", "3", "$1.50"],
+                    ["Banana", "", "$0.80"],
+                    ["Orange | Special", "12", "$5.00"]
+                ],
+                columnCount: 3
+            )
+
+            let md = TableFormatter.toMarkdown(sampleTable)
+            try assertTrue(md.contains("| Item"), "Markdown table must contain header")
+            try assertTrue(md.contains("| :"), "Markdown table must contain separator")
+            try assertTrue(md.contains("Orange \\| Special"), "Internal pipe in cell must be escaped as \\|")
+            try assertTrue(md.contains("| Apple"), "Markdown table must contain data rows")
+        }
+
+        test("TableFormatter: CSV RFC 4180 generation with quotes and commas") {
+            let sampleTable = DetectedTable(
+                headers: ["Item", "Qty", "Price, USD"],
+                rows: [
+                    ["Apple", "3", "$1.50"],
+                    ["Banana", "", "$0.80"],
+                    ["Orange \"Special\"", "12", "$5.00"]
+                ],
+                columnCount: 3
+            )
+
+            let csv = TableFormatter.toCSV(sampleTable)
+            try assertTrue(csv.contains("Item,Qty,\"Price, USD\""), "Header with comma must be quoted")
+            try assertTrue(csv.contains("Apple,3,$1.50"), "Standard row should be comma-separated")
+            try assertTrue(csv.contains("Banana,,$0.80"), "Empty cell represented as double comma")
+            try assertTrue(csv.contains("\"Orange \"\"Special\"\"\""), "Quotes must be escaped with double quotes")
+        }
+
+        test("TableFormatter: TSV generation") {
+            let sampleTable = DetectedTable(
+                headers: ["Col1", "Col2"],
+                rows: [["A", "B"], ["C", "D"]],
+                columnCount: 2
+            )
+            let tsv = TableFormatter.toTSV(sampleTable)
+            try assertEqual(tsv, "Col1\tCol2\nA\tB\nC\tD")
+        }
+
+        test("TableFormat model: All cases, display names, and Codable roundtrip") {
+            try assertEqual(TableFormat.allCases.count, 2)
+            try assertEqual(TableFormat.markdown.displayName, "Markdown Table (| Col 1 | Col 2 |)")
+            try assertEqual(TableFormat.csv.displayName, "Comma-Separated Values (CSV)")
+            try assertEqual(TableFormat.markdown.shortName, "Markdown")
+            try assertEqual(TableFormat.csv.shortName, "CSV")
+
+            let encoder = JSONEncoder()
+            let data = try encoder.encode(TableFormat.csv)
+            let decoder = JSONDecoder()
+            let decoded = try decoder.decode(TableFormat.self, from: data)
+            try assertEqual(decoded, TableFormat.csv)
+        }
+
+        test("TableDetector: Sub-millisecond latency verification") {
+            var benchmarkCells: [TextCell] = []
+            for r in 0..<10 {
+                for c in 0..<5 {
+                    benchmarkCells.append(TextCell(
+                        text: "Data_\(r)_\(c)",
+                        rect: CGRect(x: Double(c)*0.2, y: 1.0 - Double(r)*0.08, width: 0.18, height: 0.05)
+                    ))
+                }
+            }
+
+            let start = CFAbsoluteTimeGetCurrent()
+            let detected = TableDetector.detectTable(from: benchmarkCells)
+            let durationMs = (CFAbsoluteTimeGetCurrent() - start) * 1000.0
+
+            try assertTrue(detected != nil, "Table should be detected in benchmark")
+            try assertTrue(durationMs < 10.0, "Table detection must be fast (< 10ms), took \(durationMs) ms")
         }
 
         // Summary Report

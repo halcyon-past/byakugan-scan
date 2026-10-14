@@ -133,7 +133,7 @@ const jsonLd = {
       operatingSystem: "macOS 14.0 or later",
       applicationCategory: "UtilitiesApplication",
       applicationSubCategory: "Screen OCR, QR Code & Barcode Scanner",
-      softwareVersion: "1.0.4",
+      softwareVersion: "1.0.5",
       license: "https://opensource.org/licenses/MIT",
       url: SITE_URL,
       downloadUrl:
@@ -141,7 +141,7 @@ const jsonLd = {
       codeRepository: "https://github.com/halcyon-past/byakugan-scan",
       programmingLanguage: "Swift 6.0",
       installUrl: "https://github.com/halcyon-past/byakugan-scan/releases/latest",
-      releaseNotes: "https://github.com/halcyon-past/byakugan-scan/releases/tag/v1.0.4",
+      releaseNotes: "https://github.com/halcyon-past/byakugan-scan/releases/tag/v1.0.5",
       image: `${SITE_URL}/app-icon.jpg`,
       description:
         "A lightweight, 100% offline macOS menu bar utility for instant in-memory screen text OCR, QR code decoding, and commercial barcode recognition powered by Apple Vision.",
