@@ -85,6 +85,9 @@ final class AppSettings: ObservableObject {
     @Published var joinLineBreaksWithSpace: Bool {
         didSet { UserDefaults.standard.set(joinLineBreaksWithSpace, forKey: Keys.joinLineBreaksWithSpace) }
     }
+    @Published var smartDehyphenation: Bool {
+        didSet { UserDefaults.standard.set(smartDehyphenation, forKey: Keys.smartDehyphenation) }
+    }
     
     // MARK: - Additive Clipboard
     @Published var autoCopyToClipboard: Bool {
@@ -162,6 +165,7 @@ final class AppSettings: ObservableObject {
         self.trimWhitespace = ud.object(forKey: Keys.trimWhitespace) as? Bool ?? true
         self.preserveLineBreaks = ud.object(forKey: Keys.preserveLineBreaks) as? Bool ?? true
         self.joinLineBreaksWithSpace = ud.object(forKey: Keys.joinLineBreaksWithSpace) as? Bool ?? false
+        self.smartDehyphenation = ud.object(forKey: Keys.smartDehyphenation) as? Bool ?? true
         
         self.autoCopyToClipboard = ud.object(forKey: Keys.autoCopyToClipboard) as? Bool ?? true
         self.additiveClipboard = ud.object(forKey: Keys.additiveClipboard) as? Bool ?? false
@@ -209,6 +213,7 @@ final class AppSettings: ObservableObject {
         static let trimWhitespace = "trimWhitespace"
         static let preserveLineBreaks = "preserveLineBreaks"
         static let joinLineBreaksWithSpace = "joinLineBreaksWithSpace"
+        static let smartDehyphenation = "smartDehyphenation"
         
         static let autoCopyToClipboard = "autoCopyToClipboard"
         static let additiveClipboard = "additiveClipboard"
@@ -253,6 +258,7 @@ final class AppSettings: ObservableObject {
         trimWhitespace = true
         preserveLineBreaks = true
         joinLineBreaksWithSpace = false
+        smartDehyphenation = true
         
         autoCopyToClipboard = true
         additiveClipboard = false

@@ -79,6 +79,81 @@ struct TestRunner {
             try assertEqual(formatted, "Sentence part one part two.")
         }
 
+        test("Smart dehyphenation: split words across lines") {
+            let input = "super-\ncomputer"
+            let formatted = input.formatted()
+            try assertEqual(formatted, "supercomputer")
+
+            let academic = "This is an imple-\nmentation of the system.\nNext paragraph starts here."
+            let res = academic.formatted(preserveLineBreaks: true, trimWhitespace: true, joinWithSpace: false, smartDehyphenation: true)
+            try assertEqual(res, "This is an implementation of the system.\nNext paragraph starts here.")
+
+            // Mixed casing
+            try assertEqual("Inter-\nnational".formatted(), "International")
+            try assertEqual("SUPER-\nCOMPUTER".formatted(), "SUPERCOMPUTER")
+
+            // Whitespace around line split
+            let spaced = "super-  \n   computer".formatted()
+            try assertEqual(spaced, "supercomputer")
+
+            // Windows CRLF
+            let crlf = "super-\r\ncomputer".formatted()
+            try assertEqual(crlf, "supercomputer")
+        }
+
+        test("Smart dehyphenation: joinWithSpace=true") {
+            let input = "This is a super-\ncomputer system."
+            let formatted = input.formatted(preserveLineBreaks: false, trimWhitespace: true, joinWithSpace: true, smartDehyphenation: true)
+            try assertEqual(formatted, "This is a supercomputer system.")
+        }
+
+        test("Smart dehyphenation: disabled") {
+            let input = "super-\ncomputer"
+            let preserved = input.formatted(preserveLineBreaks: true, trimWhitespace: true, joinWithSpace: false, smartDehyphenation: false)
+            try assertEqual(preserved, "super-\ncomputer")
+
+            let joined = input.formatted(preserveLineBreaks: false, trimWhitespace: true, joinWithSpace: true, smartDehyphenation: false)
+            try assertEqual(joined, "super- computer")
+        }
+
+        test("Smart dehyphenation: non-breaking edge cases and compound words") {
+            // Lists / bullet points
+            let bulletList = "- Item 1\n- Item 2"
+            try assertEqual(bulletList.formatted(), "- Item 1\n- Item 2")
+
+            // List item continuing from previous line
+            let listContinuation = "First section.\n- Second section."
+            try assertEqual(listContinuation.formatted(), "First section.\n- Second section.")
+
+            // Subtraction / math operations
+            let math1 = "total - \ndiscount"
+            try assertEqual(math1.formatted(), "total -\ndiscount")
+
+            let math2 = "10 -\n5"
+            try assertEqual(math2.formatted(), "10 -\n5")
+
+            let math3 = "a - \nb"
+            try assertEqual(math3.formatted(), "a -\nb")
+
+            // Code decrement and arrows
+            let code1 = "counter--\nnextStep()"
+            try assertEqual(code1.formatted(), "counter--\nnextStep()")
+
+            let code2 = "ptr->\nfield"
+            try assertEqual(code2.formatted(), "ptr->\nfield")
+
+            // Intentional double-dash / em-dash / en-dash
+            let doubleDash = "word --\nnext"
+            try assertEqual(doubleDash.formatted(), "word --\nnext")
+
+            let emDash = "word —\nnext"
+            try assertEqual(emDash.formatted(), "word —\nnext")
+
+            // Single line compound words
+            let compound = "state-of-the-art and high-performance"
+            try assertEqual(compound.formatted(), "state-of-the-art and high-performance")
+        }
+
         // 2. ScanResult Model Tests
         print("\n▶️ [Suite 2/6] ScanResult & ScanType Models")
         test("ScanType display names and SF symbols") {
@@ -117,14 +192,18 @@ struct TestRunner {
             try assertTrue(settings.showNotificationOnCapture)
             try assertEqual(settings.ocrLanguage, "en-US")
             try assertEqual(settings.ocrAccuracyLevel, .accurate)
+            try assertTrue(settings.smartDehyphenation)
         }
 
         test("AppSettings persistence mutations") {
             let settings = AppSettings.shared
             settings.textScanShortcut = "⌘⇧9"
             try assertEqual(settings.textScanShortcut, "⌘⇧9")
+            settings.smartDehyphenation = false
+            try assertFalse(settings.smartDehyphenation)
             settings.resetToDefaults()
             try assertEqual(settings.textScanShortcut, "⌘⇧2")
+            try assertTrue(settings.smartDehyphenation)
         }
 
         // 4. HotkeyService Parser Tests

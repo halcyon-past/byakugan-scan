@@ -56,6 +56,8 @@ final class OCRService {
     ///   - accuracyLevel: Fast vs. Accurate recognition trade-off.
     ///   - preserveLineBreaks: Whether to preserve line breaks in output.
     ///   - trimWhitespace: Whether to trim leading/trailing whitespace from lines.
+    ///   - joinWithSpace: Whether to join line breaks with spaces.
+    ///   - smartDehyphenation: Whether to rejoin hyphenated words split across lines.
     /// - Returns: The extracted text string.
     func extractText(
         from image: NSImage,
@@ -63,7 +65,9 @@ final class OCRService {
         autoDetectLanguage: Bool = false,
         accuracyLevel: OCRAccuracyLevel = .accurate,
         preserveLineBreaks: Bool = true,
-        trimWhitespace: Bool = true
+        trimWhitespace: Bool = true,
+        joinWithSpace: Bool = false,
+        smartDehyphenation: Bool = true
     ) async throws -> String {
         guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
             throw OCRError.imageConversionFailed
@@ -85,12 +89,9 @@ final class OCRService {
                 var lines: [String] = []
                 for observation in observations {
                     if let candidate = observation.topCandidates(1).first {
-                        var line = candidate.string
-                        if trimWhitespace {
-                            line = line.trimmingCharacters(in: .whitespaces)
-                        }
-                        if !line.isEmpty {
-                            lines.append(line)
+                        let text = candidate.string
+                        if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            lines.append(text)
                         }
                     }
                 }
@@ -100,8 +101,14 @@ final class OCRService {
                     return
                 }
                 
-                let separator = preserveLineBreaks ? "\n" : " "
-                continuation.resume(returning: lines.joined(separator: separator))
+                let rawText = lines.joined(separator: "\n")
+                let formatted = rawText.formatted(
+                    preserveLineBreaks: preserveLineBreaks,
+                    trimWhitespace: trimWhitespace,
+                    joinWithSpace: joinWithSpace,
+                    smartDehyphenation: smartDehyphenation
+                )
+                continuation.resume(returning: formatted)
             }
             
             // Fast Neural Engine settings:

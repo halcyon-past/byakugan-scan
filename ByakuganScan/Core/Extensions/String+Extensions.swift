@@ -1,9 +1,22 @@
 import Foundation
 
 extension String {
-    /// Trims whitespace and optionally joins line breaks with a space.
-    func formatted(preserveLineBreaks: Bool, trimWhitespace: Bool, joinWithSpace: Bool) -> String {
+    /// Trims whitespace, optionally de-hyphenates words split across line breaks, and optionally joins line breaks with a space.
+    func formatted(
+        preserveLineBreaks: Bool = true,
+        trimWhitespace: Bool = true,
+        joinWithSpace: Bool = false,
+        smartDehyphenation: Bool = true
+    ) -> String {
         var result = self
+        
+        if smartDehyphenation {
+            result = result.replacingOccurrences(
+                of: #"(\b\p{L}+)-\s*\r?\n\s*(\p{L}+\b)"#,
+                with: "$1$2",
+                options: .regularExpression
+            )
+        }
         
         if trimWhitespace {
             let lines = result.components(separatedBy: "\n").map {
