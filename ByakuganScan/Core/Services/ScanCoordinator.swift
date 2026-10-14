@@ -80,7 +80,9 @@ final class ScanCoordinator: ObservableObject {
                     preserveLineBreaks: preserveLineBreaks,
                     trimWhitespace: settings.trimWhitespace,
                     joinWithSpace: settings.joinLineBreaksWithSpace,
-                    smartDehyphenation: settings.smartDehyphenation
+                    smartDehyphenation: settings.smartDehyphenation,
+                    detectTables: settings.detectTables,
+                    tableFormat: settings.tableOutputFormat
                 )
             case .qrCode:
                 let results = try await BarcodeService.shared.scanQRCodes(from: image)
