@@ -519,9 +519,9 @@ struct TestRunner {
             try assertEqual(barcodeItem.title, "Barcode Scanned")
         }
 
-        test("AppConstants: Version 1.0.6 & Settings window sizing verification") {
-            try assertEqual(AppConstants.App.version, "1.0.6")
-            try assertEqual(AppConstants.App.build, "7")
+        test("AppConstants: Version 1.0.7 & Settings window sizing verification") {
+            try assertEqual(AppConstants.App.version, "1.0.7")
+            try assertEqual(AppConstants.App.build, "8")
             try assertEqual(Int(AppConstants.UI.settingsWindowWidth), 680)
             try assertEqual(Int(AppConstants.UI.settingsWindowHeight), 540)
         }
@@ -761,6 +761,61 @@ struct TestRunner {
 
             try assertTrue(detected != nil, "Table should be detected in benchmark")
             try assertTrue(durationMs < 10.0, "Table detection must be fast (< 10ms), took \(durationMs) ms")
+        }
+
+        // Suite 14: Spatial OCR Reading Order & End-to-End Image Extraction
+        print("\n▶️ [Suite 14/14] Spatial OCR Reading Order & Multi-Column Sorting")
+        test("OCRService: Reconstruct spatial reading order for multi-column layout") {
+            let size = NSSize(width: 400, height: 200)
+            let img = NSImage(size: size)
+            img.lockFocus()
+            NSColor.white.setFill()
+            NSRect(origin: .zero, size: size).fill()
+
+            let attrs: [NSAttributedString.Key: Any] = [
+                .foregroundColor: NSColor.black,
+                .font: NSFont.systemFont(ofSize: 20)
+            ]
+
+            NSString(string: "First Left").draw(at: NSPoint(x: 20, y: 140), withAttributes: attrs)
+            NSString(string: "First Right").draw(at: NSPoint(x: 220, y: 140), withAttributes: attrs)
+            NSString(string: "Second Left").draw(at: NSPoint(x: 20, y: 60), withAttributes: attrs)
+            NSString(string: "Second Right").draw(at: NSPoint(x: 220, y: 60), withAttributes: attrs)
+            img.unlockFocus()
+
+            guard let cgImage = img.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+                throw NSError(domain: "TestError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to create cgImage"])
+            }
+
+            let request = VNRecognizeTextRequest()
+            let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+            try handler.perform([request])
+
+            let observations = request.results ?? []
+            try assertTrue(!observations.isEmpty, "Observations should not be empty")
+
+            let lines = OCRService.reconstructReadingOrder(from: observations)
+            try assertEqual(lines.count, 2, "Expected exactly 2 lines reconstructed")
+            try assertTrue(lines[0].contains("First Left") && lines[0].contains("First Right"), "Line 1 should contain both left and right items")
+            try assertTrue(lines[1].contains("Second Left") && lines[1].contains("Second Right"), "Line 2 should contain both left and right items")
+        }
+
+        test("TableDetector: High precision row interval ordering") {
+            let cells = [
+                TextCell(text: "Row 3 Col 1", rect: CGRect(x: 0.1, y: 0.2, width: 0.3, height: 0.05)),
+                TextCell(text: "Row 3 Col 2", rect: CGRect(x: 0.5, y: 0.2, width: 0.3, height: 0.05)),
+                TextCell(text: "Row 1 Col 1", rect: CGRect(x: 0.1, y: 0.8, width: 0.3, height: 0.05)),
+                TextCell(text: "Row 1 Col 2", rect: CGRect(x: 0.5, y: 0.8, width: 0.3, height: 0.05)),
+                TextCell(text: "Row 2 Col 1", rect: CGRect(x: 0.1, y: 0.5, width: 0.3, height: 0.05)),
+                TextCell(text: "Row 2 Col 2", rect: CGRect(x: 0.5, y: 0.5, width: 0.3, height: 0.05))
+            ]
+
+            let table = TableDetector.detectTable(from: cells)
+            try assertTrue(table != nil, "Table should be detected")
+            try assertEqual(table?.headers, ["Row 1 Col 1", "Row 1 Col 2"])
+            try assertEqual(table?.rows.count, 2)
+            try assertEqual(table?.rows[0], ["Row 2 Col 1", "Row 2 Col 2"])
+            try assertEqual(table?.rows[1], ["Row 3 Col 1", "Row 3 Col 2"])
         }
 
         // Summary Report

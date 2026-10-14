@@ -16,6 +16,7 @@ SWIFT_FILES=(
   "$PROJECT_DIR/ByakuganScan/Core/Models/FeedbackStyle.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Models/ThemeAccent.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Services/TableFormatter.swift"
+  "$PROJECT_DIR/ByakuganScan/Core/Services/OCRService.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Models/AppSettings.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Services/HotkeyService.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Services/HistoryService.swift"

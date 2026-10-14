@@ -4,6 +4,19 @@ All notable changes to **Byakugan Scan** will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
+## [1.0.7] — 2026-10-14
+
+### Fixed
+- **Spatial Line Reading Order Reconstruction (`OCRService`):**
+  - Reconstructed natural top-to-bottom, left-to-right reading order from raw Apple Vision observations for multi-column and complex layouts.
+  - Fixes non-table scans where Apple Vision returned text blocks in arbitrary cluster order.
+- **Table Cell & Row Band Hardening (`TableDetector`):**
+  - Hardened multi-column observation tokenization with proportional sub-box fallback when Vision bounding box estimation returns full bounds.
+  - Enforced strict top-to-bottom row interval ordering to eliminate inverted row sequences.
+  - Enhanced intra-cell multi-line row banding dilation for dense and wide-spaced tables.
+
+---
+
 ## [1.0.6] — 2026-10-14
 
 ### Fixed

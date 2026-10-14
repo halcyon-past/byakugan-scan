@@ -97,16 +97,7 @@ final class OCRService {
                     return
                 }
                 
-                var lines: [String] = []
-                for observation in observations {
-                    if let candidate = observation.topCandidates(1).first {
-                        let text = candidate.string
-                        if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            lines.append(text)
-                        }
-                    }
-                }
-                
+                let lines = Self.reconstructReadingOrder(from: observations)
                 if lines.isEmpty {
                     continuation.resume(throwing: OCRError.noTextFound)
                     return
@@ -143,4 +134,68 @@ final class OCRService {
         let request = VNRecognizeTextRequest()
         return (try? request.supportedRecognitionLanguages()) ?? ["en-US"]
     }
+    
+    // MARK: - Spatial Reading Order Reconstruction
+    
+    /// Reconstructs natural reading order (top-to-bottom, left-to-right) from raw Apple Vision observations.
+    /// Apple Vision does not guarantee reading order; multi-column or clustered layouts can be returned out of order.
+    static func reconstructReadingOrder(from observations: [VNRecognizedTextObservation]) -> [String] {
+        struct OCRLineItem {
+            let text: String
+            let rect: CGRect
+        }
+        
+        var items: [OCRLineItem] = []
+        for obs in observations {
+            guard let cand = obs.topCandidates(1).first else { continue }
+            let text = cand.string.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !text.isEmpty else { continue }
+            items.append(OCRLineItem(text: text, rect: obs.boundingBox))
+        }
+        
+        guard !items.isEmpty else { return [] }
+        
+        // Sort items top-to-bottom
+        let sortedByY = items.sorted { $0.rect.midY > $1.rect.midY }
+        
+        var lines: [[OCRLineItem]] = []
+        for item in sortedByY {
+            var placed = false
+            for i in 0..<lines.count {
+                let lineMinY = lines[i].map { $0.rect.minY }.min() ?? 0
+                let lineMaxY = lines[i].map { $0.rect.maxY }.max() ?? 0
+                let lineAvgHeight = lines[i].map { $0.rect.height }.reduce(0, +) / CGFloat(lines[i].count)
+                
+                let verticalOverlap = max(0, min(item.rect.maxY, lineMaxY) - max(item.rect.minY, lineMinY))
+                let minHeight = min(item.rect.height, lineAvgHeight)
+                let lineMidY = (lineMinY + lineMaxY) / 2.0
+                
+                if (minHeight > 0 && verticalOverlap / minHeight >= 0.4) || abs(item.rect.midY - lineMidY) <= lineAvgHeight * 0.35 {
+                    lines[i].append(item)
+                    placed = true
+                    break
+                }
+            }
+            if !placed {
+                lines.append([item])
+            }
+        }
+        
+        // Sort lines from top to bottom
+        lines.sort { l1, l2 in
+            let mid1 = l1.map { $0.rect.midY }.reduce(0, +) / CGFloat(l1.count)
+            let mid2 = l2.map { $0.rect.midY }.reduce(0, +) / CGFloat(l2.count)
+            return mid1 > mid2
+        }
+        
+        // Sort items within each line from left to right
+        for i in 0..<lines.count {
+            lines[i].sort { $0.rect.minX < $1.rect.minX }
+        }
+        
+        return lines.map { line in
+            line.map { $0.text }.joined(separator: " ")
+        }
+    }
 }
+

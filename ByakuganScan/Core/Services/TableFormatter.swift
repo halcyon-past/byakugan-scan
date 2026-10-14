@@ -75,10 +75,23 @@ final class TableDetector {
                     for match in matches {
                         let tokenRange = match.range
                         let tokenText = nsString.substring(with: tokenRange)
+                        var subBox: CGRect?
                         if let swiftRange = Range(tokenRange, in: fullText) {
-                            let subBox = (try? candidate.boundingBox(for: swiftRange))?.boundingBox ?? observation.boundingBox
-                            cells.append(TextCell(text: tokenText, rect: subBox))
+                            if let candBox = try? candidate.boundingBox(for: swiftRange) {
+                                subBox = candBox.boundingBox
+                            }
                         }
+                        
+                        // Fallback: estimate proportional sub-box if Vision boundingBox fails or returns entire box
+                        if subBox == nil || (subBox!.width >= observation.boundingBox.width * 0.95 && matches.count > 1) {
+                            let fracStart = CGFloat(tokenRange.location) / CGFloat(nsString.length)
+                            let fracWidth = CGFloat(tokenRange.length) / CGFloat(nsString.length)
+                            let estX = observation.boundingBox.origin.x + fracStart * observation.boundingBox.width
+                            let estW = fracWidth * observation.boundingBox.width
+                            subBox = CGRect(x: estX, y: observation.boundingBox.origin.y, width: estW, height: observation.boundingBox.height)
+                        }
+                        
+                        cells.append(TextCell(text: tokenText, rect: subBox ?? observation.boundingBox))
                     }
                     continue
                 }
@@ -103,7 +116,7 @@ final class TableDetector {
         // Dilation accounts for intra-cell line spacing so multi-line text cells stay within their row band.
         var yIntervals: [(minY: CGFloat, maxY: CGFloat, cells: [TextCell])] = []
         for cell in sortedByY {
-            let dilation = min(avgHeight * 0.15, 0.008)
+            let dilation = min(avgHeight * 0.25, 0.015)
             let cellMinY = cell.rect.minY - dilation
             let cellMaxY = cell.rect.maxY + dilation
             
@@ -122,6 +135,9 @@ final class TableDetector {
                 yIntervals.append((minY: cellMinY, maxY: cellMaxY, cells: [cell]))
             }
         }
+        
+        // Ensure intervals are strictly in top-to-bottom reading order
+        yIntervals.sort { ($0.minY + $0.maxY) > ($1.minY + $1.maxY) }
         
         guard yIntervals.count >= 2 else { return nil }
         

@@ -1,6 +1,6 @@
 cask "byakugan-scan" do
-  version "1.0.6"
-  sha256 "b82cc03ab9a7eb8e19a86cdd0a23900e36855e5f99dac4d35c3ec4ac6ac21a10"
+  version "1.0.7"
+  sha256 "c7315154c8de6636aae2126082fc43a9e2e77d53e0e4fb021b3b420c59a165c4"
 
   url "https://github.com/halcyon-past/byakugan-scan/releases/download/v#{version}/ByakuganScan-v#{version}.dmg"
   name "Byakugan Scan"

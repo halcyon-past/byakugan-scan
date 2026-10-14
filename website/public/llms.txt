@@ -6,7 +6,7 @@
 - **GitHub Repository:** https://github.com/halcyon-past/byakugan-scan
 - **Direct DMG Download (Universal Apple Silicon & Intel):** https://github.com/halcyon-past/byakugan-scan/releases/latest/download/ByakuganScan.dmg
 - **Homebrew Installation:** `brew install --cask halcyon-past/tap/byakugan-scan`
-- **Current Version:** v1.0.6
+- **Current Version:** v1.0.7
 - **Supported OS:** macOS 14.0 (Sonoma), macOS 15.0 (Sequoia), and newer (Universal Binary: arm64 & x86_64)
 - **License:** MIT License (100% Free & Open Source)
 - **Author / Creator:** Aritro Saha (`@halcyon-past` / Megh) — Software Engineer 1 at Bristol Myers Squibb (BMS), alumnus of Vellore Institute of Technology, Chennai
