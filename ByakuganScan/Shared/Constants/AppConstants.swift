@@ -3,8 +3,25 @@ import Foundation
 /// App-wide constants.
 enum AppConstants {
     enum App {
-        static let name = "Byakugan Scan"
-        static let bundleID = "cloud.aritro.byakugan-scan"
+        /// Whether the current running process is the Development build
+        static var isDevelopment: Bool {
+            let id = Bundle.main.bundleIdentifier ?? ""
+            if id.hasSuffix(".dev") { return true }
+            let processName = ProcessInfo.processInfo.processName
+            if processName.contains("Dev") { return true }
+            return CommandLine.arguments.contains("--dev")
+        }
+        
+        static var name: String {
+            isDevelopment ? "Byakugan Scan Dev" : "Byakugan Scan"
+        }
+        
+        static var bundleID: String {
+            isDevelopment ? devBundleID : prodBundleID
+        }
+        
+        static let prodBundleID = "cloud.aritro.byakugan-scan"
+        static let devBundleID = "cloud.aritro.byakugan-scan.dev"
         static let version = "1.0.10"
         static let build = "11"
         static let websiteURL = URL(string: "https://byakugan-scan.aritro.cloud")!

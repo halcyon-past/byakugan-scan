@@ -524,6 +524,16 @@ struct TestRunner {
             try assertEqual(AppConstants.App.build, "11")
             try assertEqual(Int(AppConstants.UI.settingsWindowWidth), 680)
             try assertEqual(Int(AppConstants.UI.settingsWindowHeight), 540)
+            try assertEqual(AppConstants.App.prodBundleID, "cloud.aritro.byakugan-scan")
+            try assertEqual(AppConstants.App.devBundleID, "cloud.aritro.byakugan-scan.dev")
+            try assertTrue(AppConstants.App.name.contains("Byakugan Scan"))
+        }
+
+        test("AppSwitcher: Verification of bundle constants and helper functions") {
+            try assertEqual(AppConstants.App.devBundleID, "cloud.aritro.byakugan-scan.dev")
+            try assertEqual(AppConstants.App.prodBundleID, "cloud.aritro.byakugan-scan")
+            let _ = AppSwitcher.isDevInstalled
+            let _ = AppSwitcher.isProdInstalled
         }
 
         // Suite 13: Table & Grid OCR Detection & Formatting (Issue #2)

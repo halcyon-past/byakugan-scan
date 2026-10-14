@@ -49,14 +49,24 @@ struct MenuBarPopoverView: View {
     // MARK: - Header
     
     private var headerSection: some View {
-        HStack {
+        HStack(alignment: .center) {
             Image(systemName: "eye.viewfinder")
                 .font(.title2)
-                .foregroundStyle(settings.themeAccent.color)
+                .foregroundStyle(AppConstants.App.isDevelopment ? .orange : settings.themeAccent.color)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Byakugan Scan")
-                    .font(.headline)
-                Text("v\(AppConstants.App.version)")
+                HStack(spacing: 6) {
+                    Text("Byakugan Scan")
+                        .font(.headline)
+                    if AppConstants.App.isDevelopment {
+                        Text("DEV")
+                            .font(.system(size: 9, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .background(Color.orange.opacity(0.9), in: RoundedRectangle(cornerRadius: 4))
+                    }
+                }
+                Text(AppConstants.App.isDevelopment ? "v\(AppConstants.App.version) • Dev Build" : "v\(AppConstants.App.version)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -154,7 +164,7 @@ struct MenuBarPopoverView: View {
     // MARK: - Footer
     
     private var footerSection: some View {
-        HStack {
+        HStack(spacing: 12) {
             Button("Settings...") {
                 AppDelegate.shared?.openSettings()
             }
@@ -162,6 +172,28 @@ struct MenuBarPopoverView: View {
             .font(.caption)
             
             Spacer()
+            
+            if AppConstants.App.isDevelopment {
+                Button {
+                    AppSwitcher.switchToOtherApp()
+                } label: {
+                    Label("To Prod", systemImage: "arrow.triangle.2.circlepath")
+                        .font(.system(size: 11, weight: .medium))
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.mini)
+                .help("Quit Dev and switch to Production Byakugan Scan")
+            } else if AppSwitcher.isDevInstalled {
+                Button {
+                    AppSwitcher.switchToOtherApp()
+                } label: {
+                    Label("To Dev", systemImage: "hammer")
+                        .font(.system(size: 11, weight: .medium))
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.mini)
+                .help("Quit Production and switch to Byakugan Scan Dev")
+            }
             
             Button("Quit") {
                 NSApplication.shared.terminate(nil)

@@ -23,6 +23,7 @@ SWIFT_FILES=(
   "$PROJECT_DIR/ByakuganScan/Core/Services/ScreenCaptureService.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Services/UpdateService.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Services/URLRouteService.swift"
+  "$PROJECT_DIR/ByakuganScan/Core/Services/AppSwitcher.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Extensions/NSImage+Extensions.swift"
   "$PROJECT_DIR/ByakuganScan/Core/Extensions/String+Extensions.swift"
   "$PROJECT_DIR/ByakuganScan/Shared/Components/FloatingHUDController.swift"

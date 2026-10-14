@@ -23,6 +23,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         Self.shared = self
         
+        // Ensure no conflicting instance (Dev vs Prod) holds Carbon hotkeys
+        terminateConflictingInstance()
+        
         // Hide dock icon – we live in the menu bar
         NSApp.setActivationPolicy(.accessory)
         
@@ -34,8 +37,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Pre-warm the Vision & Neural Engine models in background
         OCRService.shared.warmUp()
         
-        // Check for updates if enabled in user settings
-        if AppSettings.shared.autoCheckForUpdates {
+        // Check for updates if enabled in user settings (production only)
+        if !AppConstants.App.isDevelopment && AppSettings.shared.autoCheckForUpdates {
             Task {
                 await UpdateService.shared.checkForUpdates(silent: true)
             }
@@ -127,15 +130,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         
         if isScanning {
             // Live scanning activity state: illuminated/active reticle
-            let activeImage = NSImage(systemSymbolName: "viewfinder.circle.fill", accessibilityDescription: "Byakugan Scanning...")
+            let activeImage = NSImage(systemSymbolName: "viewfinder.circle.fill", accessibilityDescription: "\(AppConstants.App.name) Scanning...")
             activeImage?.isTemplate = true
             button.image = activeImage
+            if AppConstants.App.isDevelopment {
+                button.title = " DEV"
+                button.imagePosition = .imageLeading
+            }
         } else {
             // Briefly flash success check reticle before restoring default state
             if ScanCoordinator.shared.lastResult != nil && ScanCoordinator.shared.lastError == nil {
                 let checkImage = NSImage(systemSymbolName: "checkmark.circle.fill", accessibilityDescription: "Scan Complete")
                 checkImage?.isTemplate = true
                 button.image = checkImage
+                if AppConstants.App.isDevelopment {
+                    button.title = " DEV"
+                    button.imagePosition = .imageLeading
+                }
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { [weak self] in
                     self?.resetMenuBarIcon()
@@ -149,10 +160,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func resetMenuBarIcon() {
         guard let button = statusItem?.button else { return }
         let customImage = NSImage(named: "MenuBarIcon")
-        let fallbackImage = NSImage(systemSymbolName: "eye.viewfinder", accessibilityDescription: "Byakugan Scan")
+        let fallbackImage = NSImage(systemSymbolName: "eye.viewfinder", accessibilityDescription: AppConstants.App.name)
         let finalImage = customImage ?? fallbackImage
         finalImage?.isTemplate = true
         button.image = finalImage
+        
+        if AppConstants.App.isDevelopment {
+            button.title = " DEV"
+            button.toolTip = "Byakugan Scan [DEV VERSION]"
+            button.imagePosition = .imageLeading
+        } else {
+            button.title = ""
+            button.toolTip = "Byakugan Scan"
+        }
     }
     
     @objc private func statusBarButtonClicked(_ sender: NSStatusBarButton) {
@@ -191,13 +211,35 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem(title: "Scan QR Code", action: #selector(triggerQRScan), keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: "Scan Barcode", action: #selector(triggerBarcodeScan), keyEquivalent: ""))
         menu.addItem(.separator())
+        
+        if AppConstants.App.isDevelopment {
+            menu.addItem(NSMenuItem(title: "⇄ Switch to Production App", action: #selector(switchToOtherApp), keyEquivalent: ""))
+            menu.addItem(.separator())
+        } else if AppSwitcher.isDevInstalled {
+            menu.addItem(NSMenuItem(title: "⇄ Switch to Dev App", action: #selector(switchToOtherApp), keyEquivalent: ""))
+            menu.addItem(.separator())
+        }
+        
         menu.addItem(NSMenuItem(title: "Settings...", action: #selector(openSettings), keyEquivalent: ","))
-        menu.addItem(NSMenuItem(title: "About Byakugan Scan", action: #selector(openAbout), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "About \(AppConstants.App.name)", action: #selector(openAbout), keyEquivalent: ""))
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         statusItem?.menu = menu
         statusItem?.button?.performClick(nil)
         statusItem?.menu = nil
+    }
+    
+    private func terminateConflictingInstance() {
+        let otherBundleID = AppConstants.App.isDevelopment ? AppConstants.App.prodBundleID : AppConstants.App.devBundleID
+        let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: otherBundleID)
+        for app in runningApps {
+            app.terminate()
+        }
+    }
+    
+    @objc func switchToOtherApp() {
+        closePopover()
+        AppSwitcher.switchToOtherApp()
     }
     
     // MARK: - Actions
@@ -251,7 +293,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             )
             window.minSize = NSSize(width: 660, height: 500)
             window.center()
-            window.title = "Byakugan Scan Settings"
+            window.title = "\(AppConstants.App.name) Settings"
             window.isReleasedWhenClosed = false
             window.level = .floating
             window.collectionBehavior = [.moveToActiveSpace, .participatesInCycle]

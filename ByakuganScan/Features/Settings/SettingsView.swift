@@ -32,7 +32,7 @@ struct SettingsView: View {
             minWidth: AppConstants.UI.settingsWindowWidth,
             minHeight: AppConstants.UI.settingsWindowHeight
         )
-        .navigationTitle("Byakugan Scan Settings")
+        .navigationTitle("\(AppConstants.App.name) Settings")
     }
 }
 

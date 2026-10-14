@@ -31,41 +31,25 @@ final class ScreenCaptureService {
     
     // MARK: - Public API
     
-    /// Launches the custom-tinted interactive screen region selector and returns the captured image.
-    /// Uses `SelectionOverlayController` for themed selection boxes and `/usr/sbin/screencapture -c -x -R`
-    /// (replacing the uncustomizable grey `-c -s -x` system selector) to capture directly into RAM clipboard,
-    /// bypassing filesystem I/O and Spotlight (mdwrite) freezes.
+    /// Launches Apple's native interactive screen region selector and returns the captured image.
+    /// Uses `-c -s -x` to capture directly into RAM clipboard, bypassing filesystem I/O and Spotlight freezes,
+    /// and guaranteeing 100% pixel-perfect coordinates on Retina and multi-display setups.
     func captureInteractiveRegion() async throws -> NSImage {
         guard hasScreenRecordingPermission else {
             requestScreenRecordingPermission()
             throw ScreenCaptureError.permissionDenied
         }
         
-        // 1. Present custom-tinted selection overlay (respects ThemeAccent & overlayOpacity)
-        let selectedScreenRect = try await SelectionOverlayController.shared.selectRegion()
-        
-        let primaryHeight = await MainActor.run {
-            NSScreen.screens.first?.frame.height ?? NSScreen.main?.frame.height ?? 1080
-        }
-        let qRect = SelectionOverlayController.quartzRect(
-            fromAppKitScreenRect: selectedScreenRect,
-            primaryScreenHeight: primaryHeight
-        )
-        let rectArg = "\(Int(qRect.origin.x)),\(Int(qRect.origin.y)),\(Int(qRect.width)),\(Int(qRect.height))"
-        
-        // Allow one compositor frame (20ms) for the overlay window to clear before capturing pixels
-        try? await Task.sleep(nanoseconds: 20_000_000)
-        
-        // Backup existing clipboard items so we can restore them if capture fails
+        // Backup existing clipboard items so we can restore them if capture is cancelled
         let previousItems = backupClipboard()
         
         return try await withCheckedThrowingContinuation { continuation in
             let process = Process()
             process.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
             // -c: copy directly to pasteboard in RAM (zero disk I/O, zero mdwrite daemon delay)
+            // -s: interactive mouse selection mode (native macOS crosshair, 100% pixel-accurate)
             // -x: silent (app plays its own configurable SoundEffect)
-            // -R: capture the exact screen rectangle selected in SelectionOverlayController
-            process.arguments = ["-c", "-x", "-R\(rectArg)"]
+            process.arguments = ["-c", "-s", "-x"]
             
             process.terminationHandler = { [weak self] proc in
                 guard proc.terminationStatus == 0 else {

@@ -15,7 +15,8 @@ final class HistoryService: ObservableObject {
     
     private init() {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        let dir = appSupport.appendingPathComponent("ByakuganScan", isDirectory: true)
+        let folder = AppConstants.App.isDevelopment ? "ByakuganScanDev" : "ByakuganScan"
+        let dir = appSupport.appendingPathComponent(folder, isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         self.storageURL = dir.appendingPathComponent("history.json")
         self.maxItems = AppSettings.shared.maxHistoryItems

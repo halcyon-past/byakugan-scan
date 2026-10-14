@@ -111,7 +111,25 @@ open "build/Byakugan Scan.app"
 ./scripts/run_tests.sh
 ```
 
-> **Note on TCC permissions when building locally:** [`scripts/build_app.sh`](scripts/build_app.sh) signs the bundle with a stable designated requirement (`designated => identifier "cloud.aritro.byakugan-scan"`) so rebuilding locally does not invalidate your macOS Screen Recording permission entry. If macOS ever caches a stale signature, reset it with:
+### Local Development vs Production Environment
+
+Byakugan Scan includes an isolated Development environment for instant local testing without having to download release DMGs or alter your daily production setup:
+
+| Environment | Menu Bar Icon | App Name | Bundle ID | Isolated Storage |
+| :--- | :--- | :--- | :--- | :--- |
+| **Production** | `[👁️]` | `Byakugan Scan.app` | `cloud.aritro.byakugan-scan` | Standard `UserDefaults` & `ByakuganScan/history.json` |
+| **Development** | `[👁️ DEV]` | `Byakugan Scan Dev.app` | `cloud.aritro.byakugan-scan.dev` | Dev `UserDefaults` & `ByakuganScanDev/history.json` |
+
+**Quick switching between environments:**
+- **From the Menu Bar UI:** Click the menu bar icon and tap **`🔨 To Dev`** (when in Prod) or **`⇄ To Prod`** (when in Dev) in the popover footer.
+- **From the Terminal:**
+  ```bash
+  ./scripts/switch_to_dev.sh    # Terminates Prod and launches Dev (with [👁️ DEV] icon)
+  ./scripts/switch_to_prod.sh   # Terminates Dev and restores Prod (with [👁️] icon)
+  ```
+Global hotkeys (`⌥2`, etc.) transfer cleanly to the active environment with zero conflict.
+
+> **Note on TCC permissions when building locally:** [`scripts/build_app.sh`](scripts/build_app.sh) signs the bundle with a stable designated requirement (`designated => identifier "cloud.aritro.byakugan-scan"`) and [`scripts/build_dev.sh`](scripts/build_dev.sh) signs with (`designated => identifier "cloud.aritro.byakugan-scan.dev"`) so rebuilding locally never resets your macOS Screen Recording permissions. If macOS ever caches a stale signature, reset it with:
 > ```bash
 > tccutil reset ScreenCapture cloud.aritro.byakugan-scan
 > ```
