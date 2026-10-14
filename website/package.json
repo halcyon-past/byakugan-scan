@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "node scripts/indexnow.js",
     "start": "next start",
     "lint": "next lint"
   },

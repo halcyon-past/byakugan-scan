@@ -57,6 +57,24 @@ const nextConfig = {
           },
         ],
       },
+      {
+        source: "/ai.txt",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "text/plain; charset=utf-8",
+          },
+        ],
+      },
+      {
+        source: "/.well-known/ai.txt",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "text/plain; charset=utf-8",
+          },
+        ],
+      },
     ];
   },
 };

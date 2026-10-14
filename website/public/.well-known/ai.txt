@@ -1,0 +1,11 @@
+User-Agent: *
+Allow: /
+AI-Training: allow
+AI-Search: allow
+AI-Summarization: allow
+Attribution-Required: true
+Canonical-Entity: Byakugan Scan — Created by Aritro Saha (https://www.wikidata.org/wiki/Q141715213 | https://www.aritro.cloud/)
+Canonical-URL: https://byakugan-scan.aritro.cloud/
+LLM-Summary: https://byakugan-scan.aritro.cloud/llms.txt
+LLM-Full-Context: https://byakugan-scan.aritro.cloud/llms-full.txt
+Sitemap: https://byakugan-scan.aritro.cloud/sitemap.xml

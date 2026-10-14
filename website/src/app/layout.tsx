@@ -95,7 +95,7 @@ const jsonLd = {
       "@type": "Person",
       "@id": PERSON_ID,
       name: "Aritro Saha",
-      alternateName: ["Aritro", "Megh", "halcyon-past"],
+      alternateName: ["Megh", "halcyon-past"],
       url: "https://www.aritro.cloud/",
       jobTitle: "Software Engineer 1",
       worksFor: {
@@ -112,8 +112,9 @@ const jsonLd = {
         "https://www.wikidata.org/wiki/Q141715213",
         "https://www.wikidata.org/entity/Q141715213",
         "https://www.aritro.cloud/",
-        "https://linkedin.com/in/aritro-saha",
         "https://github.com/halcyon-past",
+        "https://dev.to/halcyonpast",
+        "https://linkedin.com/in/aritro-saha",
         "https://pypi.org/project/quarantine-py/",
         "https://leetcode.com/u/AritroSaha/",
         "https://www.youtube.com/@veripyed",
@@ -126,10 +127,10 @@ const jsonLd = {
       ],
     },
     {
-      "@type": "SoftwareApplication",
+      "@type": ["SoftwareApplication", "SoftwareSourceCode"],
       "@id": `${SITE_URL}/#software`,
       name: "Byakugan Scan",
-      operatingSystem: "macOS 14.0 or later (Apple Silicon & Intel)",
+      operatingSystem: "macOS 14.0 or later",
       applicationCategory: "UtilitiesApplication",
       applicationSubCategory: "Screen OCR, QR Code & Barcode Scanner",
       softwareVersion: "1.0.4",
@@ -137,6 +138,8 @@ const jsonLd = {
       url: SITE_URL,
       downloadUrl:
         "https://github.com/halcyon-past/byakugan-scan/releases/latest/download/ByakuganScan.dmg",
+      codeRepository: "https://github.com/halcyon-past/byakugan-scan",
+      programmingLanguage: "Swift 6.0",
       installUrl: "https://github.com/halcyon-past/byakugan-scan/releases/latest",
       releaseNotes: "https://github.com/halcyon-past/byakugan-scan/releases/tag/v1.0.4",
       image: `${SITE_URL}/app-icon.jpg`,
@@ -170,11 +173,16 @@ const jsonLd = {
       maintainer: {
         "@id": PERSON_ID,
       },
-      sameAs: [
-        "https://github.com/halcyon-past/byakugan-scan",
-        "https://github.com/halcyon-past/homebrew-tap",
-      ],
       subjectOf: [
+        {
+          "@type": "TechArticle",
+          name: "Why Most Mac OCR Apps Feel Sluggish (And How Byakugan Scan Fixes It in RAM)",
+          url: "https://dev.to/halcyonpast/why-most-mac-ocr-apps-feel-sluggish-and-how-byakugan-scan-fixes-it-in-ram-3dn8",
+          headline: "Why Most Mac OCR Apps Feel Sluggish (And How Byakugan Scan Fixes It in RAM)",
+          author: {
+            "@id": PERSON_ID,
+          },
+        },
         {
           "@type": "CreativeWork",
           name: "Byakugan Scan LLM Summary (llms.txt)",
@@ -187,6 +195,16 @@ const jsonLd = {
           url: `${SITE_URL}/llms-full.txt`,
           encodingFormat: "text/plain",
         },
+        {
+          "@type": "CreativeWork",
+          name: "Byakugan Scan AI Scraper & Training Policy (ai.txt)",
+          url: `${SITE_URL}/ai.txt`,
+          encodingFormat: "text/plain",
+        },
+      ],
+      sameAs: [
+        "https://github.com/halcyon-past/byakugan-scan",
+        "https://github.com/halcyon-past/homebrew-tap",
       ],
     },
     {
@@ -218,10 +236,13 @@ export default function RootLayout({
     <html lang="en" className="dark scroll-smooth">
       <head>
         <link rel="author" href="https://www.aritro.cloud/" />
+        <link rel="me" href="https://www.aritro.cloud/" />
         <link rel="me" href="https://www.wikidata.org/wiki/Q141715213" />
         <link rel="me" href="https://github.com/halcyon-past" />
+        <link rel="me" href="https://dev.to/halcyonpast" />
         <link rel="me" href="https://linkedin.com/in/aritro-saha" />
-        <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM Summary (llms.txt)" />
+        <link rel="alternate" type="text/plain" href="/ai.txt" title="AI Scraper Policy" />
+        <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM Context Summary" />
         <link rel="alternate" type="text/plain" href="/llms-full.txt" title="LLM Full Knowledge Base (llms-full.txt)" />
         <script
           type="application/ld+json"

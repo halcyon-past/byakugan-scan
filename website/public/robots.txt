@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+Allow: /ai.txt
+Allow: /.well-known/ai.txt
 Allow: /llms.txt
 Allow: /llms-full.txt
 Allow: /support
@@ -18,13 +20,34 @@ Allow: /
 User-agent: ClaudeBot
 Allow: /
 
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
 User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
 Allow: /
 
 User-agent: Google-Extended
 Allow: /
 
+User-agent: Googlebot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
 User-agent: Applebot-Extended
 Allow: /
 
+# Sitemap
 Sitemap: https://byakugan-scan.aritro.cloud/sitemap.xml
+
+# LLM & AI Search Optimization Endpoints
+# LLM Context: https://byakugan-scan.aritro.cloud/llms.txt
+# LLM Full Reference: https://byakugan-scan.aritro.cloud/llms-full.txt
+# AI Training & Scraper Policy: https://byakugan-scan.aritro.cloud/ai.txt
