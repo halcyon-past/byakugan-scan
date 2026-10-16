@@ -23,8 +23,8 @@
 3. **Silent Permission Preflight:** Uses `CGPreflightScreenCaptureAccess()` instead of `CGWindowListCreateImage`, preventing recurring macOS Screen Recording permission dialog loops.
 4. **3-in-1 Screen Recognition:**
    - **Screen Text OCR (`⌘⇧2`):** Extracts unselectable text from videos, YouTube streams, PDFs, slides, Zoom screen shares, and images across 13+ languages with automatic language detection.
-   - **On-Screen QR Code Reader (`⌘⇧3`):** Decodes QR and MicroQR codes displayed anywhere on the screen without needing a smartphone, offering one-click contextual actions (`Open URL`, `Send Email`, `Call Number`).
-   - **Industrial & Retail Barcode Scanner (`⌘⇧4`):** Recognizes EAN-13, EAN-8, UPC-E, Code 128, Code 39, Code 93, PDF417, MicroPDF417, Aztec, Data Matrix, ITF-14, and Interleaved 2 of 5.
+   - **On-Screen QR Code Reader (`⌘⇧6`):** Decodes QR and MicroQR codes displayed anywhere on the screen without needing a smartphone, offering one-click contextual actions (`Open URL`, `Send Email`, `Call Number`).
+   - **Industrial & Retail Barcode Scanner (`⌘⇧7`):** Recognizes EAN-13, EAN-8, UPC-E, Code 128, Code 39, Code 93, PDF417, MicroPDF417, Aztec, Data Matrix, ITF-14, and Interleaved 2 of 5.
 5. **Power-User Workflow Features:**
    - **Floating Frosted-Glass HUD Pill:** Displays live word/character counts and contextual action buttons without cluttering macOS Notification Center.
    - **Additive Clipboard Mode:** Optional setting to append consecutive scans together rather than overwriting the clipboard.

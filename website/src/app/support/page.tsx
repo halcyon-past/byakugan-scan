@@ -47,13 +47,13 @@ const QUICK_SHORTCUTS = [
   },
   {
     action: "Scan QR Code",
-    keys: ["⌘", "⇧", "3"],
+    keys: ["⌘", "⇧", "6"],
     badge: "Default",
     description: "Decode URLs, Wi-Fi credentials, vCards, and 2D QR payloads with one-click actions.",
   },
   {
     action: "Scan Barcode",
-    keys: ["⌘", "⇧", "4"],
+    keys: ["⌘", "⇧", "7"],
     badge: "Default",
     description: "Recognize EAN-13, UPC-E, Code 128, PDF417, Aztec, Data Matrix, and industrial codes.",
   },
@@ -401,7 +401,7 @@ export default function SupportPage() {
             </div>
             <div className="pt-3 border-t border-white/[0.08] flex items-center justify-between text-xs font-mono">
               <span className="text-slate-400">Default:</span>
-              <kbd className="px-2 py-0.5 rounded bg-white/10 text-white font-mono">⌘⇧3</kbd>
+              <kbd className="px-2 py-0.5 rounded bg-white/10 text-white font-mono">⌘⇧6</kbd>
             </div>
           </div>
 
@@ -416,7 +416,7 @@ export default function SupportPage() {
             </div>
             <div className="pt-3 border-t border-white/[0.08] flex items-center justify-between text-xs font-mono">
               <span className="text-slate-400">Default:</span>
-              <kbd className="px-2 py-0.5 rounded bg-white/10 text-white font-mono">⌘⇧4</kbd>
+              <kbd className="px-2 py-0.5 rounded bg-white/10 text-white font-mono">⌘⇧7</kbd>
             </div>
           </div>
         </div>
