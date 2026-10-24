@@ -207,60 +207,248 @@ struct ShortcutsSettingsView: View {
                     Text("⌘S").font(.system(.body, design: .monospaced))
                 }
             }
+            
+            Section {
+                Button("Restore to Default") {
+                    settings.resetShortcutsToDefaults()
+                }
+                .help("Reset all keyboard shortcuts to factory defaults")
+            }
         }
         .formStyle(.grouped)
         .navigationTitle("Shortcuts")
     }
 }
 
-/// Shortcut input and display field.
+/// Central coordinator ensuring only one shortcut field records key events at any time.
+@MainActor
+final class ShortcutRecorderCoordinator: ObservableObject {
+    static let shared = ShortcutRecorderCoordinator()
+    @Published var activeFieldID: UUID? = nil
+    
+    func activate(id: UUID) {
+        activeFieldID = id
+    }
+    
+    func deactivate(id: UUID) {
+        if activeFieldID == id {
+            activeFieldID = nil
+        }
+    }
+}
+
+/// Shortcut input, recording, and display field with full native macOS key-event capture.
 struct ShortcutField: View {
     @Binding var shortcut: String
     var placeholder: String = "Record Shortcut"
-    @State private var isEditing = false
+    
+    @EnvironmentObject private var settings: AppSettings
+    @ObservedObject private var coordinator = ShortcutRecorderCoordinator.shared
+    
+    @State private var fieldID = UUID()
+    @State private var eventMonitor: Any? = nil
+    @State private var isManualInputPresented = false
+    @State private var manualInputText = ""
+    
+    private var isRecording: Bool {
+        coordinator.activeFieldID == fieldID
+    }
     
     var body: some View {
         HStack(spacing: 6) {
-            if shortcut.isEmpty {
-                Text(placeholder)
-                    .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(.tertiary)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 6))
+            if isRecording {
+                // Active recording state indicator
+                HStack(spacing: 5) {
+                    Circle()
+                        .fill(settings.themeAccent.color)
+                        .frame(width: 7, height: 7)
+                    Text("Press shortcut...")
+                        .font(.system(.body, design: .monospaced))
+                        .fontWeight(.medium)
+                        .foregroundStyle(settings.themeAccent.color)
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .strokeBorder(settings.themeAccent.color, lineWidth: 1.5)
+                        .background(settings.themeAccent.color.opacity(0.12), in: RoundedRectangle(cornerRadius: 6))
+                )
+                
+                Button("Cancel") {
+                    stopRecording()
+                }
+                .buttonStyle(.borderless)
+                .font(.caption)
+            } else if shortcut.isEmpty {
+                // Empty state: clickable pill or Record button
+                Button {
+                    startRecording()
+                } label: {
+                    Text(placeholder)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(.tertiary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 6))
+                }
+                .buttonStyle(.plain)
+                .help("Click to record shortcut")
+                
+                Button("Record") {
+                    startRecording()
+                }
+                .buttonStyle(.borderless)
+                .font(.caption)
             } else {
-                Text(shortcut)
-                    .font(.system(.body, design: .monospaced))
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
+                // Assigned shortcut state
+                Button {
+                    startRecording()
+                } label: {
+                    Text(shortcut)
+                        .font(.system(.body, design: .monospaced))
+                        .fontWeight(.medium)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
+                }
+                .buttonStyle(.plain)
+                .help("Click to record new shortcut")
                 
                 Button {
                     shortcut = ""
-                    NotificationCenter.default.post(
-                        name: NSNotification.Name(AppConstants.Notifications.settingsChanged),
-                        object: nil
-                    )
+                    notifySettingsChanged()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
+                .help("Remove shortcut")
+                
+                Button("Record") {
+                    startRecording()
+                }
+                .buttonStyle(.borderless)
+                .font(.caption)
             }
-            
-            Button(isEditing ? "Save" : "Edit") {
-                isEditing.toggle()
-                if !isEditing {
-                    NotificationCenter.default.post(
-                        name: NSNotification.Name(AppConstants.Notifications.settingsChanged),
-                        object: nil
-                    )
+        }
+        .contextMenu {
+            Button("Record Shortcut") {
+                startRecording()
+            }
+            if !shortcut.isEmpty {
+                Button("Clear Shortcut") {
+                    shortcut = ""
+                    notifySettingsChanged()
                 }
             }
-            .buttonStyle(.borderless)
-            .font(.caption)
+            Divider()
+            Button("Enter Manually...") {
+                manualInputText = shortcut
+                isManualInputPresented = true
+            }
         }
+        .sheet(isPresented: $isManualInputPresented) {
+            VStack(alignment: .leading, spacing: 14) {
+                Text("Enter Keyboard Shortcut")
+                    .font(.headline)
+                Text("Type or paste a shortcut string (e.g., ⌘⇧2, ⌘⌥C):")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                TextField("Shortcut string", text: $manualInputText)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(.body, design: .monospaced))
+                
+                HStack {
+                    Spacer()
+                    Button("Cancel") {
+                        isManualInputPresented = false
+                    }
+                    Button("Save") {
+                        let trimmed = manualInputText.trimmingCharacters(in: .whitespacesAndNewlines)
+                        shortcut = trimmed
+                        notifySettingsChanged()
+                        isManualInputPresented = false
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+            .padding(20)
+            .frame(width: 300)
+        }
+        .onChange(of: coordinator.activeFieldID) { _, newActiveID in
+            if newActiveID != fieldID && eventMonitor != nil {
+                removeMonitor()
+            }
+        }
+        .onDisappear {
+            stopRecording()
+        }
+    }
+    
+    // MARK: - Recording Actions
+    
+    private func startRecording() {
+        coordinator.activate(id: fieldID)
+        installMonitor()
+    }
+    
+    private func stopRecording() {
+        removeMonitor()
+        coordinator.deactivate(id: fieldID)
+    }
+    
+    private func installMonitor() {
+        removeMonitor()
+        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { event in
+            // Handle Escape -> Cancel
+            if event.keyCode == 53 {
+                DispatchQueue.main.async {
+                    self.stopRecording()
+                }
+                return nil
+            }
+            
+            // Handle Delete/Backspace (51) -> Clear shortcut
+            if event.keyCode == 51 {
+                DispatchQueue.main.async {
+                    self.shortcut = ""
+                    self.stopRecording()
+                    self.notifySettingsChanged()
+                }
+                return nil
+            }
+            
+            // Attempt to format shortcut from key code and modifier flags
+            if let formatted = HotkeyService.formatShortcut(keyCode: event.keyCode, modifierFlags: event.modifierFlags) {
+                DispatchQueue.main.async {
+                    self.shortcut = formatted
+                    self.stopRecording()
+                    self.notifySettingsChanged()
+                }
+                return nil
+            } else {
+                // Key pressed without required primary modifiers (⌘, ⌥, ⌃)
+                NSSound.beep()
+                return nil
+            }
+        }
+    }
+    
+    private func removeMonitor() {
+        if let monitor = eventMonitor {
+            NSEvent.removeMonitor(monitor)
+            eventMonitor = nil
+        }
+    }
+    
+    private func notifySettingsChanged() {
+        NotificationCenter.default.post(
+            name: NSNotification.Name(AppConstants.Notifications.settingsChanged),
+            object: nil
+        )
     }
 }
 
