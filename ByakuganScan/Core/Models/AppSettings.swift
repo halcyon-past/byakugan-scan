@@ -243,8 +243,8 @@ final class AppSettings: ObservableObject {
         static let themeAccent = "themeAccent"
     }
     
-    /// Resets all settings to factory defaults.
-    func resetToDefaults() {
+    /// Resets all global keyboard shortcuts to factory defaults.
+    func resetShortcutsToDefaults() {
         textScanShortcut = "⌘⇧2"
         qrScanShortcut = "⌘⇧6"
         barcodeScanShortcut = "⌘⇧7"
@@ -255,6 +255,16 @@ final class AppSettings: ObservableObject {
         stopSpeakingShortcut = ""
         toggleAdditiveClipboardShortcut = ""
         clearAdditiveClipboardShortcut = ""
+        
+        NotificationCenter.default.post(
+            name: NSNotification.Name(AppConstants.Notifications.settingsChanged),
+            object: nil
+        )
+    }
+    
+    /// Resets all settings to factory defaults.
+    func resetToDefaults() {
+        resetShortcutsToDefaults()
         
         launchAtLogin = false
         showInMenuBar = true

@@ -231,6 +231,26 @@ struct TestRunner {
             try assertEqual(settings.tableOutputFormat, .markdown)
         }
 
+        test("AppSettings resetShortcutsToDefaults restores factory shortcuts") {
+            let settings = AppSettings.shared
+            settings.textScanShortcut = ""
+            settings.qrScanShortcut = "⌘⌥Q"
+            settings.barcodeScanShortcut = ""
+            settings.captureLastSelectionShortcut = "⌘⇧L"
+            
+            try assertEqual(settings.textScanShortcut, "")
+            try assertEqual(settings.qrScanShortcut, "⌘⌥Q")
+            try assertEqual(settings.captureLastSelectionShortcut, "⌘⇧L")
+            
+            settings.resetShortcutsToDefaults()
+            
+            try assertEqual(settings.textScanShortcut, "⌘⇧2")
+            try assertEqual(settings.qrScanShortcut, "⌘⇧6")
+            try assertEqual(settings.barcodeScanShortcut, "⌘⇧7")
+            try assertEqual(settings.captureLastSelectionShortcut, "")
+            try assertEqual(settings.captureWithoutLineBreaksShortcut, "")
+        }
+
         // 4. HotkeyService Parser Tests
         print("\n▶️ [Suite 4/6] HotkeyService Shortcut Parser")
         test("Parse default shortcuts") {
@@ -242,6 +262,58 @@ struct TestRunner {
             
             let parsedBarcode = HotkeyService.parseShortcut("⌘⇧7")
             try assertTrue(parsedBarcode != nil, "Expected parsed shortcut for ⌘⇧7")
+        }
+
+        test("Parse uppercase and lowercase letter shortcuts") {
+            let parsedUpper = HotkeyService.parseShortcut("⌘⇧A")
+            try assertTrue(parsedUpper != nil, "Expected parsed shortcut for ⌘⇧A")
+            try assertEqual(parsedUpper?.keyCode, 0)
+            
+            let parsedLower = HotkeyService.parseShortcut("⌘⇧a")
+            try assertTrue(parsedLower != nil, "Expected parsed shortcut for ⌘⇧a")
+            try assertEqual(parsedLower?.keyCode, 0)
+        }
+
+        test("HotkeyService keyString and carbonKeyCode mappings") {
+            try assertEqual(HotkeyService.keyString(for: 19), "2")
+            try assertEqual(HotkeyService.keyString(for: 22), "6")
+            try assertEqual(HotkeyService.keyString(for: 26), "7")
+            try assertEqual(HotkeyService.keyString(for: 0), "A")
+            try assertEqual(HotkeyService.keyString(for: 49), "Space")
+            try assertEqual(HotkeyService.keyString(for: 50), "`")
+            try assertTrue(HotkeyService.keyString(for: 9999) == nil)
+
+            try assertEqual(HotkeyService.carbonKeyCode(for: "A"), 0)
+            try assertEqual(HotkeyService.carbonKeyCode(for: "a"), 0)
+            try assertEqual(HotkeyService.carbonKeyCode(for: "2"), 19)
+            try assertEqual(HotkeyService.carbonKeyCode(for: "6"), 22)
+            try assertEqual(HotkeyService.carbonKeyCode(for: "7"), 26)
+            try assertEqual(HotkeyService.carbonKeyCode(for: " "), 49)
+            try assertEqual(HotkeyService.carbonKeyCode(for: "`"), 50)
+        }
+
+        test("HotkeyService formatShortcut and round-trip parsing") {
+            // Valid shortcuts with primary modifiers
+            let formattedText = HotkeyService.formatShortcut(keyCode: 19, modifierFlags: [.command, .shift])
+            try assertEqual(formattedText, "⌘⇧2")
+            let parsedText = HotkeyService.parseShortcut(formattedText!)
+            try assertEqual(parsedText?.keyCode, 19)
+
+            let formattedOpt = HotkeyService.formatShortcut(keyCode: 0, modifierFlags: [.command, .option])
+            try assertEqual(formattedOpt, "⌘⌥A")
+            let parsedOpt = HotkeyService.parseShortcut(formattedOpt!)
+            try assertEqual(parsedOpt?.keyCode, 0)
+
+            // Rejection of hotkeys without primary modifiers (⌘, ⌥, ⌃)
+            let noMods = HotkeyService.formatShortcut(keyCode: 0, modifierFlags: [])
+            try assertTrue(noMods == nil, "Modifier-less hotkey must be rejected")
+
+            let shiftOnly = HotkeyService.formatShortcut(keyCode: 0, modifierFlags: [.shift])
+            try assertTrue(shiftOnly == nil, "Shift-only hotkey must be rejected")
+            
+            // Unknown key code
+            let unknownKey = HotkeyService.formatShortcut(keyCode: 9999, modifierFlags: [.command])
+            try assertTrue(unknownKey == nil, "Unknown keyCode must return nil")
         }
 
         test("Parse invalid shortcuts returns nil") {
@@ -532,9 +604,9 @@ struct TestRunner {
             try assertEqual(barcodeItem.title, "Barcode Scanned")
         }
 
-        test("AppConstants: Version 1.0.11 & Settings window sizing verification") {
-            try assertEqual(AppConstants.App.version, "1.0.11")
-            try assertEqual(AppConstants.App.build, "12")
+        test("AppConstants: Version 1.0.12 & Settings window sizing verification") {
+            try assertEqual(AppConstants.App.version, "1.0.12")
+            try assertEqual(AppConstants.App.build, "13")
             try assertEqual(Int(AppConstants.UI.settingsWindowWidth), 680)
             try assertEqual(Int(AppConstants.UI.settingsWindowHeight), 540)
             try assertEqual(AppConstants.App.prodBundleID, "cloud.aritro.byakugan-scan")
