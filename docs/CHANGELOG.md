@@ -4,6 +4,29 @@ All notable changes to **Byakugan Scan** will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
+## [1.0.12] — 2026-10-24
+
+### Added
+- **Native Interactive Shortcut Recorder (`SettingsView`, `ShortcutField`):**
+  - Instant click-to-record interface with live visual listening state indicator (`⏺ Press shortcut...`) styled with the active theme accent.
+  - Automatically captures any key combination (Command, Option, Control, Shift + Key) directly into memory and registers it as a global hotkey.
+  - Supports pressing Escape to cancel recording and Delete/Backspace to clear the shortcut.
+  - Context menu manual entry sheet fallback allowing users to paste or type custom shortcut strings directly.
+  - Centralized `ShortcutRecorderCoordinator` preventing concurrent recording conflicts across settings fields.
+- **Restore to Default Global Shortcuts (`AppSettings`, `SettingsView`):**
+  - Added a dedicated "Restore to Default" button at the bottom of the Shortcuts settings tab to reset all shortcuts to factory defaults (`⌘⇧2`, `⌘⇧6`, `⌘⇧7`) with one click.
+- **Bidirectional Carbon Key Code Formatter & Parser (`HotkeyService`):**
+  - Added `HotkeyService.formatShortcut` to convert key events into clean display symbols (`⌘⇧2`, `⌘⌥A`, `⌥⌃X`).
+  - Added case-insensitive Carbon key code parsing and extended key support (Space, Backtick).
+- **Process Termination Safeguards (`switch_to_dev.sh`, `build_dev.sh`):**
+  - Automatically checks for and terminates previous running dev instances before installing and launching new builds.
+
+### Fixed
+- **Settings Shortcut Re-recording Blocker:**
+  - Fixed an issue where clearing a shortcut left the field in an uneditable state, preventing users from adding a new shortcut.
+
+---
+
 ## [1.0.8] — 2026-10-14
 
 ### Fixed
