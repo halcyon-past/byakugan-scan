@@ -207,7 +207,7 @@ export default function SupportPage() {
       <div className="max-w-3xl mb-14">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/15 border border-pink-500/30 text-pink-300 text-xs font-mono mb-4 shadow-sm backdrop-blur-md">
           <Sparkles className="w-3.5 h-3.5" />
-          <span>OFFICIAL DOCUMENTATION // v1.0.11</span>
+          <span>OFFICIAL DOCUMENTATION // v1.0.12</span>
         </div>
         <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
           Support &amp; User Guide
@@ -274,7 +274,7 @@ export default function SupportPage() {
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Direct DMG Installer</h3>
               <p className="text-sm text-slate-200 leading-relaxed mb-5">
-                Download <code className="text-slate-100 font-mono text-xs bg-white/10 px-1 py-0.5 rounded">ByakuganScan.dmg</code> (v1.0.11), drag <strong className="text-white">Byakugan Scan.app</strong> into your <strong className="text-white">/Applications</strong> directory, and launch.
+                Download <code className="text-slate-100 font-mono text-xs bg-white/10 px-1 py-0.5 rounded">ByakuganScan.dmg</code> (v1.0.12), drag <strong className="text-white">Byakugan Scan.app</strong> into your <strong className="text-white">/Applications</strong> directory, and launch.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
@@ -282,7 +282,7 @@ export default function SupportPage() {
                 href={APP_DOWNLOAD_URL}
                 className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 text-white text-xs font-semibold transition-all inline-flex items-center gap-1.5 shadow-lg shadow-pink-600/25"
               >
-                <span>Download DMG (v1.0.11)</span>
+                <span>Download DMG (v1.0.12)</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
               <a
@@ -763,13 +763,13 @@ export default function SupportPage() {
               Have a question or run into an edge case?
             </h2>
             <p className="text-sm text-slate-200 leading-relaxed">
-              Include your macOS version and Byakugan Scan version (<strong className="text-white">v1.0.11</strong>). We review and respond to all support emails and GitHub issues promptly.
+              Include your macOS version and Byakugan Scan version (<strong className="text-white">v1.0.12</strong>). We review and respond to all support emails and GitHub issues promptly.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <a
-              href="mailto:aritrosaha2025@gmail.com?subject=Byakugan%20Scan%20Support%20(v1.0.11)"
+              href="mailto:aritrosaha2025@gmail.com?subject=Byakugan%20Scan%20Support%20(v1.0.12)"
               className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 text-white text-xs font-semibold transition-all inline-flex items-center gap-2 shadow-lg shadow-pink-600/30"
             >
               <Mail className="w-4 h-4" />

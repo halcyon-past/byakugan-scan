@@ -37,8 +37,8 @@ plutil -replace CFBundleExecutable -string "ByakuganScanDev" "$CONTENTS/Info.pli
 plutil -replace CFBundleIdentifier -string "cloud.aritro.byakugan-scan.dev" "$CONTENTS/Info.plist"
 plutil -replace CFBundleName -string "Byakugan Scan Dev" "$CONTENTS/Info.plist"
 plutil -replace CFBundleDisplayName -string "Byakugan Scan Dev" "$CONTENTS/Info.plist"
-plutil -replace CFBundleShortVersionString -string "${VERSION:-1.0.11}" "$CONTENTS/Info.plist"
-plutil -replace CFBundleVersion -string "${BUILD_NUM:-12}" "$CONTENTS/Info.plist"
+plutil -replace CFBundleShortVersionString -string "${VERSION:-1.0.12}" "$CONTENTS/Info.plist"
+plutil -replace CFBundleVersion -string "${BUILD_NUM:-13}" "$CONTENTS/Info.plist"
 
 # 3. Create .icns file for macOS
 echo "🎨 Generating AppIcon.icns..."
@@ -78,6 +78,11 @@ codesign --force --deep --sign - -r='designated => identifier "cloud.aritro.byak
 
 # 6. Install to /Applications so it is directly launchable and recognized by macOS
 echo "📥 Installing to /Applications/$APP_NAME.app..."
+if pgrep -x "ByakuganScanDev" >/dev/null 2>&1; then
+    echo "🛑 Quitting currently running Dev app before installation..."
+    pkill -x "ByakuganScanDev" 2>/dev/null || true
+    sleep 0.5
+fi
 rm -rf "/Applications/$APP_NAME.app"
 cp -R "$APP_BUNDLE" "/Applications/$APP_NAME.app"
 

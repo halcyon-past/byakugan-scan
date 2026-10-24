@@ -112,8 +112,9 @@ final class HotkeyService {
         return (keyCode: keyCode, modifiers: mods)
     }
     
-    /// Maps common characters to Carbon virtual key codes.
-    private static func carbonKeyCode(for char: Character) -> UInt32? {
+    /// Maps common characters to Carbon virtual key codes (case-insensitive).
+    static func carbonKeyCode(for char: Character) -> UInt32? {
+        let lower = Character(char.lowercased())
         let map: [Character: UInt32] = [
             "a": 0, "s": 1, "d": 2, "f": 3, "h": 4, "g": 5, "z": 6,
             "x": 7, "c": 8, "v": 9, "b": 11, "q": 12, "w": 13, "e": 14,
@@ -121,8 +122,93 @@ final class HotkeyService {
             "6": 22, "5": 23, "=": 24, "9": 25, "7": 26, "-": 27, "8": 28,
             "0": 29, "]": 30, "o": 31, "u": 32, "[": 33, "i": 34, "p": 35,
             "l": 37, "j": 38, "'": 39, "k": 40, ";": 41, "\\": 42, ",": 43,
-            "/": 44, "n": 45, "m": 46, ".": 47
+            "/": 44, "n": 45, "m": 46, ".": 47, "`": 50, " ": 49
         ]
-        return map[char]
+        return map[lower]
+    }
+    
+    /// Maps Carbon virtual key codes to display string representation.
+    static func keyString(for keyCode: UInt16) -> String? {
+        switch keyCode {
+        case 0: return "A"
+        case 1: return "S"
+        case 2: return "D"
+        case 3: return "F"
+        case 4: return "H"
+        case 5: return "G"
+        case 6: return "Z"
+        case 7: return "X"
+        case 8: return "C"
+        case 9: return "V"
+        case 11: return "B"
+        case 12: return "Q"
+        case 13: return "W"
+        case 14: return "E"
+        case 15: return "R"
+        case 16: return "Y"
+        case 17: return "T"
+        case 18: return "1"
+        case 19: return "2"
+        case 20: return "3"
+        case 21: return "4"
+        case 22: return "6"
+        case 23: return "5"
+        case 24: return "="
+        case 25: return "9"
+        case 26: return "7"
+        case 27: return "-"
+        case 28: return "8"
+        case 29: return "0"
+        case 30: return "]"
+        case 31: return "O"
+        case 32: return "U"
+        case 33: return "["
+        case 34: return "I"
+        case 35: return "P"
+        case 37: return "L"
+        case 38: return "J"
+        case 39: return "'"
+        case 40: return "K"
+        case 41: return ";"
+        case 42: return "\\"
+        case 43: return ","
+        case 44: return "/"
+        case 45: return "N"
+        case 46: return "M"
+        case 47: return "."
+        case 49: return "Space"
+        case 50: return "`"
+        default: return nil
+        }
+    }
+    
+    /// Formats modifier flags and key code into display string like "⌘⇧2".
+    /// Requires at least one modifier key (Command, Option, or Control) to ensure
+    /// valid macOS global hotkey registration without hijacking single-character typing.
+    static func formatShortcut(keyCode: UInt16, modifierFlags: NSEvent.ModifierFlags) -> String? {
+        // Resolve key character from key code
+        let resolvedKey: String
+        if let name = keyString(for: keyCode) {
+            resolvedKey = name
+        } else {
+            return nil
+        }
+        
+        let flags = modifierFlags.intersection(.deviceIndependentFlagsMask)
+        let relevantFlags: NSEvent.ModifierFlags = [.command, .shift, .option, .control]
+        let active = flags.intersection(relevantFlags)
+        
+        // Ensure at least one primary modifier (⌘, ⌥, ⌃) is present
+        guard active.contains(.command) || active.contains(.option) || active.contains(.control) else {
+            return nil
+        }
+        
+        var str = ""
+        if active.contains(.command) { str += "⌘" }
+        if active.contains(.shift) { str += "⇧" }
+        if active.contains(.option) { str += "⌥" }
+        if active.contains(.control) { str += "⌃" }
+        str += resolvedKey
+        return str
     }
 }

@@ -25,7 +25,7 @@ export default function Footer() {
 
             <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span>Production Version 1.0.11 (Universal Apple Silicon & Intel)</span>
+              <span>Production Version 1.0.12 (Universal Apple Silicon & Intel)</span>
             </div>
           </div>
 
