@@ -78,6 +78,11 @@ codesign --force --deep --sign - -r='designated => identifier "cloud.aritro.byak
 
 # 6. Install to /Applications so it is directly launchable and recognized by macOS
 echo "📥 Installing to /Applications/$APP_NAME.app..."
+if pgrep -x "ByakuganScanDev" >/dev/null 2>&1; then
+    echo "🛑 Quitting currently running Dev app before installation..."
+    pkill -x "ByakuganScanDev" 2>/dev/null || true
+    sleep 0.5
+fi
 rm -rf "/Applications/$APP_NAME.app"
 cp -R "$APP_BUNDLE" "/Applications/$APP_NAME.app"
 

@@ -11,11 +11,17 @@ if [ ! -d "/Applications/Byakugan Scan Dev.app" ] || [ "$1" == "--rebuild" ] || 
     "$PROJECT_DIR/scripts/build_dev.sh"
 fi
 
-# Gracefully terminate production app if running
+# Gracefully terminate production app or previous dev app if running
 if pgrep -x "ByakuganScan" >/dev/null 2>&1; then
     echo "🛑 Quitting Production app..."
     pkill -x "ByakuganScan" 2>/dev/null || true
     sleep 0.3
+fi
+
+if pgrep -x "ByakuganScanDev" >/dev/null 2>&1; then
+    echo "🛑 Quitting previous Dev app instance..."
+    pkill -x "ByakuganScanDev" 2>/dev/null || true
+    sleep 0.5
 fi
 
 # Launch Dev app
