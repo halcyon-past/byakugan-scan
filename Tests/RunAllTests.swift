@@ -251,6 +251,22 @@ struct TestRunner {
             try assertEqual(settings.captureWithoutLineBreaksShortcut, "")
         }
 
+        test("AppSettings initial launch flag and menu bar toggle") {
+            let settings = AppSettings.shared
+            let originalFlag = settings.hasCompletedInitialLaunch
+            let originalMenuBar = settings.showInMenuBar
+            
+            settings.hasCompletedInitialLaunch = true
+            try assertTrue(settings.hasCompletedInitialLaunch)
+            
+            settings.showInMenuBar = false
+            try assertFalse(settings.showInMenuBar)
+            
+            // Restore
+            settings.hasCompletedInitialLaunch = originalFlag
+            settings.showInMenuBar = originalMenuBar
+        }
+
         // 4. HotkeyService Parser Tests
         print("\n▶️ [Suite 4/6] HotkeyService Shortcut Parser")
         test("Parse default shortcuts") {
@@ -262,6 +278,30 @@ struct TestRunner {
             
             let parsedBarcode = HotkeyService.parseShortcut("⌘⇧7")
             try assertTrue(parsedBarcode != nil, "Expected parsed shortcut for ⌘⇧7")
+        }
+
+        test("Parse Space shortcut with modifiers and reject zero-modifier Space") {
+            let parsedSpace = HotkeyService.parseShortcut("⌘⇧Space")
+            try assertTrue(parsedSpace != nil, "Expected parsed shortcut for ⌘⇧Space")
+            try assertEqual(parsedSpace?.keyCode, 49)
+
+            let parsedOptSpace = HotkeyService.parseShortcut("⌥Space")
+            try assertTrue(parsedOptSpace != nil, "Expected parsed shortcut for ⌥Space")
+            try assertEqual(parsedOptSpace?.keyCode, 49)
+
+            // Zero modifier hotkeys must be rejected to prevent hijacking standard typing
+            let zeroModSpace = HotkeyService.parseShortcut("Space")
+            try assertTrue(zeroModSpace == nil, "Space without modifiers must be rejected")
+
+            let zeroModKey = HotkeyService.parseShortcut("A")
+            try assertTrue(zeroModKey == nil, "Alphanumeric key without modifiers must be rejected")
+        }
+
+        test("HotkeyService register rejects zero modifiers safely") {
+            let regID = HotkeyService.shared.register(keyCode: 49, modifiers: 0) {
+                // Callback should not be registered
+            }
+            try assertEqual(regID, 0, "Registration with zero modifiers must fail safely and return 0")
         }
 
         test("Parse uppercase and lowercase letter shortcuts") {

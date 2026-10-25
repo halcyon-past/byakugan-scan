@@ -220,19 +220,70 @@ struct ShortcutsSettingsView: View {
     }
 }
 
-/// Central coordinator ensuring only one shortcut field records key events at any time.
+/// Central coordinator ensuring only one shortcut field records key events at any time,
+/// with deterministic local event monitor registration and lifecycle cleanup.
 @MainActor
 final class ShortcutRecorderCoordinator: ObservableObject {
     static let shared = ShortcutRecorderCoordinator()
-    @Published var activeFieldID: UUID? = nil
     
-    func activate(id: UUID) {
+    @Published var activeFieldID: UUID? = nil
+    private var monitor: Any? = nil
+    private var onRecordCallback: ((String) -> Void)? = nil
+    
+    func startRecording(for id: UUID, onRecord: @escaping (String) -> Void) {
+        stopRecording()
         activeFieldID = id
+        onRecordCallback = onRecord
+        
+        monitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { [weak self] event in
+            guard let self = self else { return event }
+            
+            // Handle Escape (53) -> Cancel recording
+            if event.keyCode == 53 {
+                DispatchQueue.main.async {
+                    self.stopRecording()
+                }
+                return nil
+            }
+            
+            // Handle Delete/Backspace (51) -> Clear shortcut
+            if event.keyCode == 51 {
+                let callback = self.onRecordCallback
+                DispatchQueue.main.async {
+                    self.stopRecording()
+                    callback?("")
+                }
+                return nil
+            }
+            
+            // Attempt to format shortcut from key code and modifier flags
+            if let formatted = HotkeyService.formatShortcut(keyCode: event.keyCode, modifierFlags: event.modifierFlags) {
+                let callback = self.onRecordCallback
+                DispatchQueue.main.async {
+                    self.stopRecording()
+                    callback?(formatted)
+                }
+                return nil
+            } else {
+                // Key pressed without required primary modifiers (⌘, ⌥, ⌃)
+                NSSound.beep()
+                return nil
+            }
+        }
     }
     
-    func deactivate(id: UUID) {
-        if activeFieldID == id {
-            activeFieldID = nil
+    func stopRecording() {
+        if let existing = monitor {
+            NSEvent.removeMonitor(existing)
+            monitor = nil
+        }
+        onRecordCallback = nil
+        activeFieldID = nil
+    }
+    
+    deinit {
+        if let existing = monitor {
+            NSEvent.removeMonitor(existing)
         }
     }
 }
@@ -246,7 +297,6 @@ struct ShortcutField: View {
     @ObservedObject private var coordinator = ShortcutRecorderCoordinator.shared
     
     @State private var fieldID = UUID()
-    @State private var eventMonitor: Any? = nil
     @State private var isManualInputPresented = false
     @State private var manualInputText = ""
     
@@ -378,11 +428,6 @@ struct ShortcutField: View {
             .padding(20)
             .frame(width: 300)
         }
-        .onChange(of: coordinator.activeFieldID) { _, newActiveID in
-            if newActiveID != fieldID && eventMonitor != nil {
-                removeMonitor()
-            }
-        }
         .onDisappear {
             stopRecording()
         }
@@ -391,56 +436,15 @@ struct ShortcutField: View {
     // MARK: - Recording Actions
     
     private func startRecording() {
-        coordinator.activate(id: fieldID)
-        installMonitor()
-    }
-    
-    private func stopRecording() {
-        removeMonitor()
-        coordinator.deactivate(id: fieldID)
-    }
-    
-    private func installMonitor() {
-        removeMonitor()
-        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { event in
-            // Handle Escape -> Cancel
-            if event.keyCode == 53 {
-                DispatchQueue.main.async {
-                    self.stopRecording()
-                }
-                return nil
-            }
-            
-            // Handle Delete/Backspace (51) -> Clear shortcut
-            if event.keyCode == 51 {
-                DispatchQueue.main.async {
-                    self.shortcut = ""
-                    self.stopRecording()
-                    self.notifySettingsChanged()
-                }
-                return nil
-            }
-            
-            // Attempt to format shortcut from key code and modifier flags
-            if let formatted = HotkeyService.formatShortcut(keyCode: event.keyCode, modifierFlags: event.modifierFlags) {
-                DispatchQueue.main.async {
-                    self.shortcut = formatted
-                    self.stopRecording()
-                    self.notifySettingsChanged()
-                }
-                return nil
-            } else {
-                // Key pressed without required primary modifiers (⌘, ⌥, ⌃)
-                NSSound.beep()
-                return nil
-            }
+        coordinator.startRecording(for: fieldID) { newShortcut in
+            self.shortcut = newShortcut
+            self.notifySettingsChanged()
         }
     }
     
-    private func removeMonitor() {
-        if let monitor = eventMonitor {
-            NSEvent.removeMonitor(monitor)
-            eventMonitor = nil
+    private func stopRecording() {
+        if coordinator.activeFieldID == fieldID {
+            coordinator.stopRecording()
         }
     }
     
