@@ -4,6 +4,26 @@ All notable changes to **Byakugan Scan** will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
+## [1.0.13] — 2026-10-25
+
+### Fixed
+- **Application Reopening & Launch Lifecycle Handling (`AppDelegate`):**
+  - Implemented `applicationShouldHandleReopen(_:hasVisibleWindows:)` so launching the app from Applications, Finder, Spotlight, or following macOS Screen Recording permission restarts brings the utility forward, presents the Settings window, and highlights the status item.
+  - Added initial launch presentation (`hasCompletedInitialLaunch`) ensuring first-time users receive immediate visual confirmation that the app is active and running in the menu bar.
+- **Menu Bar Status Item Sizing & MacBook Notch Protection (`AppDelegate`):**
+  - Capped status bar icon metrics to 18x18 points (`NSSize(width: 18, height: 18)`), preventing status items from being clipped or hidden behind camera notches on MacBook Pro and MacBook Air displays.
+  - Replaced deprecated status popup methods with modern `NSMenu.popUp(positioning:at:in:)`.
+  - Added safe guard for `NSApp.currentEvent` in `statusBarButtonClicked` to eliminate nil unwrapping crashes during non-mouse activations.
+  - Added dynamic observation for `AppSettings.showInMenuBar` to automatically restore or remove status bar items in real-time.
+- **Local Event Monitor Cleanup (`ShortcutRecorderCoordinator`, `SettingsView`):**
+  - Centralized key event recording in `ShortcutRecorderCoordinator` reference class, resolving a struct `@State` memory leak where local event monitors were not removed upon recording completion.
+- **Carbon Hotkey Thread Safety & Zero-Modifier Defense (`HotkeyService`):**
+  - Added `NSLock` synchronization around hotkey registration and Carbon event callbacks to ensure thread safety across concurrent operations.
+  - Added explicit support for `"Space"` hotkeys (Carbon key code 49).
+  - Enforced zero-modifier rejection to prevent accidental global registration of bare alphanumeric keys that could hijack typing.
+
+---
+
 ## [1.0.12] — 2026-10-24
 
 ### Added

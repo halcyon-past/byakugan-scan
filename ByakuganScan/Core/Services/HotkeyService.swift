@@ -17,6 +17,7 @@ final class HotkeyService {
     private init() { installEventHandler() }
     
     // MARK: - Private State
+    private let lock = NSLock()
     private var registrations: [UInt32: (ref: EventHotKeyRef?, callback: HotkeyCallback)] = [:]
     private var nextID: UInt32 = 1
     private var eventHandlerRef: EventHandlerRef?
@@ -28,35 +29,57 @@ final class HotkeyService {
     ///   - keyCode: Carbon virtual key code.
     ///   - modifiers: Carbon modifier flags (cmdKey, shiftKey, optionKey, controlKey).
     ///   - callback: Closure to invoke when the hotkey fires.
-    /// - Returns: The registration ID (use to unregister later).
+    /// - Returns: The registration ID (use to unregister later), or 0 if registration failed.
     @discardableResult
     func register(keyCode: UInt32, modifiers: UInt32, callback: @escaping HotkeyCallback) -> UInt32 {
+        guard modifiers != 0 else {
+            return 0
+        }
+        
+        lock.lock()
         let hotkeyID = nextID
         nextID += 1
+        lock.unlock()
         
         var eventID = EventHotKeyID()
         eventID.signature = OSType(0x42594B47) // 'BYKG'
         eventID.id = hotkeyID
         
         var hotKeyRef: EventHotKeyRef?
-        RegisterEventHotKey(keyCode, modifiers, eventID, GetApplicationEventTarget(), 0, &hotKeyRef)
-        registrations[hotkeyID] = (ref: hotKeyRef, callback: callback)
+        let status = RegisterEventHotKey(keyCode, modifiers, eventID, GetApplicationEventTarget(), 0, &hotKeyRef)
+        guard status == noErr, let ref = hotKeyRef else {
+            return 0
+        }
+        
+        lock.lock()
+        registrations[hotkeyID] = (ref: ref, callback: callback)
+        lock.unlock()
         return hotkeyID
     }
     
     /// Unregisters a previously registered hotkey.
     /// - Parameter id: The registration ID returned by `register(...)`.
     func unregister(id: UInt32) {
-        if let reg = registrations[id], let ref = reg.ref {
+        lock.lock()
+        let reg = registrations.removeValue(forKey: id)
+        lock.unlock()
+        
+        if let ref = reg?.ref {
             UnregisterEventHotKey(ref)
         }
-        registrations.removeValue(forKey: id)
     }
     
     /// Unregisters all active hotkeys.
     func unregisterAll() {
-        for (id, _) in registrations {
-            unregister(id: id)
+        lock.lock()
+        let allRegistrations = registrations
+        registrations.removeAll()
+        lock.unlock()
+        
+        for (_, reg) in allRegistrations {
+            if let ref = reg.ref {
+                UnregisterEventHotKey(ref)
+            }
         }
     }
     
@@ -82,8 +105,12 @@ final class HotkeyService {
                     &hotkeyID
                 )
                 
-                if let registration = service.registrations[hotkeyID.id] {
-                    DispatchQueue.main.async { registration.callback() }
+                service.lock.lock()
+                let callback = service.registrations[hotkeyID.id]?.callback
+                service.lock.unlock()
+                
+                if let callback = callback {
+                    DispatchQueue.main.async { callback() }
                 }
                 return noErr
             },
@@ -96,19 +123,31 @@ final class HotkeyService {
     
     // MARK: - Key Code Helpers
     
-    /// Converts a display shortcut string like '⌘⇧2' to Carbon key code + modifiers.
+    /// Converts a display shortcut string like '⌘⇧2' or '⌘⇧Space' to Carbon key code + modifiers.
     static func parseShortcut(_ shortcut: String) -> (keyCode: UInt32, modifiers: UInt32)? {
-        // Simple parser for common modifier+key combos
         var mods: UInt32 = 0
-        var keyStr = shortcut
+        var keyStr = shortcut.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if keyStr.contains("⌘") { mods |= UInt32(cmdKey); keyStr = keyStr.replacingOccurrences(of: "⌘", with: "") }
         if keyStr.contains("⇧") { mods |= UInt32(shiftKey); keyStr = keyStr.replacingOccurrences(of: "⇧", with: "") }
         if keyStr.contains("⌥") { mods |= UInt32(optionKey); keyStr = keyStr.replacingOccurrences(of: "⌥", with: "") }
         if keyStr.contains("⌃") { mods |= UInt32(controlKey); keyStr = keyStr.replacingOccurrences(of: "⌃", with: "") }
         
-        guard let char = keyStr.first else { return nil }
-        guard let keyCode = carbonKeyCode(for: char) else { return nil }
+        keyStr = keyStr.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !keyStr.isEmpty else { return nil }
+        
+        let keyCode: UInt32
+        if keyStr.lowercased() == "space" {
+            keyCode = 49
+        } else if let char = keyStr.first, let code = carbonKeyCode(for: char) {
+            keyCode = code
+        } else {
+            return nil
+        }
+        
+        // Guard against zero-modifier registrations which can hijack global keyboard input
+        guard mods != 0 else { return nil }
+        
         return (keyCode: keyCode, modifiers: mods)
     }
     

@@ -63,6 +63,9 @@ final class AppSettings: ObservableObject {
     @Published var autoCheckForUpdates: Bool {
         didSet { UserDefaults.standard.set(autoCheckForUpdates, forKey: Keys.autoCheckForUpdates) }
     }
+    @Published var hasCompletedInitialLaunch: Bool {
+        didSet { UserDefaults.standard.set(hasCompletedInitialLaunch, forKey: Keys.hasCompletedInitialLaunch) }
+    }
     
     // MARK: - Recognition Language
     @Published var ocrLanguage: String {
@@ -163,6 +166,7 @@ final class AppSettings: ObservableObject {
         self.feedbackStyle = FeedbackStyle(rawValue: feedbackRaw) ?? .floatingHUD
         self.automaticallyOpenLinks = ud.object(forKey: Keys.automaticallyOpenLinks) as? Bool ?? false
         self.autoCheckForUpdates = ud.object(forKey: Keys.autoCheckForUpdates) as? Bool ?? true
+        self.hasCompletedInitialLaunch = ud.bool(forKey: Keys.hasCompletedInitialLaunch)
         
         self.ocrLanguage = ud.string(forKey: Keys.ocrLanguage) ?? "en-US"
         // Default to FALSE for ultra-fast instant OCR (no multi-lingual detector stall)
@@ -217,6 +221,7 @@ final class AppSettings: ObservableObject {
         static let feedbackStyle = "feedbackStyle"
         static let automaticallyOpenLinks = "automaticallyOpenLinks"
         static let autoCheckForUpdates = "autoCheckForUpdates"
+        static let hasCompletedInitialLaunch = "hasCompletedInitialLaunch"
         
         static let ocrLanguage = "ocrLanguage"
         static let automaticallyDetectLanguage = "automaticallyDetectLanguage"
