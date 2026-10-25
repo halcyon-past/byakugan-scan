@@ -14,7 +14,7 @@ fi
 
 VERSION=$(grep 'static let version =' "$PROJECT_DIR/ByakuganScan/Shared/Constants/AppConstants.swift" | sed -E 's/.*"([^"]+)".*/\1/' | tr -d '[:space:]')
 if [ -z "$VERSION" ]; then
-  VERSION="1.0.12"
+  VERSION="1.0.13"
 fi
 
 echo "💿 Packaging DMG for $APP_NAME v$VERSION..."
