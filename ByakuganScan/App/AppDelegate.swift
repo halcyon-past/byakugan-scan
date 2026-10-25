@@ -29,7 +29,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Hide dock icon – we live in the menu bar
         NSApp.setActivationPolicy(.accessory)
         
-        setupMenuBarItem()
+        if AppSettings.shared.showInMenuBar {
+            setupMenuBarItem()
+        }
+        setupMenuBarVisibilityObserver()
         setupHotkeys()
         requestNotificationPermissions()
         setupScanningStateObserver()
@@ -60,6 +63,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         // Setup URL Scheme route handlers
         setupURLRouting()
+        
+        // On initial first run, present Settings so user immediately knows the app is active
+        if !AppSettings.shared.hasCompletedInitialLaunch {
+            AppSettings.shared.hasCompletedInitialLaunch = true
+            DispatchQueue.main.async { [weak self] in
+                self?.openSettings()
+            }
+        }
+    }
+    
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        // If the user closed or hid the menu bar icon, restore it when they click the app icon in Finder/Applications
+        if !AppSettings.shared.showInMenuBar {
+            AppSettings.shared.showInMenuBar = true
+            if statusItem == nil {
+                setupMenuBarItem()
+            }
+        }
+        
+        // Open Settings window so user receives clear, immediate visual confirmation
+        openSettings()
+        
+        // Briefly flash the status bar item so the user sees where the menu bar icon lives
+        if let button = statusItem?.button {
+            button.highlight(true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                button.highlight(false)
+            }
+        }
+        
+        return true
     }
     
     func applicationWillTerminate(_ notification: Notification) {
@@ -116,6 +150,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
+    private func setupMenuBarVisibilityObserver() {
+        AppSettings.shared.$showInMenuBar
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] show in
+                guard let self = self else { return }
+                if show && self.statusItem == nil {
+                    self.setupMenuBarItem()
+                } else if !show && self.statusItem != nil {
+                    if let item = self.statusItem {
+                        NSStatusBar.system.removeStatusItem(item)
+                        self.statusItem = nil
+                    }
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
     private func setupScanningStateObserver() {
         ScanCoordinator.shared.$isScanning
             .receive(on: DispatchQueue.main)
@@ -132,6 +183,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             // Live scanning activity state: illuminated/active reticle
             let activeImage = NSImage(systemSymbolName: "viewfinder.circle.fill", accessibilityDescription: "\(AppConstants.App.name) Scanning...")
             activeImage?.isTemplate = true
+            activeImage?.size = NSSize(width: 18, height: 18)
             button.image = activeImage
             if AppConstants.App.isDevelopment {
                 button.title = " DEV"
@@ -142,6 +194,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if ScanCoordinator.shared.lastResult != nil && ScanCoordinator.shared.lastError == nil {
                 let checkImage = NSImage(systemSymbolName: "checkmark.circle.fill", accessibilityDescription: "Scan Complete")
                 checkImage?.isTemplate = true
+                checkImage?.size = NSSize(width: 18, height: 18)
                 button.image = checkImage
                 if AppConstants.App.isDevelopment {
                     button.title = " DEV"
@@ -161,8 +214,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         guard let button = statusItem?.button else { return }
         let customImage = NSImage(named: "MenuBarIcon")
         let fallbackImage = NSImage(systemSymbolName: "eye.viewfinder", accessibilityDescription: AppConstants.App.name)
-        let finalImage = customImage ?? fallbackImage
+        let finalImage = (customImage ?? fallbackImage)?.copy() as? NSImage ?? fallbackImage
         finalImage?.isTemplate = true
+        finalImage?.size = NSSize(width: 18, height: 18)
         button.image = finalImage
         
         if AppConstants.App.isDevelopment {
@@ -176,7 +230,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc private func statusBarButtonClicked(_ sender: NSStatusBarButton) {
-        let event = NSApp.currentEvent!
+        guard let event = NSApp.currentEvent else {
+            togglePopover(sender)
+            return
+        }
         if event.type == .rightMouseUp {
             showContextMenu()
         } else {
@@ -223,10 +280,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem(title: "Settings...", action: #selector(openSettings), keyEquivalent: ","))
         menu.addItem(NSMenuItem(title: "About \(AppConstants.App.name)", action: #selector(openAbout), keyEquivalent: ""))
         menu.addItem(.separator())
-        menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
-        statusItem?.menu = menu
-        statusItem?.button?.performClick(nil)
-        statusItem?.menu = nil
+        menu.addItem(NSMenuItem(title: "Quit \(AppConstants.App.name)", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        
+        if let button = statusItem?.button {
+            menu.popUp(positioning: nil, at: NSPoint(x: 0, y: button.bounds.height + 4), in: button)
+        }
     }
     
     private func terminateConflictingInstance() {
