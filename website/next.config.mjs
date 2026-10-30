@@ -14,6 +14,19 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Content-Signal",
+            value: "search=yes, ai-train=yes, ai-input=yes",
+          },
+          {
+            key: "X-Robots-Tag",
+            value: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+          },
+        ],
+      },
+      {
         source: "/sitemap.xml",
         headers: [
           {
@@ -58,6 +71,15 @@ const nextConfig = {
         ],
       },
       {
+        source: "/index.md",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "text/markdown; charset=utf-8",
+          },
+        ],
+      },
+      {
         source: "/ai.txt",
         headers: [
           {
@@ -72,6 +94,32 @@ const nextConfig = {
           {
             key: "Content-Type",
             value: "text/plain; charset=utf-8",
+          },
+        ],
+      },
+      {
+        source: "/bbb1a623984c8d7af9ff1ade96c213fb.txt",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "text/plain; charset=utf-8",
+          },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400",
+          },
+        ],
+      },
+      {
+        source: "/byakugan-scan-indexnow-key.txt",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "text/plain; charset=utf-8",
+          },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400",
           },
         ],
       },

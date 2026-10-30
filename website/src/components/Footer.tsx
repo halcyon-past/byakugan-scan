@@ -126,17 +126,17 @@ export default function Footer() {
               rel="author me noopener noreferrer"
               className="font-bold text-pink-300 hover:text-white transition-colors inline-flex items-center gap-0.5 underline decoration-pink-500/40 underline-offset-4"
             >
-              <span>Aritro Saha</span>
+              <span>Aritro Saha (halcyon-past)</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </a>
             <span className="text-slate-600">|</span>
             <a
-              href="https://www.aritro.cloud/"
+              href="https://github.com/halcyon-past"
               target="_blank"
-              rel="noopener noreferrer"
+              rel="me noopener noreferrer"
               className="text-slate-400 hover:text-white transition-colors"
             >
-              aritro.cloud
+              @halcyon-past
             </a>
             <span className="text-slate-600">|</span>
             <a
