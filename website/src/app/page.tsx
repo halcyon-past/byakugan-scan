@@ -14,6 +14,18 @@ import {
   Copy,
   Check,
   Download,
+  ScanText,
+  QrCode,
+  Barcode,
+  Table as TableIcon,
+  Lock,
+  Layers,
+  Code2,
+  FileText,
+  UserCheck,
+  ExternalLink,
+  CheckCircle2,
+  HelpCircle,
 } from "lucide-react";
 import MangaScrollSection from "@/components/MangaScrollSection";
 import { APP_DOWNLOAD_URL } from "@/constants/links";
@@ -22,6 +34,7 @@ export default function AnimeMasterpieceHome() {
   const [installMethod, setInstallMethod] = useState<"brew" | "dmg">("brew");
   const [copiedBrew, setCopiedBrew] = useState(false);
   const [copiedSha, setCopiedSha] = useState(false);
+
   return (
     <div className="relative w-full overflow-hidden">
       {/* Soothing Atmospheric Radial Glow & Soft Ambient Grid */}
@@ -39,22 +52,31 @@ export default function AnimeMasterpieceHome() {
             {/* Japanese Kanji Eyebrow Badge */}
             <div className="flex items-center gap-2.5 mb-5">
               <span className="px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-xs font-medium text-pink-300">
-                白眼の目覚め // All-Seeing Vision Utility
+                白眼の目覚め // macOS Screen OCR & Barcode Utility by Aritro Saha (@halcyon-past)
               </span>
             </div>
 
             {/* Monumental, Readable Headline */}
             <h1 className="text-4xl sm:text-6xl xl:text-7xl font-extrabold text-slate-100 tracking-tight leading-[1.08] mb-6">
-              Sees through{" "}
+              Instant Screen OCR,{" "}
               <span className="bg-gradient-to-r from-pink-400 via-fuchsia-300 to-rose-400 bg-clip-text text-transparent">
-                every obstacle
+                QR & Barcode Scanner
               </span>{" "}
-              on your screen.
+              for macOS.
             </h1>
 
-            {/* Lead Narrative with Soothing Contrast */}
+            {/* Lead Narrative with High Utility Clarity */}
             <p className="text-slate-300 text-base sm:text-lg max-w-xl font-normal leading-relaxed mb-8">
-              A bespoke macOS menu bar utility built for developers, designers, and researchers. Snatch unselectable text from video streams, protected portals, and images in 11 milliseconds. Decode QR codes and commercial barcodes with zero latency and complete privacy.
+              Sees through every obstacle on your screen. Snatch unselectable text from video streams, protected PDFs, and images in 11 milliseconds. Decode on-screen QR codes and 13+ industrial barcodes with zero disk latency and complete privacy. Handcrafted by{" "}
+              <a
+                href="https://www.aritro.cloud/"
+                target="_blank"
+                rel="author me noopener noreferrer"
+                className="text-pink-300 font-semibold underline decoration-pink-500/40 hover:text-white transition-colors"
+              >
+                Aritro Saha (@halcyon-past)
+              </a>
+              .
             </p>
 
             {/* Professional Tabbed Installation Card */}
@@ -204,10 +226,10 @@ export default function AnimeMasterpieceHome() {
             {/* Quick Explore Link */}
             <div className="flex items-center gap-4">
               <a
-                href="#capabilities"
+                href="#solutions"
                 className="px-5 py-2.5 bg-white/[0.04] border border-white/10 hover:border-pink-500/30 hover:bg-white/[0.07] text-slate-300 hover:text-white text-xs font-medium rounded-lg transition-all flex items-center gap-2"
               >
-                <span>Explore Technical Capabilities</span>
+                <span>Explore Utility Solutions</span>
                 <ArrowDown className="w-3.5 h-3.5 text-pink-400" />
               </a>
             </div>
@@ -224,9 +246,9 @@ export default function AnimeMasterpieceHome() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6 hairline-t text-xs text-slate-400">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-slate-400 font-medium">Quick Shortcuts:</span>
-            <span className="bg-white/[0.04] border border-white/10 px-2.5 py-1 rounded text-slate-200 font-mono text-xs">⌘⇧2 Text</span>
-            <span className="bg-white/[0.04] border border-white/10 px-2.5 py-1 rounded text-slate-200 font-mono text-xs">⌘⇧6 QR</span>
-            <span className="bg-white/[0.04] border border-white/10 px-2.5 py-1 rounded text-slate-200 font-mono text-xs">⌘⇧7 Barcode</span>
+            <span className="bg-white/[0.04] border border-white/10 px-2.5 py-1 rounded text-slate-200 font-mono text-xs">⌘⇧2 Text OCR</span>
+            <span className="bg-white/[0.04] border border-white/10 px-2.5 py-1 rounded text-slate-200 font-mono text-xs">⌘⇧6 QR Scanner</span>
+            <span className="bg-white/[0.04] border border-white/10 px-2.5 py-1 rounded text-slate-200 font-mono text-xs">⌘⇧7 Barcode Scanner</span>
           </div>
 
           <div className="flex items-center gap-2 text-slate-400 font-medium">
@@ -253,7 +275,7 @@ export default function AnimeMasterpieceHome() {
           <span className="text-pink-400">•</span>
           <span>INVISIBLE MENUBAR UTILITY</span>
           <span className="text-sky-400">•</span>
-          <span>// ALL-SEEING VISION SYSTEM</span>
+          <span>CREATED BY ARITRO SAHA (@HALCYON-PAST)</span>
           <span className="text-pink-400">•</span>
           <span>APPLE NEURAL ENGINE CONCURRENCY</span>
           <span className="text-sky-400">•</span>
@@ -334,7 +356,7 @@ export default function AnimeMasterpieceHome() {
 
             <div className="pt-6 hairline-t flex items-center justify-between text-xs font-mono">
               <span className="text-slate-400 font-medium">Default Shortcut</span>
-              <span className="text-slate-200 font-semibold bg-white/[0.06] border border-white/10 px-2.5 py-1 rounded">⌘ + ⇧ + 3</span>
+              <span className="text-slate-200 font-semibold bg-white/[0.06] border border-white/10 px-2.5 py-1 rounded">⌘ + ⇧ + 6</span>
             </div>
           </div>
 
@@ -355,17 +377,154 @@ export default function AnimeMasterpieceHome() {
 
             <div className="pt-6 hairline-t flex items-center justify-between text-xs font-mono">
               <span className="text-slate-400 font-medium">Default Shortcut</span>
-              <span className="text-slate-200 font-semibold bg-white/[0.06] border border-white/10 px-2.5 py-1 rounded">⌘ + ⇧ + 4</span>
+              <span className="text-slate-200 font-semibold bg-white/[0.06] border border-white/10 px-2.5 py-1 rounded">⌘ + ⇧ + 7</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* ======================================================== */}
-      {/* 5. TECHNICAL ARCHITECTURE SPECIFICATIONS */}
+      {/* 5. SEARCH INTENT & REAL-WORLD UTILITY SOLUTIONS */}
+      {/* ======================================================== */}
+      <section id="solutions" className="py-24 px-6 max-w-7xl mx-auto hairline-b z-20 relative">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div>
+            <span className="text-xs font-mono tracking-wider text-pink-400 font-semibold uppercase block mb-2">
+              Utility & Real-World Use Cases
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-100 tracking-tight leading-tight">
+              Solving Your Everyday Screen Obstacles
+            </h2>
+          </div>
+
+          <p className="text-slate-300 text-sm max-w-md font-normal leading-relaxed">
+            People don’t search for app names — they search for solutions to friction. Byakugan Scan dissolves the barrier between visual pixels and actionable text.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Use Case 1 */}
+          <div className="p-7 rounded-2xl bg-[#0e101c] border border-white/[0.08] hover:border-pink-500/30 transition-all flex flex-col justify-between shadow-lg group">
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 mb-5">
+                <Code2 className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">
+                Copy Code from Videos & Webinars
+              </h3>
+              <p className="text-sm text-slate-300 leading-relaxed font-normal">
+                Pause a YouTube coding tutorial, Udemy course, or Zoom screen share. Press <code className="text-pink-300 font-mono text-xs bg-white/[0.06] px-1.5 py-0.5 rounded">⌘⇧2</code> and grab clean, unselectable code snippets straight into your clipboard in under 50ms without re-typing.
+              </p>
+            </div>
+            <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center gap-2 text-xs font-mono text-slate-400">
+              <span className="text-emerald-400">✓</span>
+              <span>Sub-50ms Vision Neural Engine</span>
+            </div>
+          </div>
+
+          {/* Use Case 2 */}
+          <div className="p-7 rounded-2xl bg-[#0e101c] border border-white/[0.08] hover:border-sky-500/30 transition-all flex flex-col justify-between shadow-lg group">
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 mb-5">
+                <QrCode className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">
+                Scan Monitor QR Codes Without a Phone
+              </h3>
+              <p className="text-sm text-slate-300 leading-relaxed font-normal">
+                Stop awkwardly holding your smartphone up to your Mac display. Press <code className="text-sky-300 font-mono text-xs bg-white/[0.06] px-1.5 py-0.5 rounded">⌘⇧6</code> to snap any on-screen QR code into actionable links with 1-click Open URL, Compose Email, or Copy Secret actions.
+              </p>
+            </div>
+            <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center gap-2 text-xs font-mono text-slate-400">
+              <span className="text-sky-400">✓</span>
+              <span>One-Click Contextual Actions</span>
+            </div>
+          </div>
+
+          {/* Use Case 3 */}
+          <div className="p-7 rounded-2xl bg-[#0e101c] border border-white/[0.08] hover:border-amber-500/30 transition-all flex flex-col justify-between shadow-lg group">
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-5">
+                <Barcode className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">
+                Industrial & Logistics Barcode Reader
+              </h3>
+              <p className="text-sm text-slate-300 leading-relaxed font-normal">
+                Recognize 13+ standard retail and industrial symbologies directly from PDF invoices, packaging mockups, shipping manifests, and web shops with <code className="text-amber-300 font-mono text-xs bg-white/[0.06] px-1.5 py-0.5 rounded">⌘⇧7</code>.
+              </p>
+            </div>
+            <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center gap-2 text-xs font-mono text-slate-400">
+              <span className="text-amber-400">✓</span>
+              <span>EAN, UPC, Code 128, PDF417, Aztec</span>
+            </div>
+          </div>
+
+          {/* Use Case 4 */}
+          <div className="p-7 rounded-2xl bg-[#0e101c] border border-white/[0.08] hover:border-fuchsia-500/30 transition-all flex flex-col justify-between shadow-lg group">
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/20 flex items-center justify-center text-fuchsia-400 mb-5">
+                <TableIcon className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">
+                Convert Screen Tables to Markdown & CSV
+              </h3>
+              <p className="text-sm text-slate-300 leading-relaxed font-normal">
+                Tired of messy unaligned multi-column data? Byakugan Scan features automatic spatial column analysis that formats tabular dashboard data straight into clean Markdown tables or CSV files in your clipboard.
+              </p>
+            </div>
+            <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center gap-2 text-xs font-mono text-slate-400">
+              <span className="text-fuchsia-400">✓</span>
+              <span>Spatial Table Ordering & Escaped Pipes</span>
+            </div>
+          </div>
+
+          {/* Use Case 5 */}
+          <div className="p-7 rounded-2xl bg-[#0e101c] border border-white/[0.08] hover:border-emerald-500/30 transition-all flex flex-col justify-between shadow-lg group">
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-5">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">
+                Free Open-Source TextSniper Alternative
+              </h3>
+              <p className="text-sm text-slate-300 leading-relaxed font-normal">
+                Why pay $12 for proprietary OCR tools? Byakugan Scan is 100% free and open-source under the MIT license, delivering equal or faster performance with zero subscription fees, telemetry, or license verification stalls.
+              </p>
+            </div>
+            <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center gap-2 text-xs font-mono text-slate-400">
+              <span className="text-emerald-400">✓</span>
+              <span>100% Free & MIT Licensed</span>
+            </div>
+          </div>
+
+          {/* Use Case 6 */}
+          <div className="p-7 rounded-2xl bg-[#0e101c] border border-white/[0.08] hover:border-purple-500/30 transition-all flex flex-col justify-between shadow-lg group">
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-5">
+                <Lock className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">
+                Zero Disk I/O & Complete Privacy
+              </h3>
+              <p className="text-sm text-slate-300 leading-relaxed font-normal">
+                Captures pixels into volatile RAM (<code className="text-purple-300 font-mono text-xs bg-white/[0.06] px-1.5 py-0.5 rounded">NSPasteboard</code>) without writing temporary files to disk, eliminating Spotlight indexing hangs. Zero network entitlements guarantee no data ever leaves your Mac.
+              </p>
+            </div>
+            <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center gap-2 text-xs font-mono text-slate-400">
+              <span className="text-purple-400">✓</span>
+              <span>Zero Network Entitlements</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ======================================================== */}
+      {/* 6. TECHNICAL ARCHITECTURE SPECIFICATIONS & FAQS */}
       {/* ======================================================== */}
       <section id="specs" className="py-24 px-6 max-w-7xl mx-auto hairline-b z-20 relative">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Left Column: Specs */}
           <div className="lg:col-span-5">
             <span className="text-xs font-mono tracking-wider text-pink-400 font-semibold uppercase block mb-2">
               Hardware Profile
@@ -400,31 +559,63 @@ export default function AnimeMasterpieceHome() {
             </div>
           </div>
 
-          <div className="lg:col-span-7 space-y-6">
-            <div className="p-7 rounded-2xl bg-[#121422] border border-white/[0.08] shadow-xl">
+          {/* Right Column: High-Intent FAQ List */}
+          <div id="faq" className="lg:col-span-7 space-y-5">
+            <h3 className="text-2xl font-bold text-slate-100 tracking-tight mb-2">
+              Frequently Asked Questions
+            </h3>
+
+            <div className="p-6 rounded-2xl bg-[#121422] border border-white/[0.08] shadow-xl">
               <h4 className="text-base font-bold text-slate-100 mb-2 tracking-tight">
-                Why is Screen Recording permission required?
+                How do I copy unselectable text from a video or protected PDF on Mac?
               </h4>
               <p className="text-sm text-slate-300 leading-relaxed font-normal">
-                macOS mandates explicit user authorization for any utility sampling display coordinates. Byakugan Scan only captures the exact rectangular frame defined by your interactive drag selection, extracts content in RAM, and immediately purges the pixels. No background recordings, screenshots, or logs are ever stored.
+                Press <code className="text-pink-300 font-mono text-xs bg-white/[0.06] px-1.5 py-0.5 rounded">⌘⇧2</code> to trigger Byakugan Scan’s interactive screen overlay, drag a selection box around the text in your paused video, PDF, or stream, and the text is recognized and copied to your clipboard in under 50ms using Apple’s native Vision Neural Engine.
               </p>
             </div>
 
-            <div className="p-7 rounded-2xl bg-[#121422] border border-white/[0.08] shadow-xl">
+            <div className="p-6 rounded-2xl bg-[#121422] border border-white/[0.08] shadow-xl">
               <h4 className="text-base font-bold text-slate-100 mb-2 tracking-tight">
-                Does Byakugan Scan transmit telemetry to external servers?
+                What is the best free and open-source alternative to TextSniper on macOS?
               </h4>
               <p className="text-sm text-slate-300 leading-relaxed font-normal">
-                Zero telemetry. The application sandbox completely excludes network client entitlements (<code className="text-pink-300 font-mono bg-white/[0.06] px-1.5 py-0.5 rounded border border-white/10 text-xs">com.apple.security.network.client: false</code>). It cannot make outbound network connections. Your screen content remains 100% private and on-device.
+                Byakugan Scan is a 100% free, open-source (MIT) TextSniper alternative. It processes captures in volatile RAM (<code className="text-slate-200 font-mono text-xs">NSPasteboard</code>) without writing temporary files, preventing Spotlight indexing lags. It also includes on-screen QR decoding and 13+ industrial barcode scanning.
               </p>
             </div>
 
-            <div className="p-7 rounded-2xl bg-[#121422] border border-white/[0.08] shadow-xl">
+            <div className="p-6 rounded-2xl bg-[#121422] border border-white/[0.08] shadow-xl">
               <h4 className="text-base font-bold text-slate-100 mb-2 tracking-tight">
-                Can I customize the keyboard shortcuts?
+                How do I scan a QR code displayed on my Mac screen without using my phone?
               </h4>
               <p className="text-sm text-slate-300 leading-relaxed font-normal">
-                Yes. Click Settings in the menu bar popover or press <code className="text-slate-200 font-mono bg-white/[0.06] px-1.5 py-0.5 rounded text-xs">⌘,</code> to remap any capture action to your preferred hotkeys.
+                Press <code className="text-sky-300 font-mono text-xs bg-white/[0.06] px-1.5 py-0.5 rounded">⌘⇧6</code> to activate QR matrix mode and highlight the code on your display. Byakugan Scan decodes the payload and presents one-click buttons to Open URL, Compose Email, Call Phone Number, or Copy the secret.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-[#121422] border border-white/[0.08] shadow-xl">
+              <h4 className="text-base font-bold text-slate-100 mb-2 tracking-tight">
+                Can Byakugan Scan read industrial barcodes directly from my computer monitor?
+              </h4>
+              <p className="text-sm text-slate-300 leading-relaxed font-normal">
+                Yes. Press <code className="text-amber-300 font-mono text-xs bg-white/[0.06] px-1.5 py-0.5 rounded">⌘⇧7</code> to scan over 13 commercial barcode symbologies including EAN-13, EAN-8, UPC-E, Code 128, Code 39, Code 93, PDF417, Aztec, Data Matrix, and ITF-14 directly from your display.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-[#121422] border border-white/[0.08] shadow-xl">
+              <h4 className="text-base font-bold text-slate-100 mb-2 tracking-tight">
+                Why is Screen Recording permission required, and is my data safe?
+              </h4>
+              <p className="text-sm text-slate-300 leading-relaxed font-normal">
+                macOS mandates explicit authorization for any utility sampling display coordinates. Byakugan Scan only captures the exact rectangular frame defined by your drag selection, extracts content in RAM, and immediately purges the pixels. It excludes network entitlements (<code className="text-emerald-300 font-mono text-xs bg-white/[0.06] px-1.5 py-0.5 rounded">com.apple.security.network.client: false</code>), meaning zero telemetry or network calls.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-[#121422] border border-white/[0.08] shadow-xl">
+              <h4 className="text-base font-bold text-slate-100 mb-2 tracking-tight">
+                How do I install Byakugan Scan via Homebrew?
+              </h4>
+              <p className="text-sm text-slate-300 leading-relaxed font-normal">
+                Run <code className="text-pink-300 font-mono text-xs bg-white/[0.06] px-1.5 py-0.5 rounded">brew install --cask halcyon-past/tap/byakugan-scan</code> in Terminal. You can update it anytime using <code className="text-slate-200 font-mono text-xs">brew upgrade</code>.
               </p>
             </div>
           </div>
@@ -432,7 +623,77 @@ export default function AnimeMasterpieceHome() {
       </section>
 
       {/* ======================================================== */}
-      {/* 6. FINALE CALL TO ACTION */}
+      {/* 7. CREATOR SPOTLIGHT: ARITRO SAHA (@HALCYON-PAST) */}
+      {/* ======================================================== */}
+      <section className="py-20 px-6 max-w-7xl mx-auto hairline-b z-20 relative">
+        <div className="p-8 sm:p-10 rounded-2xl bg-gradient-to-br from-[#121324] via-[#0d0e1a] to-[#0a0b14] border border-white/10 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 relative z-10">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="px-2.5 py-0.5 rounded-full bg-pink-500/10 border border-pink-500/20 text-xs font-mono font-medium text-pink-300">
+                  CREATOR // AUTHOR SPOTLIGHT
+                </span>
+                <span className="text-xs font-mono text-slate-500">Wikidata: Q141715213</span>
+              </div>
+
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3">
+                Crafted by Aritro Saha (@halcyon-past)
+              </h3>
+
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-6 font-normal">
+                Byakugan Scan is engineered by{" "}
+                <strong className="text-white">Aritro Saha</strong> (also known as <em className="text-pink-300 not-italic font-semibold">Megh</em> and <code className="text-pink-300 font-mono text-xs bg-white/[0.06] px-1.5 py-0.5 rounded">@halcyon-past</code>), Software Engineer 1 at Bristol Myers Squibb (BMS) and alumnus of Vellore Institute of Technology, Chennai. Built with a passion for ultra-fast, zero-telemetry native tools that put user privacy first.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-4 text-xs font-medium">
+                <a
+                  href="https://www.aritro.cloud/"
+                  target="_blank"
+                  rel="author me noopener noreferrer"
+                  className="px-4 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-white transition-all inline-flex items-center gap-1.5"
+                >
+                  <span>Official Website: aritro.cloud</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-pink-400" />
+                </a>
+
+                <a
+                  href="https://github.com/halcyon-past"
+                  target="_blank"
+                  rel="me noopener noreferrer"
+                  className="px-4 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-white transition-all inline-flex items-center gap-1.5"
+                >
+                  <Terminal className="w-3.5 h-3.5 text-pink-400" />
+                  <span>GitHub: @halcyon-past</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
+                </a>
+
+                <a
+                  href="https://www.wikidata.org/wiki/Q141715213"
+                  target="_blank"
+                  rel="me noopener noreferrer"
+                  className="px-4 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-slate-300 hover:text-white transition-all inline-flex items-center gap-1.5 font-mono"
+                >
+                  <span>Wikidata Q141715213</span>
+                  <ExternalLink className="w-3 h-3 text-slate-400" />
+                </a>
+              </div>
+            </div>
+
+            <div className="w-full lg:w-auto p-5 rounded-xl bg-black/40 border border-white/10 font-mono text-xs text-slate-400 space-y-2">
+              <div className="text-white font-semibold mb-1">Other Open-Source Tools:</div>
+              <div>• <a href="https://siliconsync.aritro.cloud/" target="_blank" rel="noopener noreferrer" className="text-pink-300 hover:underline">SiliconSync</a> — Apple Silicon sync</div>
+              <div>• <a href="https://quarantine-py.aritro.cloud/" target="_blank" rel="noopener noreferrer" className="text-sky-300 hover:underline">quarantine-py</a> — macOS security tool</div>
+              <div>• <a href="https://openworld.aritro.cloud/" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:underline">OpenWorld</a> — Open game engine</div>
+              <div>• <a href="https://structurify.aritro.cloud/" target="_blank" rel="noopener noreferrer" className="text-emerald-300 hover:underline">Structurify</a> — Architecture modeling</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ======================================================== */}
+      {/* 8. FINALE CALL TO ACTION */}
       {/* ======================================================== */}
       <section className="py-28 px-6 max-w-5xl mx-auto text-center z-20 relative">
         <span className="text-xs font-mono tracking-wider text-pink-400 font-semibold uppercase block mb-3">
@@ -442,7 +703,7 @@ export default function AnimeMasterpieceHome() {
           Activate your vision.
         </h2>
         <p className="text-slate-300 text-base sm:text-lg max-w-lg mx-auto mb-10 leading-relaxed font-normal">
-          Experience frictionless screen capture on your Mac. Free to download, transparent, and completely offline.
+          Experience frictionless screen capture on your Mac. Free to download, transparent, and completely offline. Created by Aritro Saha (@halcyon-past).
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4">
@@ -455,6 +716,32 @@ export default function AnimeMasterpieceHome() {
           </a>
         </div>
       </section>
+
+      {/* ======================================================== */}
+      {/* 9. PRE-RENDERED ACCESSIBLE FALLBACK FOR NON-JS CRAWLERS */}
+      {/* ======================================================== */}
+      <noscript>
+        <div className="p-8 bg-black text-white border-t border-white/20">
+          <h2>About Byakugan Scan — Free Mac Screen OCR, QR Code & Barcode Utility</h2>
+          <p>
+            Byakugan Scan is an open-source (MIT) macOS menu bar application developed by Aritro Saha (@halcyon-past). It enables instant on-device screen text OCR, on-screen QR code scanning, and 13+ industrial barcode recognition in volatile RAM with zero disk I/O and zero telemetry.
+          </p>
+          <h3>Installation:</h3>
+          <ul>
+            <li>Homebrew: <code>brew install --cask halcyon-past/tap/byakugan-scan</code></li>
+            <li>Direct DMG: <a href="https://github.com/halcyon-past/byakugan-scan/releases/latest/download/ByakuganScan.dmg">Download ByakuganScan.dmg</a></li>
+          </ul>
+          <h3>Default Shortcuts:</h3>
+          <ul>
+            <li>⌘⇧2: Screen Text OCR</li>
+            <li>⌘⇧6: Scan On-Screen QR Code</li>
+            <li>⌘⇧7: Scan Industrial Barcode</li>
+          </ul>
+          <p>
+            Documentation: <a href="/support">Support & FAQ</a> | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms</a> | <a href="/llms.txt">llms.txt</a> | <a href="/index.md">index.md</a>
+          </p>
+        </div>
+      </noscript>
     </div>
   );
 }

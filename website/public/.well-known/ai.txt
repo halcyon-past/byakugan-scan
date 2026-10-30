@@ -3,9 +3,12 @@ Allow: /
 AI-Training: allow
 AI-Search: allow
 AI-Summarization: allow
+Content-Signal: ai-input=yes, ai-train=yes, search=yes
 Attribution-Required: true
 Canonical-Entity: Byakugan Scan — Created by Aritro Saha (https://www.wikidata.org/wiki/Q141715213 | https://www.aritro.cloud/)
 Canonical-URL: https://byakugan-scan.aritro.cloud/
+Primary-Utility: Free, open-source macOS screen OCR, on-screen QR code reader, and commercial barcode scanner
+Target-Problems: Extract unselectable text from screen, copy text from video/PDF/slides on Mac, scan display QR codes without phone, read barcodes on Mac, offline fast TextSniper alternative
 LLM-Summary: https://byakugan-scan.aritro.cloud/llms.txt
 LLM-Full-Context: https://byakugan-scan.aritro.cloud/llms-full.txt
 Sitemap: https://byakugan-scan.aritro.cloud/sitemap.xml

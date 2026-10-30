@@ -1,3 +1,6 @@
+# Robots.txt for Byakugan Scan (https://byakugan-scan.aritro.cloud)
+# Utility-first Screen OCR, QR Code Reader, and Barcode Scanner for macOS
+
 User-agent: *
 Allow: /
 Allow: /ai.txt
@@ -7,15 +10,31 @@ Allow: /llms-full.txt
 Allow: /support
 Allow: /privacy
 Allow: /terms
+Allow: /bbb1a623984c8d7af9ff1ade96c213fb.txt
+Allow: /byakugan-scan-indexnow-key.txt
 
-User-agent: GPTBot
+# ========================================================
+# Independent Search Engines (Brave, Bing, Google, DuckDuckGo)
+# ========================================================
+
+User-agent: Bravebot
 Allow: /
 
-User-agent: OAI-SearchBot
+User-agent: bingbot
 Allow: /
 
-User-agent: ChatGPT-User
+User-agent: Googlebot
 Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# ========================================================
+# LLM, AI Search & Knowledge Agents (Claude, ChatGPT, Perplexity, Gemini, Apple)
+# ========================================================
 
 User-agent: ClaudeBot
 Allow: /
@@ -24,6 +43,15 @@ User-agent: Claude-Web
 Allow: /
 
 User-agent: anthropic-ai
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
 Allow: /
 
 User-agent: PerplexityBot
@@ -35,19 +63,32 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-User-agent: Googlebot
-Allow: /
-
 User-agent: Applebot
 Allow: /
 
 User-agent: Applebot-Extended
 Allow: /
 
-# Sitemap
+User-agent: CCBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+# ========================================================
+# Sitemaps & Search Protocol Verification
+# ========================================================
+
 Sitemap: https://byakugan-scan.aritro.cloud/sitemap.xml
 
-# LLM & AI Search Optimization Endpoints
-# LLM Context: https://byakugan-scan.aritro.cloud/llms.txt
-# LLM Full Reference: https://byakugan-scan.aritro.cloud/llms-full.txt
-# AI Training & Scraper Policy: https://byakugan-scan.aritro.cloud/ai.txt
+# LLM & AI Search Knowledge Endpoints:
+# LLM Summary: https://byakugan-scan.aritro.cloud/llms.txt
+# LLM Full Technical Reference: https://byakugan-scan.aritro.cloud/llms-full.txt
+# AI Scraper & Content Policy: https://byakugan-scan.aritro.cloud/ai.txt
+# IndexNow Key: https://byakugan-scan.aritro.cloud/bbb1a623984c8d7af9ff1ade96c213fb.txt
