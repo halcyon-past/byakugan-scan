@@ -4,6 +4,24 @@ All notable changes to **Byakugan Scan** will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
+## [1.0.14] — 2026-11-01
+
+### Fixed
+- **Camera Shutter & Audio Feedback Delivery (`SoundEffect`):**
+  - Replaced unsupported iOS-only `AudioServicesPlaySystemSound(1108)` call with authentic macOS camera shutter and screenshot audio assets (`Shutter.aif` and `ScreenCapture.aif`).
+  - Bundled sound assets directly in the app bundle (`ByakuganScan/Resources/Sounds/`) with fallback resolution to macOS CoreAudio system sound paths.
+  - Added playback reset handling (`sound.stop()`, `sound.currentTime = 0`) to resolve AppKit cached `NSSound` instances failing to play on rapid re-triggers.
+  - Added haptic feedback integration (`NSHapticFeedbackManager`) for `.hapticPop`.
+- **Settings Sound Effect Live Preview (`SettingsView`):**
+  - Added automatic audio preview playback on `.onChange(of: settings.captureSoundEffect)` so browsing sound effects in Settings immediately plays the selected sound.
+  - Interactive preview speaker icon now plays reliably with instant re-triggering.
+- **Visual Feedback Streamlining (`FeedbackStyle`, `ScanCoordinator`):**
+  - Removed confusing and redundant "Both HUD & Notification" option, streamlining Visual Feedback to 3 clear choices: **Floating HUD Pill (Recommended)**, **System Notification**, and **Silent / Off**.
+  - Decoupled notification delivery in `ScanCoordinator` from unexposed legacy flags, ensuring system notifications fire reliably when selected.
+  - Added safe backward-compatibility fallback in settings migration so previous legacy configurations cleanly default to `.floatingHUD`.
+
+---
+
 ## [1.0.13] — 2026-10-25
 
 ### Fixed

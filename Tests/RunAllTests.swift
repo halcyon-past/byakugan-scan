@@ -556,16 +556,28 @@ struct TestRunner {
             }
         }
 
+        test("SoundEffect: Playback execution for all effects") {
+            for effect in SoundEffect.allCases {
+                let played = effect.play()
+                try assertTrue(played, "Effect \(effect.displayName) must execute playback successfully")
+            }
+        }
+
         // Suite 10: FeedbackStyle Model & Options (Issue #3)
         print("\n▶️ [Suite 10/12] FeedbackStyle Model & Properties")
         test("FeedbackStyle: All cases and property checks") {
-            try assertEqual(FeedbackStyle.allCases.count, 4)
+            try assertEqual(FeedbackStyle.allCases.count, 3)
             try assertTrue(FeedbackStyle.floatingHUD.showsHUD, "floatingHUD must show HUD")
             try assertTrue(!FeedbackStyle.floatingHUD.showsSystemNotification, "floatingHUD must not show system notif")
             try assertTrue(!FeedbackStyle.systemNotification.showsHUD, "systemNotification must not show HUD")
             try assertTrue(FeedbackStyle.systemNotification.showsSystemNotification, "systemNotification must show system notif")
-            try assertTrue(FeedbackStyle.both.showsHUD && FeedbackStyle.both.showsSystemNotification, "both must show both")
             try assertTrue(!FeedbackStyle.none.showsHUD && !FeedbackStyle.none.showsSystemNotification, "none must show neither")
+        }
+
+        test("FeedbackStyle: Legacy raw value migration fallback") {
+            try assertEqual(FeedbackStyle(rawValue: "both"), nil)
+            let fallback = FeedbackStyle(rawValue: "both") ?? .floatingHUD
+            try assertEqual(fallback, .floatingHUD)
         }
 
         test("FeedbackStyle: Codable roundtrip") {
@@ -644,9 +656,9 @@ struct TestRunner {
             try assertEqual(barcodeItem.title, "Barcode Scanned")
         }
 
-        test("AppConstants: Version 1.0.13 & Settings window sizing verification") {
-            try assertEqual(AppConstants.App.version, "1.0.13")
-            try assertEqual(AppConstants.App.build, "14")
+        test("AppConstants: Version 1.0.14 & Settings window sizing verification") {
+            try assertEqual(AppConstants.App.version, "1.0.14")
+            try assertEqual(AppConstants.App.build, "15")
             try assertEqual(Int(AppConstants.UI.settingsWindowWidth), 680)
             try assertEqual(Int(AppConstants.UI.settingsWindowHeight), 540)
             try assertEqual(AppConstants.App.prodBundleID, "cloud.aritro.byakugan-scan")

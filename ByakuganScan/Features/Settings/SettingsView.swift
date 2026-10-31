@@ -101,6 +101,11 @@ struct GeneralSettingsView: View {
                                 Label(sound.displayName, systemImage: sound.systemImage).tag(sound)
                             }
                         }
+                        .onChange(of: settings.captureSoundEffect) { _, newSound in
+                            if newSound != .none {
+                                newSound.play()
+                            }
+                        }
                         
                         Button {
                             settings.captureSoundEffect.play()

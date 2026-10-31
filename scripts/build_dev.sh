@@ -37,8 +37,8 @@ plutil -replace CFBundleExecutable -string "ByakuganScanDev" "$CONTENTS/Info.pli
 plutil -replace CFBundleIdentifier -string "cloud.aritro.byakugan-scan.dev" "$CONTENTS/Info.plist"
 plutil -replace CFBundleName -string "Byakugan Scan Dev" "$CONTENTS/Info.plist"
 plutil -replace CFBundleDisplayName -string "Byakugan Scan Dev" "$CONTENTS/Info.plist"
-plutil -replace CFBundleShortVersionString -string "${VERSION:-1.0.13}" "$CONTENTS/Info.plist"
-plutil -replace CFBundleVersion -string "${BUILD_NUM:-13}" "$CONTENTS/Info.plist"
+plutil -replace CFBundleShortVersionString -string "${VERSION:-1.0.14}" "$CONTENTS/Info.plist"
+plutil -replace CFBundleVersion -string "${BUILD_NUM:-15}" "$CONTENTS/Info.plist"
 
 # 3. Create .icns file for macOS
 echo "🎨 Generating AppIcon.icns..."
@@ -72,11 +72,17 @@ cp "$PROJECT_DIR/Assets/Icons/AS_icon_lightmode_64x64.png" "$RESOURCES_DIR/MenuB
 cp "$PROJECT_DIR/Assets/Icons/AS_icon_darkmode_32x32.png"  "$RESOURCES_DIR/MenuBarIcon_Dark.png"
 cp "$PROJECT_DIR/Assets/Icons/AS_icon_darkmode_64x64.png"  "$RESOURCES_DIR/MenuBarIcon_Dark@2x.png"
 
-# 5. Ad-hoc codesign with permanent designated requirement for cloud.aritro.byakugan-scan.dev
+# 5. Copy sound effect assets into Resources
+echo "🔊 Bundling sound effect assets..."
+if [ -d "$PROJECT_DIR/ByakuganScan/Resources/Sounds" ]; then
+    cp "$PROJECT_DIR/ByakuganScan/Resources/Sounds/"* "$RESOURCES_DIR/"
+fi
+
+# 6. Ad-hoc codesign with permanent designated requirement for cloud.aritro.byakugan-scan.dev
 echo "🔐 Signing dev app bundle with cloud.aritro.byakugan-scan.dev designated requirement..."
 codesign --force --deep --sign - -r='designated => identifier "cloud.aritro.byakugan-scan.dev"' "$APP_BUNDLE"
 
-# 6. Install to /Applications so it is directly launchable and recognized by macOS
+# 7. Install to /Applications so it is directly launchable and recognized by macOS
 echo "📥 Installing to /Applications/$APP_NAME.app..."
 if pgrep -x "ByakuganScanDev" >/dev/null 2>&1; then
     echo "🛑 Quitting currently running Dev app before installation..."
