@@ -1,6 +1,5 @@
 import Foundation
 import AppKit
-import AudioToolbox
 
 /// Represents selectable audio feedback effects upon scan completion.
 public enum SoundEffect: String, Codable, CaseIterable, Identifiable {
@@ -33,18 +32,49 @@ public enum SoundEffect: String, Codable, CaseIterable, Identifiable {
     }
     
     /// Plays the configured sound effect on device.
-    public func play() {
+    @discardableResult
+    public func play() -> Bool {
         switch self {
         case .classicGlass:
-            NSSound(named: "Glass")?.play()
+            return playSound(named: "Glass", fallbackPaths: ["/System/Library/Sounds/Glass.aiff"])
         case .subtleClick:
-            NSSound(named: "Tink")?.play()
+            return playSound(named: "Tink", fallbackPaths: ["/System/Library/Sounds/Tink.aiff"])
         case .cameraShutter:
-            AudioServicesPlaySystemSound(1108)
+            return playSound(
+                named: "Shutter",
+                fallbackPaths: [
+                    "/System/Library/Components/CoreAudio.component/Contents/SharedSupport/SystemSounds/system/Shutter.aif",
+                    "/System/Library/Components/CoreAudio.component/Contents/SharedSupport/SystemSounds/system/Screen Capture.aif"
+                ]
+            )
         case .hapticPop:
-            NSSound(named: "Pop")?.play()
+            NSHapticFeedbackManager.defaultPerformer.perform(.generic, performanceTime: .now)
+            return playSound(named: "Pop", fallbackPaths: ["/System/Library/Sounds/Pop.aiff"])
         case .none:
-            break
+            return true
         }
+    }
+    
+    @discardableResult
+    private func playSound(named name: String, fallbackPaths: [String] = []) -> Bool {
+        let sound: NSSound? = {
+            if let namedSound = NSSound(named: name) {
+                return namedSound
+            }
+            for path in fallbackPaths {
+                if FileManager.default.fileExists(atPath: path),
+                   let fileSound = NSSound(contentsOfFile: path, byReference: true) {
+                    return fileSound
+                }
+            }
+            return nil
+        }()
+        
+        guard let sound = sound else { return false }
+        if sound.isPlaying {
+            sound.stop()
+        }
+        sound.currentTime = 0
+        return sound.play()
     }
 }
