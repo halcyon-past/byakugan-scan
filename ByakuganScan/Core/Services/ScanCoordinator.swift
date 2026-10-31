@@ -106,12 +106,10 @@ final class ScanCoordinator: ObservableObject {
                 settings.captureSoundEffect.play()
             }
             
-            // Visual Feedback: Floating HUD and/or System Notification (Issue #3)
+            // Visual Feedback: Floating HUD or System Notification
             if settings.feedbackStyle.showsHUD {
                 FloatingHUDController.shared.show(result: result)
-            }
-            
-            if settings.feedbackStyle.showsSystemNotification && settings.showNotificationOnCapture {
+            } else if settings.feedbackStyle.showsSystemNotification {
                 sendNotification(for: result)
             }
             

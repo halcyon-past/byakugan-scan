@@ -67,7 +67,13 @@ cp "$PROJECT_DIR/Assets/Icons/AS_icon_lightmode_64x64.png" "$RESOURCES_DIR/MenuB
 cp "$PROJECT_DIR/Assets/Icons/AS_icon_darkmode_32x32.png"  "$RESOURCES_DIR/MenuBarIcon_Dark.png"
 cp "$PROJECT_DIR/Assets/Icons/AS_icon_darkmode_64x64.png"  "$RESOURCES_DIR/MenuBarIcon_Dark@2x.png"
 
-# 5. Ad-hoc codesign the bundle with permanent designated requirement
+# 5. Copy sound effect assets into Resources for NSSound(named:) lookup
+echo "🔊 Bundling sound effect assets..."
+if [ -d "$PROJECT_DIR/ByakuganScan/Resources/Sounds" ]; then
+    cp "$PROJECT_DIR/ByakuganScan/Resources/Sounds/"* "$RESOURCES_DIR/"
+fi
+
+# 6. Ad-hoc codesign the bundle with permanent designated requirement
 echo "🔐 Signing app bundle..."
 codesign --force --deep --sign - -r='designated => identifier "cloud.aritro.byakugan-scan"' "$APP_BUNDLE"
 
