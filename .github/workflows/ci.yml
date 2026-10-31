@@ -69,7 +69,7 @@ jobs:
 
   automated-tests:
     name: Run Swift & Web Test Suites
-    runs-on: macos-14
+    runs-on: macos-15
     needs: branch-naming
     steps:
       - name: Checkout Code
