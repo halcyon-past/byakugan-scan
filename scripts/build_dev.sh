@@ -37,8 +37,8 @@ plutil -replace CFBundleExecutable -string "ByakuganScanDev" "$CONTENTS/Info.pli
 plutil -replace CFBundleIdentifier -string "cloud.aritro.byakugan-scan.dev" "$CONTENTS/Info.plist"
 plutil -replace CFBundleName -string "Byakugan Scan Dev" "$CONTENTS/Info.plist"
 plutil -replace CFBundleDisplayName -string "Byakugan Scan Dev" "$CONTENTS/Info.plist"
-plutil -replace CFBundleShortVersionString -string "${VERSION:-1.0.13}" "$CONTENTS/Info.plist"
-plutil -replace CFBundleVersion -string "${BUILD_NUM:-13}" "$CONTENTS/Info.plist"
+plutil -replace CFBundleShortVersionString -string "${VERSION:-1.0.14}" "$CONTENTS/Info.plist"
+plutil -replace CFBundleVersion -string "${BUILD_NUM:-15}" "$CONTENTS/Info.plist"
 
 # 3. Create .icns file for macOS
 echo "🎨 Generating AppIcon.icns..."
