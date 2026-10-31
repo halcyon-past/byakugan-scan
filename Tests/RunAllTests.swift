@@ -656,9 +656,9 @@ struct TestRunner {
             try assertEqual(barcodeItem.title, "Barcode Scanned")
         }
 
-        test("AppConstants: Version 1.0.13 & Settings window sizing verification") {
-            try assertEqual(AppConstants.App.version, "1.0.13")
-            try assertEqual(AppConstants.App.build, "14")
+        test("AppConstants: Version 1.0.14 & Settings window sizing verification") {
+            try assertEqual(AppConstants.App.version, "1.0.14")
+            try assertEqual(AppConstants.App.build, "15")
             try assertEqual(Int(AppConstants.UI.settingsWindowWidth), 680)
             try assertEqual(Int(AppConstants.UI.settingsWindowHeight), 540)
             try assertEqual(AppConstants.App.prodBundleID, "cloud.aritro.byakugan-scan")

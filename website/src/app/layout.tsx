@@ -150,7 +150,7 @@ const jsonLd = {
       operatingSystem: "macOS 14.0 or later (Sonoma, Sequoia)",
       applicationCategory: "UtilitiesApplication, ProductivityApplication",
       applicationSubCategory: "Screen OCR, QR Code Reader, Industrial Barcode Scanner, Table Extractor",
-      softwareVersion: "1.0.13",
+      softwareVersion: "1.0.14",
       license: "https://opensource.org/licenses/MIT",
       url: SITE_URL,
       downloadUrl:
@@ -158,7 +158,7 @@ const jsonLd = {
       codeRepository: "https://github.com/halcyon-past/byakugan-scan",
       programmingLanguage: "Swift 6.0",
       installUrl: "https://github.com/halcyon-past/byakugan-scan/releases/latest",
-      releaseNotes: "https://github.com/halcyon-past/byakugan-scan/releases/tag/v1.0.13",
+      releaseNotes: "https://github.com/halcyon-past/byakugan-scan/releases/tag/v1.0.14",
       image: `${SITE_URL}/app-icon.jpg`,
       screenshot: `${SITE_URL}/opengraph-image`,
       description:
