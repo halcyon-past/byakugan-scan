@@ -20,7 +20,7 @@ permissions:
 jobs:
   build:
     name: Build & Package DMG (${{ github.event.inputs.branch }})
-    runs-on: macos-14
+    runs-on: macos-15
 
     steps:
       - name: Checkout Code from Target Branch
