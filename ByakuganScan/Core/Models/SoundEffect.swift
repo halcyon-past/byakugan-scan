@@ -61,6 +61,12 @@ public enum SoundEffect: String, Codable, CaseIterable, Identifiable {
             if let namedSound = NSSound(named: name) {
                 return namedSound
             }
+            for ext in ["aif", "aiff", "wav"] {
+                if let path = Bundle.main.path(forResource: name, ofType: ext),
+                   let fileSound = NSSound(contentsOfFile: path, byReference: true) {
+                    return fileSound
+                }
+            }
             for path in fallbackPaths {
                 if FileManager.default.fileExists(atPath: path),
                    let fileSound = NSSound(contentsOfFile: path, byReference: true) {
