@@ -151,7 +151,7 @@ const jsonLd = {
       applicationCategory: "UtilitiesApplication, ProductivityApplication",
       applicationSubCategory: "Screen OCR, QR Code Reader, Industrial Barcode Scanner, Table Extractor",
       softwareVersion: "1.0.14",
-      license: "https://opensource.org/licenses/MIT",
+      license: "https://opensource.org/licenses/Apache-2.0",
       url: SITE_URL,
       downloadUrl:
         "https://github.com/halcyon-past/byakugan-scan/releases/latest/download/ByakuganScan.dmg",
@@ -250,7 +250,7 @@ const jsonLd = {
           name: "What is the best free and open-source alternative to TextSniper on macOS?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Byakugan Scan is a 100% free, open-source (MIT) alternative to TextSniper. It captures screen pixels directly into volatile RAM (NSPasteboard) to avoid macOS Spotlight indexing stalls, operates 100% offline with zero telemetry, and includes on-screen QR decoding and 13+ industrial barcode scanning.",
+            text: "Byakugan Scan is a 100% free, open-source (Apache 2.0) alternative to TextSniper. It captures screen pixels directly into volatile RAM (NSPasteboard) to avoid macOS Spotlight indexing stalls, operates 100% offline with zero telemetry, and includes on-screen QR decoding and 13+ industrial barcode scanning.",
           },
         },
         {

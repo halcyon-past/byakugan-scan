@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description:
-    "Terms of Service and open-source MIT license details for the Byakugan Scan macOS screen OCR, QR code, and barcode utility.",
+    "Terms of Service and open-source Apache 2.0 license details for the Byakugan Scan macOS screen OCR, QR code, and barcode utility.",
   alternates: {
     canonical: "/terms",
   },
