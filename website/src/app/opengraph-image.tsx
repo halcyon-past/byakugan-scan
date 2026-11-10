@@ -67,7 +67,7 @@ export default async function Image() {
                 background: "#34d399",
               }}
             />
-            <span>100% Offline • Open Source (MIT)</span>
+            <span>100% Offline • Open Source (Apache 2.0)</span>
           </div>
         </div>
 

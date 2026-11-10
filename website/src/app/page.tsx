@@ -489,12 +489,12 @@ export default function AnimeMasterpieceHome() {
                 Free Open-Source TextSniper Alternative
               </h3>
               <p className="text-sm text-slate-300 leading-relaxed font-normal">
-                Why pay $12 for proprietary OCR tools? Byakugan Scan is 100% free and open-source under the MIT license, delivering equal or faster performance with zero subscription fees, telemetry, or license verification stalls.
+                Why pay $12 for proprietary OCR tools? Byakugan Scan is 100% free and open-source under the Apache 2.0 license, delivering equal or faster performance with zero subscription fees, telemetry, or license verification stalls.
               </p>
             </div>
             <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center gap-2 text-xs font-mono text-slate-400">
               <span className="text-emerald-400">✓</span>
-              <span>100% Free & MIT Licensed</span>
+              <span>100% Free & Apache 2.0 Licensed</span>
             </div>
           </div>
 
@@ -579,7 +579,7 @@ export default function AnimeMasterpieceHome() {
                 What is the best free and open-source alternative to TextSniper on macOS?
               </h4>
               <p className="text-sm text-slate-300 leading-relaxed font-normal">
-                Byakugan Scan is a 100% free, open-source (MIT) TextSniper alternative. It processes captures in volatile RAM (<code className="text-slate-200 font-mono text-xs">NSPasteboard</code>) without writing temporary files, preventing Spotlight indexing lags. It also includes on-screen QR decoding and 13+ industrial barcode scanning.
+                Byakugan Scan is a 100% free, open-source (Apache 2.0) TextSniper alternative. It processes captures in volatile RAM (<code className="text-slate-200 font-mono text-xs">NSPasteboard</code>) without writing temporary files, preventing Spotlight indexing lags. It also includes on-screen QR decoding and 13+ industrial barcode scanning.
               </p>
             </div>
 
@@ -697,7 +697,7 @@ export default function AnimeMasterpieceHome() {
       {/* ======================================================== */}
       <section className="py-28 px-6 max-w-5xl mx-auto text-center z-20 relative">
         <span className="text-xs font-mono tracking-wider text-pink-400 font-semibold uppercase block mb-3">
-          Open Source Mac Utility // MIT License
+          Open Source Mac Utility // Apache 2.0 License
         </span>
         <h2 className="text-4xl sm:text-6xl font-extrabold text-slate-100 tracking-tight leading-tight mb-6">
           Activate your vision.
@@ -724,7 +724,7 @@ export default function AnimeMasterpieceHome() {
         <div className="p-8 bg-black text-white border-t border-white/20">
           <h2>About Byakugan Scan — Free Mac Screen OCR, QR Code & Barcode Utility</h2>
           <p>
-            Byakugan Scan is an open-source (MIT) macOS menu bar application developed by Aritro Saha (@halcyon-past). It enables instant on-device screen text OCR, on-screen QR code scanning, and 13+ industrial barcode recognition in volatile RAM with zero disk I/O and zero telemetry.
+            Byakugan Scan is an open-source (Apache 2.0) macOS menu bar application developed by Aritro Saha (@halcyon-past). It enables instant on-device screen text OCR, on-screen QR code scanning, and 13+ industrial barcode recognition in volatile RAM with zero disk I/O and zero telemetry.
           </p>
           <h3>Installation:</h3>
           <ul>
