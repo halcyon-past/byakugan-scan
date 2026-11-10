@@ -1111,7 +1111,7 @@ for frameIndex in 0..<totalFrames {
         ctx.setLineWidth(1.5)
         ctx.strokePath()
         
-        drawText("⭐ Star on GitHub: github.com/halcyon-past/byakugan-scan  •  MIT License", in: ctx, at: CGPoint(x: outroRect.midX - 310, y: outroRect.midY - 7), fontSize: 16, weight: .bold, color: NSColor(red: 1.0, green: 0.85, blue: 0.3, alpha: 1.0))
+        drawText("⭐ Star on GitHub: github.com/halcyon-past/byakugan-scan  •  Apache 2.0 License", in: ctx, at: CGPoint(x: outroRect.midX - 310, y: outroRect.midY - 7), fontSize: 16, weight: .bold, color: NSColor(red: 1.0, green: 0.85, blue: 0.3, alpha: 1.0))
         
         cursorPos = CGPoint(x: termRect.maxX - 40, y: termRect.minY + 50)
     }

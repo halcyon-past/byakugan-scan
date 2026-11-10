@@ -17,7 +17,7 @@
     <a href="https://github.com/halcyon-past/byakugan-scan/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/halcyon-past/byakugan-scan/ci.yml?branch=main&style=flat-square&label=ci" alt="CI" /></a>
     <img src="https://img.shields.io/badge/macOS-14.0%2B-111827?style=flat-square&logo=apple" alt="macOS 14+" />
     <img src="https://img.shields.io/badge/Swift-6.0-F05138?style=flat-square&logo=swift&logoColor=white" alt="Swift 6.0" />
-    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=flat-square" alt="MIT License" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-22c55e?style=flat-square" alt="Apache 2.0 License" /></a>
   </p>
 
   <p>
@@ -163,4 +163,4 @@ Pull requests should target the `dev` branch using the branch naming convention 
 
 ## License
 
-MIT © [Aritro Saha](https://aritro.cloud)
+Apache-2.0 © [Aritro Saha](https://aritro.cloud)

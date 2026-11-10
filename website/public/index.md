@@ -1,11 +1,11 @@
 # Byakugan Scan — Instant Mac Screen OCR, QR Code & Barcode Scanner
 
-> A lightweight, 100% offline macOS menu bar utility for instant in-memory screen text OCR, on-screen QR code decoding, and industrial barcode scanning powered by Apple Vision. Free, open-source (MIT), and built with Swift 6 on Apple Silicon and Intel.
+> A lightweight, 100% offline macOS menu bar utility for instant in-memory screen text OCR, on-screen QR code decoding, and industrial barcode scanning powered by Apple Vision. Free, open-source (Apache 2.0), and built with Swift 6 on Apple Silicon and Intel.
 
 - **Download Direct Universal DMG:** https://github.com/halcyon-past/byakugan-scan/releases/latest/download/ByakuganScan.dmg
 - **Install via Homebrew:** `brew install --cask halcyon-past/tap/byakugan-scan`
 - **Supported OS:** macOS 14.0 Sonoma, macOS 15.0 Sequoia, macOS 16+
-- **License:** MIT License (100% Free & Open Source)
+- **License:** Apache 2.0 License (100% Free & Open Source)
 
 ---
 

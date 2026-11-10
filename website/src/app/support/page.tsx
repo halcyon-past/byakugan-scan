@@ -706,7 +706,7 @@ export default function SupportPage() {
               <tbody className="divide-y divide-white/[0.07] text-slate-200">
                 <tr>
                   <td className="py-3.5 px-6 font-semibold text-white">Price &amp; License</td>
-                  <td className="py-3.5 px-6 text-emerald-300 font-semibold">100% Free &amp; Open Source (MIT)</td>
+                  <td className="py-3.5 px-6 text-emerald-300 font-semibold">100% Free &amp; Open Source (Apache 2.0)</td>
                   <td className="py-3.5 px-6">Paid (Proprietary)</td>
                   <td className="py-3.5 px-6">Built-in to macOS</td>
                 </tr>
